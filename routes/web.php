@@ -16,5 +16,22 @@ Route::get('/', function () {
 });
 
 Route::get('/write', function () {
-    return view('create');
+    $journey_labels = App\label::getWhere('journey_type');
+    $waypoint_labels = App\label::getWhere('waypoint_type');
+
+    return view('create',[
+        'journey_labels' => $journey_labels,
+        'waypoint_labels' => $waypoint_labels,
+    ]);
+});
+
+Route::get('/test', function () {
+
+    $journey_labels = App\label::getWhere('journey_type');
+    $waypoint_labels = App\label::getWhere('waypoint_type');
+
+    return view('test',[
+        'journey_labels' => $journey_labels,
+        'waypoint_labels' => $waypoint_labels,
+    ]);
 });
