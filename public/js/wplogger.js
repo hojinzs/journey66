@@ -85,6 +85,7 @@ JournalLogger.prototype.Waypoint = function(latlng){
     var $newWaypoint = $dummywp.clone(true);
     $newWaypoint.addClass('waypoint');
     $newWaypoint.attr("id",Idx.NextId);
+    $newWaypoint.attr("name",Idx.NextId);
     $newWaypoint.data("index",Idx.NextIndex);
     $newWaypoint.find('#wp-name').text('Waypoint #'+Idx.NextIndex);
     $newWaypoint.find('#Lat').val(latlng.lat());
@@ -116,15 +117,11 @@ JournalLogger.prototype.Waypoint = function(latlng){
     //set Static Google Maps
     var currentzoom = map.getZoom();
 
-    console.log(currentzoom);
-
     var staticmap = "https://maps.googleapis.com/maps/api/staticmap?";
     staticmap = staticmap + "size=150x150";
     staticmap = staticmap + "&markers=color:red|"+latlng.lat()+","+latlng.lng();
     staticmap = staticmap + "&zoom=" + currentzoom;
     staticmap = staticmap + "&key=" + gMapKey;
-
-    console.log(staticmap);
 
     $newWaypoint.find('#static-map').attr('src',staticmap);
 
@@ -208,8 +205,6 @@ JournalLogger.handleImgsFilesSelect = function(e){
     var sel_files = [];
 
     var $target = $(e.target).parents('#waypoint-images').find('.image');
-
-    console.log($target);
 
     var files = e.target.files;
     var filesArr = Array.prototype.slice.call(files);

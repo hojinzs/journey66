@@ -21,6 +21,8 @@
         @stack('scripts')
         @stack('css')
 
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
     </head>
     <body>
         @yield('contents')

@@ -2,6 +2,41 @@ var map;
 var JLogger;
 var src = 'test.gpx';
 var gMapKey = "AIzaSyC24oO9KSFgwoDRSdQQzOEhbHYOAX4ldsc";
+var gpx;
+var img_file = [];
+
+$(document).ready(function(){
+  $('#gpx-upload-file').on('change',gpxupload);
+  $.ajaxSetup({headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+
+  //Form Submit Action
+  $( "#waypoint" ).on( "submit", function(event) {
+    event.preventDefault();
+
+    console.log(gpx);
+
+    var FormArray = $(this).serializeField();
+
+    var jsonData = JSON.stringify(FormArray);
+    console.log(jsonData);
+
+    $.ajax({
+      url: "/api/newjourney",
+      type: "POST",
+      contentType: "application/json",
+      data: jsonData,
+      dataType: "text",
+      success: function(data){
+        $('.test_serialize_result').text(data);
+      },
+      error: function(xhr,status,error){
+        alert(error);
+      }
+    });
+
+  }); 
+
+});
 
 function initMap(){
   map = new google.maps.Map(document.getElementById('map'), {
@@ -29,6 +64,9 @@ function loadGPXFileIntoGoogleMap(map, filename) {
                   // parser.addRoutepointsToMap();         // Add the routepoints
                   // parser.addWaypointsToMap();           // Add the waypoints
 
+                  gpx = data;
+                  console.log(gpx);
+
                   resolve(parser);
                 }
             });
@@ -42,6 +80,8 @@ function loadGPXFileIntoGoogleMap(map, filename) {
         JLogger.TrackMarker(track);
         JLogger.setForm();
 
+        $('#gpx-upload-file').prependTo('#waypoint').hide();
+
         $('#GPX-upload').detach();
 
     });
@@ -51,29 +91,45 @@ function loadGPXFileIntoGoogleMap(map, filename) {
 
 function gpxupload(e) {
   var file = e.target.files[0];
-  var output = document.getElementById('waypoint');
+  result = URL.createObjectURL(file);
 
-  output.src = URL.createObjectURL(file);
-
-  loadGPXFileIntoGoogleMap(this.map,samplegpx);
+  loadGPXFileIntoGoogleMap(map,result);
 
 };
 
 function gpxupload_test(e) {
   var samplegpx = "sample_gpx/300k.gpx";
 
-  loadGPXFileIntoGoogleMap(this.map,samplegpx);
+  loadGPXFileIntoGoogleMap(map,samplegpx);
 
 };
 
-$(document).ready(function(){
-  $('#gpx-upload-file').on('change',gpxupload);
+$.fn.serializeField = function() {
+  var result = {};
+  
+  this.each(function() {
+      
+      $(this).find("fieldset").each( function() {
+        var $this = $(this);
+        var name = $this.attr("name");
 
-  $( "form" ).on( "submit", function( event ) {
-    event.preventDefault();
-    console.log( $( this ).serialize() );
+        console.log(name);
+      
+        if (name) {
+          result[name] = {};
+          $.each($this.serializeArray(), function() {
+            result[name][this.name] = this.value;
+          }); 
+        } else {
+          $.each($this.serializeArray(), function() {
+            result[this.name] = this.value;
+          });
+        };
+       });
+      
   });
+  
+  return result;
+};
 
-
-});
 

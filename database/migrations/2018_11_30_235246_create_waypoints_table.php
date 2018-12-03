@@ -19,6 +19,7 @@ class CreateWaypointsTable extends Migration
             $table->foreign('journey_id')
                 ->references('id')->on('journeys')
                 ->onDelete('cascade');
+            $table->integer('sequence');
             $table->string('name');
             $table->longText('description')
                 ->nullable();
@@ -40,6 +41,9 @@ class CreateWaypointsTable extends Migration
      */
     public function down()
     {
+        Schema::table('waypoints',function(Blueprint $table){
+            $table->dropForeign('waypoints_journey_id_foreign');
+        });
         Schema::dropIfExists('waypoints');
     }
 }

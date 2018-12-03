@@ -26,7 +26,9 @@ class CreateJourneysTable extends Migration
             $table->string('author_name');
             $table->string('author_email');
             $table->string('key');
-            $table->string('file_path');
+            $table->string('file_path')
+                ->nullable()
+                ->comment('gpx file uri');
             $table->softDeletes('deleted_at');
 
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));

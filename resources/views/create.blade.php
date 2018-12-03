@@ -26,13 +26,13 @@
     <!-- Gpx Upload-->
     <form id="GPX-upload">
         <h3>Select GPX file</h3>
-        <input id="gpx-upload-file" type="file" accept=".gpx">
+        <input id="gpx-upload-file" name="gpx" type="file" accept=".gpx">
         <a href="#" onclick="javascriot:gpxupload_test()">use sample gpx file</a>
     </form>
 
     <!-- Waypoint input form-->
-    <form id="waypoint" style="display:none">
-        <fieldset id="title">
+    <form method="POST" id="waypoint" style="display:none" action="/api/newjourney">
+        <fieldset name="title" id="title">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -71,7 +71,7 @@
 
         <div id="waypoint-list">
 
-            <fieldset id="DUMMY" style="display:none">
+            <fieldset name="DUMMY" id="DUMMY" style="display:none">
                 <div class="row">
                     <div class="col-md-3">
                         <img id="static-map" style="width: 100%" src="">
@@ -133,7 +133,7 @@
 
         </div>
 
-        <fieldset id="confirm">
+        <fieldset id="confirm" name="confirm">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -147,8 +147,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <button id="form-submit" type="button" class="btn btn-primary btn-lg btn-block">Submit</button>
-                                    <input type="submit" value="Submit">
+                                    <input type="submit" value="Submit" type="button" class="btn btn-primary btn-lg btn-block">
                                 </div>
                             </div>
                         </div>
