@@ -13,14 +13,18 @@ $(document).ready(function(){
   $( "#waypoint" ).on( "submit", function(event) {
     event.preventDefault();
 
+    // form data
     var FormArray = $(this).serializeField();
-    FormArray.gpx = window.btoa(gpx);
 
-    console.log(FormArray.gpx);
+    // serialize gpx file
+    var oSerializer = new XMLSerializer();
+    var sXML = oSerializer.serializeToString(gpx); 
+    FormArray.gpx = window.btoa(encodeURIComponent(sXML));
 
+    // ready to json
     var jsonData = JSON.stringify(FormArray);
-    console.log(jsonData);
 
+    //send
     $.ajax({
       url: "/api/newjourney",
       type: "POST",
@@ -28,7 +32,7 @@ $(document).ready(function(){
       data: jsonData,
       dataType: "text",
       success: function(data){
-        var print = window.atob(data);
+        var print = decodeURIComponent(window.atob(data));
         $('.test_serialize_result').text(print);
       },
       error: function(xhr,status,error){
