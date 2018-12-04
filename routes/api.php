@@ -16,3 +16,18 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+/**
+ * Posting New Journey
+ */
+Route::post('/newjourney','journeyController@store');
+
+/**
+ * Upload Image File
+ */
+Route::post('/media/upload','mediaController@store');
+
+/**
+ * Upload GPX file to Journey
+ */
+Route::post('/journey/{id}/gpxupload','gpxController@store');

@@ -35,22 +35,3 @@ Route::get('/test', function () {
         'waypoint_labels' => $waypoint_labels,
     ]);
 });
-
-Route::prefix('api')->group(function(){
-    
-    /**
-     * Posting New Journey
-     */
-    Route::post('/newjourney','journeyController@store');
-
-    /**
-     * Upload Image File
-     */
-    Route::post('/media/upload','mediaController@store');
-
-    /**
-     * Upload GPX file to Journey
-     */
-    Route::post('/journey/{id}/gpxupload','gpxController@store');
-
-});

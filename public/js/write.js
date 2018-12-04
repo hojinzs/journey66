@@ -13,9 +13,10 @@ $(document).ready(function(){
   $( "#waypoint" ).on( "submit", function(event) {
     event.preventDefault();
 
-    console.log(gpx);
-
     var FormArray = $(this).serializeField();
+    FormArray.gpx = window.btoa(gpx);
+
+    console.log(FormArray.gpx);
 
     var jsonData = JSON.stringify(FormArray);
     console.log(jsonData);
@@ -27,7 +28,8 @@ $(document).ready(function(){
       data: jsonData,
       dataType: "text",
       success: function(data){
-        $('.test_serialize_result').text(data);
+        var print = window.atob(data);
+        $('.test_serialize_result').text(print);
       },
       error: function(xhr,status,error){
         alert(error);

@@ -35,8 +35,10 @@ class journeyController extends Controller
     public function store(Request $request)
     {
         //
-        $return = $request->input('title.journey-title');
-        return var_dump($return);
+        $gpx = base64_decode($request->input('gpx'));
+
+        $return = base64_encode($gpx);
+        return $return;
     }
 
     /**
