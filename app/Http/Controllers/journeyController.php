@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class journeyController extends Controller
 {
@@ -36,6 +37,15 @@ class journeyController extends Controller
     {
         //
         $gpx = base64_decode($request->input('gpx'));
+
+        try {
+            //code...
+            $disk = Storage::disk('gcs');
+            $disk->put('gpxs/test.gpx',$gpx);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $th;
+        }
 
         $return = base64_encode($gpx);
         return $return;
