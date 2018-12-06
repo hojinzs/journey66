@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\gpx;
+use App\journey;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Controller;
 
 class journeyController extends Controller
 {
@@ -36,19 +39,42 @@ class journeyController extends Controller
     public function store(Request $request)
     {
         //
-        $gpx = base64_decode($request->input('gpx'));
 
         try {
             //code...
-            $disk = Storage::disk('gcs');
-            $disk->put('gpxs/test.gpx',$gpx);
+            $gpx = urldecode(base64_decode($request->input('gpx')));
+
+            //hashmake using author name & email
+            $email = $request->input('confirm.email');
+            $author = $request->input('confirm.author');
+            $key = Hash::make($email.$author);
+
+            $gpx_path = gpx::uploadGPX($gpx);
+
+            //create new journey
+    
+            $journey = new journey;
+    
+            $journey->name = $request->input('title.journey-title');
+            $journey->description = $request->input('title.journey-description');
+            $journey->type = $request->input('title.journey-type');
+            $journey->file_path = $request->$gpx_path;
+            $journey->key = $key;
+            
+            $journey->author_email = $email;
+            $journey->author_name = $author;
+    
+            $journey->save();
+
+            $insertedId = $journey->id;
+
         } catch (\Throwable $th) {
             //throw $th;
+
             return $th;
         }
 
-        $return = base64_encode($gpx);
-        return $return;
+        return $insertedId;
     }
 
     /**
@@ -95,4 +121,5 @@ class journeyController extends Controller
     {
         //
     }
+
 }

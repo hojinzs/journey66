@@ -1,20 +1,27 @@
 var map;
 var JLogger;
+var $form
 var src = 'test.gpx';
 var gMapKey = "AIzaSyC24oO9KSFgwoDRSdQQzOEhbHYOAX4ldsc";
 var gpx;
 var img_file = [];
 
 $(document).ready(function(){
+  $form = $("#journey");
+  JLogger = new JournalLogger(map,$form);
+  
   $('#gpx-upload-file').on('change',gpxupload);
   $.ajaxSetup({headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
 
   //Form Submit Action
-  $( "#waypoint" ).on( "submit", function(event) {
+  $( "#journey" ).on( "submit", function(event) {
     event.preventDefault();
 
     // form data
-    var FormArray = $(this).serializeField();
+    var FormArray = $(this).serializeForm();
+
+    console.log(FormArray);
+
 
     // serialize gpx file
     var oSerializer = new XMLSerializer();
@@ -24,21 +31,22 @@ $(document).ready(function(){
     // ready to json
     var jsonData = JSON.stringify(FormArray);
 
-    //send
-    $.ajax({
-      url: "/api/newjourney",
-      type: "POST",
-      contentType: "application/json",
-      data: jsonData,
-      dataType: "text",
-      success: function(data){
-        var print = decodeURIComponent(window.atob(data));
-        $('.test_serialize_result').text(print);
-      },
-      error: function(xhr,status,error){
-        alert(error);
-      }
-    });
+    console.log(jsonData);
+
+    // //send
+    // $.ajax({
+    //   url: "/api/newjourney",
+    //   type: "POST",
+    //   contentType: "application/json",
+    //   data: jsonData,
+    //   dataType: "text",
+    //   success: function(data){
+    //     $('.test_serialize_result').text(data);
+    //   },
+    //   error: function(xhr,status,error){
+    //     alert(error);
+    //   }
+    // });
 
   }); 
 
@@ -82,11 +90,10 @@ function loadGPXFileIntoGoogleMap(map, filename) {
     getData().then(function(parser){
         var track = parser.track.getPath();
 
-        var JLogger = new JournalLogger(map);
         JLogger.TrackMarker(track);
         JLogger.setForm();
 
-        $('#gpx-upload-file').prependTo('#waypoint').hide();
+        $('#gpx-upload-file').prependTo('#journey').hide();
 
         $('#GPX-upload').detach();
 
@@ -110,16 +117,14 @@ function gpxupload_test(e) {
 
 };
 
-$.fn.serializeField = function() {
+$.fn.serializeForm = function() {
   var result = {};
-  
+ 
   this.each(function() {
       
       $(this).find("fieldset").each( function() {
         var $this = $(this);
         var name = $this.attr("name");
-
-        console.log(name);
       
         if (name) {
           result[name] = {};
@@ -137,5 +142,3 @@ $.fn.serializeField = function() {
   
   return result;
 };
-
-

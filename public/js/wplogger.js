@@ -1,9 +1,9 @@
 // Waypoint Marker
 
-function JournalLogger(map){
-    this.$form = $('#waypoint');
-    this.$waypointlist = this.$form.find('#waypoint-list')
-    this.$dummywp = this.$waypointlist.find('#DUMMY');
+function JournalLogger(map,form){
+    this.$form = form;
+    this.$waypointlist = this.$form.find('#waypoint-list');
+    this.$dummywp = $('#DUMMY');
     this.map = map;
 
     //track setting
@@ -67,8 +67,8 @@ JournalLogger.prototype.TrackMarker = function(track){
         var plng = event.latLng.lng();
         var point = new google.maps.LatLng(plat,plng);
 
-        var waypoint = new JournalLogger(map);
-        waypoint.Waypoint(point);
+        // var waypoint = new JournalLogger(map);
+        JLogger.Waypoint(point);
         
     });
 
