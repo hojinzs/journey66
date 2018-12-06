@@ -3,8 +3,6 @@ var JLogger;
 var $form
 var src = 'test.gpx';
 var gMapKey = "AIzaSyC24oO9KSFgwoDRSdQQzOEhbHYOAX4ldsc";
-var gpx;
-var img_file = [];
 
 $(document).ready(function(){
   $form = $("#journey");
@@ -14,40 +12,10 @@ $(document).ready(function(){
   $.ajaxSetup({headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
 
   //Form Submit Action
-  $( "#journey" ).on( "submit", function(event) {
+  $form.on( "submit", function(event) {
     event.preventDefault();
 
-    // form data
-    var FormArray = $(this).serializeForm();
-
-    console.log(FormArray);
-
-
-    // serialize gpx file
-    var oSerializer = new XMLSerializer();
-    var sXML = oSerializer.serializeToString(gpx); 
-    FormArray.gpx = window.btoa(encodeURIComponent(sXML));
-
-    // ready to json
-    var jsonData = JSON.stringify(FormArray);
-
-    console.log(jsonData);
-
-    // //send
-    // $.ajax({
-    //   url: "/api/newjourney",
-    //   type: "POST",
-    //   contentType: "application/json",
-    //   data: jsonData,
-    //   dataType: "text",
-    //   success: function(data){
-    //     $('.test_serialize_result').text(data);
-    //   },
-    //   error: function(xhr,status,error){
-    //     alert(error);
-    //   }
-    // });
-
+    JLogger.Submit();
   }); 
 
 });
@@ -57,8 +25,6 @@ function initMap(){
     zoom: 1,
     center: {lat: 1.0, lng: 1.0}
   });
-
-  map.markers = [];
 
 };
 
@@ -78,9 +44,6 @@ function loadGPXFileIntoGoogleMap(map, filename) {
                   // parser.addRoutepointsToMap();         // Add the routepoints
                   // parser.addWaypointsToMap();           // Add the waypoints
 
-                  gpx = data;
-                  console.log(gpx);
-
                   resolve(parser);
                 }
             });
@@ -89,9 +52,11 @@ function loadGPXFileIntoGoogleMap(map, filename) {
 
     getData().then(function(parser){
         var track = parser.track.getPath();
+        var xml = parser.xmlDoc;
 
         JLogger.TrackMarker(track);
         JLogger.setForm();
+        JLogger.gpx = xml;
 
         $('#gpx-upload-file').prependTo('#journey').hide();
 
@@ -115,30 +80,4 @@ function gpxupload_test(e) {
 
   loadGPXFileIntoGoogleMap(map,samplegpx);
 
-};
-
-$.fn.serializeForm = function() {
-  var result = {};
- 
-  this.each(function() {
-      
-      $(this).find("fieldset").each( function() {
-        var $this = $(this);
-        var name = $this.attr("name");
-      
-        if (name) {
-          result[name] = {};
-          $.each($this.serializeArray(), function() {
-            result[name][this.name] = this.value;
-          }); 
-        } else {
-          $.each($this.serializeArray(), function() {
-            result[this.name] = this.value;
-          });
-        };
-       });
-      
-  });
-  
-  return result;
 };

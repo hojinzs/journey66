@@ -45,8 +45,8 @@ class journeyController extends Controller
             $gpx = urldecode(base64_decode($request->input('gpx')));
 
             //hashmake using author name & email
-            $email = $request->input('confirm.email');
-            $author = $request->input('confirm.author');
+            $email = $request->input('email');
+            $author = $request->input('author');
             $key = Hash::make($email.$author);
 
             $gpx_path = gpx::uploadGPX($gpx);
@@ -55,9 +55,9 @@ class journeyController extends Controller
     
             $journey = new journey;
     
-            $journey->name = $request->input('title.journey-title');
-            $journey->description = $request->input('title.journey-description');
-            $journey->type = $request->input('title.journey-type');
+            $journey->name = $request->input('title');
+            $journey->description = $request->input('description');
+            $journey->type = $request->input('type');
             $journey->file_path = $request->$gpx_path;
             $journey->key = $key;
             
@@ -68,13 +68,24 @@ class journeyController extends Controller
 
             $insertedId = $journey->id;
 
+            // set Waypoints
+            $wps = $request->input('waypoints');
+            foreach ($wps as $k => $wp) {
+                # code...
+                $return = $wp['name'];
+                $return = $wp['name'];
+                $return = $wp['name'];
+                $return = $wp['name'];
+                $return = $wp['name'];
+            };
+
         } catch (\Throwable $th) {
             //throw $th;
 
             return $th;
         }
 
-        return $insertedId;
+        return $return;
     }
 
     /**
