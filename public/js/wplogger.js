@@ -173,6 +173,7 @@ JournalLogger.prototype.Waypoint = function(latlng){
 
     //pair marker in waypoint
     $newWaypoint.marker = marker;
+    $newWaypoint.imgs = [];
     
     // Legarcy
     // this.map.markers.push(marker);
@@ -204,9 +205,6 @@ JournalLogger.prototype.setWaypointReindex = function(){
 }
 
 JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
-
-    $wp.imgs = [];
-
     var $target = $wp.find('.image');
 
     console.log($target);
@@ -252,6 +250,8 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
 JournalLogger.prototype.Submit =function(){
         // form data
         var FormArray = {};
+        var ImgArray = [];
+        var Logger = this;
 
         // set journey data
         FormArray.title = this.$form.find("[name=journey-title]").val();
@@ -273,8 +273,6 @@ JournalLogger.prototype.Submit =function(){
             wp.Lat = w.find("[name=Lat]").val();
             wp.Lng = w.find("[name=Lng]").val();
 
-            console.log(wp);
-
             FormArray.waypoints.push(wp);
 
         })
@@ -286,9 +284,6 @@ JournalLogger.prototype.Submit =function(){
     
         // ready to json
         var jsonData = JSON.stringify(FormArray);
-
-        console.log(FormArray);
-        console.log(jsonData);
     
         //send
         $.ajax({
@@ -298,7 +293,24 @@ JournalLogger.prototype.Submit =function(){
           data: jsonData,
           dataType: "text",
           success: function(data){
-            $('.test_serialize_result').text(data);
+
+            arr = JSON.parse(data);
+            Logger.waypoints.forEach(function(wp,i){
+
+                console.log(wp.imgs);
+
+                uwid = arr['UWID'][i];
+                wp.attr("UWID",uwid);
+                wp.imgs.forEach(function(f){
+                    img = [];
+                    img.file =  f;
+                    img.target = uwid;
+                    ImgArray.push(img);
+                })
+            });
+
+            console.log(ImgArray);
+
           },
           error: function(xhr,status,error){
             alert(error);

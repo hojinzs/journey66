@@ -19,14 +19,10 @@ class Medias extends Migration
             $table->increments('id');
             $table->string('where')
                 ->nullable()
-                ->comment('target model, table name');
-            $table->unsignedInteger('index')
-                ->nullable()
-                ->comment('index number of target model');
+                ->comment('target UniqueModleId');
             $table->string('name');
             $table->string('type');
             $table->string('path')
-                ->unique()
                 ->comment('file uri');
 
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
