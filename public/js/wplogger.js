@@ -265,6 +265,8 @@ JournalLogger.prototype.Submit =function(){
         // set waypoint data
         this.waypoints.forEach(function(w){
             wp={};
+            
+            wp.id = w.find("[name=waypoint-name]").val();
             wp.name = w.find("[name=waypoint-name]").val();
             wp.description = w.find("[name=description]").val();
             wp.type = w.find("[name=waypoint-type]").val();

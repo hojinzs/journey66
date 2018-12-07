@@ -15,6 +15,9 @@ class CreateJourneysTable extends Migration
     {
         Schema::create('journeys', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('UJID')
+                ->unique()
+                ->description('hashed waypoint id. using for uri, file input');
             $table->string('name');
             $table->longText('description')
                 ->nullable();
@@ -25,9 +28,10 @@ class CreateJourneysTable extends Migration
                 ->comment('Stage for publish the Journey-Log, Pending::Waiting for Publish, Published::Published on web, Private::Trun Private JourneyLog or Deleted');
             $table->string('author_name');
             $table->string('author_email');
-            $table->string('key');
+            $table->string('key')
+                ->unique();
             $table->string('file_path')
-                ->nullable()
+                ->unique()
                 ->comment('gpx file uri');
             $table->softDeletes('deleted_at');
 

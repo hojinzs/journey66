@@ -26,6 +26,7 @@ class Medias extends Migration
             $table->string('name');
             $table->string('type');
             $table->string('path')
+                ->unique()
                 ->comment('file uri');
 
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));

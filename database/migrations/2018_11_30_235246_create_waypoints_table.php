@@ -15,6 +15,9 @@ class CreateWaypointsTable extends Migration
     {
         Schema::create('waypoints', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('UWID')
+                ->unique()
+                ->description('hashed waypoint id. using for uri, file input');
             $table->unsignedInteger('journey_id');
             $table->foreign('journey_id')
                 ->references('id')->on('journeys')

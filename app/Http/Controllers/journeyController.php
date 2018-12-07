@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\gpx;
 use App\journey;
+use App\waypoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
@@ -40,52 +41,27 @@ class journeyController extends Controller
     {
         //
 
+        $Response = [];
+
         try {
-            //code...
-            $gpx = urldecode(base64_decode($request->input('gpx')));
 
-            //hashmake using author name & email
-            $email = $request->input('email');
-            $author = $request->input('author');
-            $key = Hash::make($email.$author);
+            // set new Journeys
+            $jn = journeyController::setJourney($request);
+            $Response['UJUD'] = $jn['UJID'];
 
-            $gpx_path = gpx::uploadGPX($gpx);
+            // set new Waypoints
+            $wpArr = $request->input('waypoints');
+            $wps = journeyController::setWaypoints($wpArr,$jn['id']);
+            $Response['UWID'] = $wps;
 
-            //create new journey
-    
-            $journey = new journey;
-    
-            $journey->name = $request->input('title');
-            $journey->description = $request->input('description');
-            $journey->type = $request->input('type');
-            $journey->file_path = $request->$gpx_path;
-            $journey->key = $key;
-            
-            $journey->author_email = $email;
-            $journey->author_name = $author;
-    
-            $journey->save();
-
-            $insertedId = $journey->id;
-
-            // set Waypoints
-            $wps = $request->input('waypoints');
-            foreach ($wps as $k => $wp) {
-                # code...
-                $return = $wp['name'];
-                $return = $wp['name'];
-                $return = $wp['name'];
-                $return = $wp['name'];
-                $return = $wp['name'];
-            };
+            $Response['status'] = 'success';
 
         } catch (\Throwable $th) {
             //throw $th;
-
             return $th;
         }
 
-        return $return;
+        return $Response;
     }
 
     /**
@@ -131,6 +107,76 @@ class journeyController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function setJourney($request){
+        // set
+        $journey = new journey;
+
+        // make resource
+        $gpx = urldecode(base64_decode($request->input('gpx')));
+        $email = $request->input('email');
+        $author = $request->input('author');
+        $key = Hash::make($email.$author);
+        $gpx_path = gpx::uploadGPX($gpx);
+
+        $journey->UJID = 'tmp'.time();
+        $journey->name = $request->input('title');
+        $journey->description = $request->input('description');
+        $journey->type = $request->input('type');
+        $journey->file_path = $gpx_path;
+        $journey->key = $key;
+        $journey->author_email = $email;
+        $journey->author_name = $author;
+
+        // insert
+        $journey->save();
+        $insertedId = $journey->id;
+        $UJID = 'JN'.hash('crc32b',$insertedId);
+        $journey->UJID = $UJID;
+        $journey->save();
+
+        $v['id'] = $insertedId;
+        $v['UJID'] = $UJID;
+
+        //update
+
+        return $v;
+    }
+
+    /**
+     * 
+     */
+    private function setWaypoints($WArr,$j_id){
+
+        $v = [];
+        
+        foreach ($WArr as $k => $wp) {
+            // make resource
+            $sequnce = $k +1;
+            $UWID = 'WP'.hash('crc32b',$j_id.'.'.$k);
+
+            // set
+            $waypoint = new waypoint;
+
+            $waypoint->UWID = $UWID;
+            $waypoint->journey_id = $j_id;
+            $waypoint->sequence = $sequnce;
+            $waypoint->name = $wp['name'];
+            $waypoint->description = $wp['description'];
+            $waypoint->type = $wp['type'];
+            $waypoint->latitude = $wp['Lat'];
+            $waypoint->longitude = $wp['Lng'];
+
+            // input
+            $waypoint->save();
+
+            $v[$k] = $waypoint->UWID;
+
+        };
+
+        return $v;
+
     }
 
 }
