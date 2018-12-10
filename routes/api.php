@@ -26,13 +26,3 @@ Route::post('/newjourney','journeyController@store');
  * Upload Tmp Image File
  */
 Route::post('/img/tmp','imageupload@store');
-
-/**
- * Upload Image File
- */
-Route::post('/media/upload','mediaController@store');
-
-/**
- * Upload GPX file to Journey
- */
-Route::post('/journey/{id}/gpxupload','gpxController@store');
