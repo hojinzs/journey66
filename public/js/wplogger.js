@@ -206,44 +206,53 @@ JournalLogger.prototype.setWaypointReindex = function(){
 
 JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
     var $target = $wp.find('.image');
-
-    console.log($target);
-
     var files = e.target.files;
-    var filesArr = Array.prototype.slice.call(files);
+    var f = files[0];
+    var responseURL;
 
-    filesArr.forEach(function(f){
-        if(!f.type.match("image.*")){
-            alert("Only upload Imagefiles");
-            return;
-        }
+    if(!f.type.match("image.*")){
+        alert("Only upload Imagefiles");
+        return;
+    }
 
-        $wp.imgs.push(f);
+    // 파일 업로드
+    var filedata = new FormData(); // FormData 인스턴스 생성
+    filedata.append('image', f);
+  
+    var _xml = new XMLHttpRequest();
+    _xml.open('POST', '/api/img/tmp/', true);
+    _xml.onload = function(event) {
+      if (_xml.status == 200) {
+        responseURL = _xml.responseText;
 
-        var reader = new FileReader();
-        reader.onload = function(e){
-            var $newImg = $('<img/>',{
-                class: 'gallary rounded float-left',
-                src: e.target.result
-            })
+        console.log(responseURL);
 
-            $newImg.mouseenter(function(){
-                $(this).addClass('shadow');
-            });
-            $newImg.mouseleave(function(){
-                $(this).removeClass('shadow');
-            })
-            $newImg.click(function(){
-                var index = $wp.imgs.indexOf(f);
-                $wp.imgs.splice(index,1);
-                f.remove();
-            })
-            
-            $newImg.appendTo($target);
-        }
-        reader.readAsDataURL(f);
+        var $newImg = $('<img/>',{
+            class: 'gallary rounded float-left',
+            src: responseURL
+        })
 
-    });
+        $newImg.mouseenter(function(){
+            $(this).addClass('shadow');
+        });
+        $newImg.mouseleave(function(){
+            $(this).removeClass('shadow');
+        })
+        $newImg.click(function(){
+            var index = $wp.imgs.indexOf(f);
+            $wp.imgs.splice(index,1);
+            f.remove();
+        })
+        
+        $newImg.appendTo($target);
+        $wp.imgs.push($newImg);
+
+      }
+      else {
+        alert('Error');
+      }
+    };  
+    _xml.send(filedata);
 
 };
 

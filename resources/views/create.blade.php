@@ -146,7 +146,7 @@
                                 <div class="image" style="overflow: hidden;">
                                     <!-- <img id="upload-images" src="https://via.placeholder.com/100" class="gallary rounded float-left" alt="..."> -->
                                 </div>
-                                <input type="file" id="input_img" multiple/>
+                                <input type="file" id="input_img" />
                             </div>
                         </div>
                         <div class="form-group row">

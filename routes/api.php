@@ -23,6 +23,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/newjourney','journeyController@store');
 
 /**
+ * Upload Tmp Image File
+ */
+Route::post('/img/tmp','imageupload@store');
+
+/**
  * Upload Image File
  */
 Route::post('/media/upload','mediaController@store');
