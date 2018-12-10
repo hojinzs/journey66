@@ -25,4 +25,4 @@ Route::post('/newjourney','journeyController@store');
 /**
  * Upload Tmp Image File
  */
-Route::post('/img/tmp','imageupload@store');
+Route::post('/imageuploader','imageupload@store');

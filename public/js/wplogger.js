@@ -220,7 +220,7 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
     filedata.append('image', f);
   
     var _xml = new XMLHttpRequest();
-    _xml.open('POST', '/api/img/tmp/', true);
+    _xml.open('POST', '/api/imageuploader/', true);
     _xml.onload = function(event) {
       if (_xml.status == 200) {
         responseURL = _xml.responseText;
