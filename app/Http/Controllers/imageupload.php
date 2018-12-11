@@ -38,8 +38,11 @@ class imageupload extends Controller
     {
         //
         if($request->hasFile('image')){
-            $path = $request->image->store('images','public');
-            return $path;
+            $path = $request->image->store('tmp','gcs');
+            $disk = Storage::disk('gcs');
+            $disk->setVisibility($path,'public');
+            $url = $disk->url($path);
+            return $url;
         };
 
         return "done";
