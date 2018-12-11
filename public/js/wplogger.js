@@ -205,61 +205,64 @@ JournalLogger.prototype.setWaypointReindex = function(){
 }
 
 JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
+    var $newImg = $('<img/>',{
+        class: 'gallary rounded float-left'
+    })
+
     var $target = $wp.find('.image');
     var files = e.target.files;
     var f = files[0];
-    var responseURL;
 
     if(!f.type.match("image.*")){
         alert("Only upload Imagefiles");
         return;
     }
 
-    // 파일 업로드
+    // Set formdata
     var filedata = new FormData(); // FormData 인스턴스 생성
     filedata.append('image', f);
-  
-    var _xml = new XMLHttpRequest();
-    _xml.open('POST', '/api/imageuploader/', true);
-    _xml.onload = function(event) {
-      if (_xml.status == 200) {
-        responseURL = _xml.responseText;
 
-        console.log(responseURL);
+    $.ajax({
+        url: "/api/imageuploader/",
+        type: "POST",
+        data: filedata,
+        contentType: false,
+        processData: false,
+        beforeSend: function(){
+            $newImg.appendTo($target);
+            $newImg.attr('src',"https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif");
+        },
+        success: function(data){
 
-        var $newImg = $('<img/>',{
-            class: 'gallary rounded float-left',
-            src: responseURL
-        })
+            $newImg.attr('src',data);
+    
+            $newImg.mouseenter(function(){
+                $(this).addClass('shadow');
+            });
+            $newImg.mouseleave(function(){
+                $(this).removeClass('shadow');
+            })
+            $newImg.click(function(){
+                var index = $wp.imgs.indexOf(f);
+                $wp.imgs.splice(index,1);
+                $(this).remove();
+            })
 
-        $newImg.mouseenter(function(){
-            $(this).addClass('shadow');
-        });
-        $newImg.mouseleave(function(){
-            $(this).removeClass('shadow');
-        })
-        $newImg.click(function(){
-            var index = $wp.imgs.indexOf(f);
-            $wp.imgs.splice(index,1);
-            f.remove();
-        })
-        
-        $newImg.appendTo($target);
-        $wp.imgs.push($newImg);
-
-      }
-      else {
-        alert('Error');
-      }
-    };  
-    _xml.send(filedata);
+            $newImg.src = data;
+            
+            $wp.imgs.push($newImg[0]);
+        },
+        error: function(xhr,status,error){
+            $newImg.remove();
+            alert(error);
+        },
+    });
 
 };
 
 JournalLogger.prototype.Submit =function(){
         // form data
         var FormArray = {};
-        var ImgArray = [];
         var Logger = this;
 
         // set journey data
@@ -296,7 +299,7 @@ JournalLogger.prototype.Submit =function(){
     
         //send
         $.ajax({
-          url: "/api/newjourney",
+          url: "/api/newjourney/",
           type: "POST",
           contentType: "application/json",
           data: jsonData,
@@ -304,21 +307,40 @@ JournalLogger.prototype.Submit =function(){
           success: function(data){
 
             arr = JSON.parse(data);
-            Logger.waypoints.forEach(function(wp,i){
 
-                console.log(wp.imgs);
+            var ImgStore = {};
+            ImgStore.ImgList = [];
+
+            Logger.waypoints.forEach(function(wp,i){
 
                 uwid = arr['UWID'][i];
                 wp.attr("UWID",uwid);
                 wp.imgs.forEach(function(f){
-                    img = [];
-                    img.file =  f;
+                    img = {};
+                    img.file =  f.currentSrc;
                     img.target = uwid;
-                    ImgArray.push(img);
+                    ImgStore.ImgList.push(img);
                 })
             });
 
-            console.log(ImgArray);
+            ImgStore.status = "done";
+            var jsonData2 = JSON.stringify(ImgStore);
+
+            //send2
+            $.ajax({
+                url: "/api/setwaypointimg/",
+                type: "POST",
+                contentType: "application/json",
+                data: jsonData2,
+                dataType: "text",
+                success: function(data){
+                    alert(data);
+                },
+                error: function(xhr,status,error){
+                alert(error);
+                }
+            })
+
 
           },
           error: function(xhr,status,error){
