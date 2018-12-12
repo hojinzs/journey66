@@ -201,8 +201,6 @@ JournalLogger.prototype.setWaypointReindex = function(){
 
     $list.forEach(function(v,i){
         idx = i+1
-        console.log(v);
-        console.log(i);
 
         v.attr("id",idx);
         v.data("index",idx);
@@ -267,8 +265,6 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
             img.stored = 'temp';
             
             $wp.imgs.push(img);
-
-            console.log($wp.imgs);
         },
         error: function(xhr,status,error){
             $newImg.remove();
