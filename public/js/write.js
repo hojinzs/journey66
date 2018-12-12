@@ -19,39 +19,39 @@ function initMap(){
 function loadGPXFileIntoGoogleMap(map, filename) {
 
   function getData(callback){
-        return new Promise(function(resolve,reject){
-            $.ajax({
-                  url: filename,
-                  dataType: "xml",
-                  success: function(data) {
-                    var parser = new GPXParser(data, map);
-                    parser.setTrackColour("#ff0000");     // Set the track line colour
-                    parser.setTrackWidth(3);          // Set the track line width
-                    parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
-                    parser.centerAndZoom(data);
-                    parser.addTrackpointsToMap();         // Add the trackpoints
-                    // parser.addRoutepointsToMap();         // Add the routepoints
-                    // parser.addWaypointsToMap();           // Add the waypoints
+      return new Promise(function(resolve,reject){
+          $.ajax({
+                url: filename,
+                dataType: "xml",
+                success: function(data) {
+                  var parser = new GPXParser(data, map);
+                  parser.setTrackColour("#ff0000");     // Set the track line colour
+                  parser.setTrackWidth(3);          // Set the track line width
+                  parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
+                  parser.centerAndZoom(data);
+                  parser.addTrackpointsToMap();         // Add the trackpoints
+                  // parser.addRoutepointsToMap();         // Add the routepoints
+                  // parser.addWaypointsToMap();           // Add the waypoints
 
-                    resolve(parser);
-                }
-            });
-        });
-    }
+                  resolve(parser);
+              }
+          });
+      });
+  }
 
-    getData().then(function(parser){
-        var track = parser.track.getPath();
-        var xml = parser.xmlDoc;
+  getData().then(function(parser){
+      var track = parser.track.getPath();
+      var xml = parser.xmlDoc;
 
-        JLogger = new JournalLogger(map);
-        JLogger.TrackMarker(track);
-        JLogger.setForm(form);
-        JLogger.CreateJourney();
-        JLogger.gpx = xml;
+      JLogger = new JournalLogger(map);
+      JLogger.TrackMarker(track);
+      JLogger.setForm(form);
+      JLogger.CreateJourney();
+      JLogger.gpx = xml;
 
-        $('#gpx-upload-file').prependTo(form).hide();
-        $('#GPX-upload').detach();
-    });
+      $('#gpx-upload-file').prependTo(form).hide();
+      $('#GPX-upload').detach();
+  });
 
 };
 
