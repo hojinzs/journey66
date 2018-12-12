@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 
-class imageupload extends Controller
+class ImageUploader extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -42,10 +42,13 @@ class imageupload extends Controller
             $disk = Storage::disk('gcs');
             $disk->setVisibility($path,'public');
             $url = $disk->url($path);
-            return $url;
+            return response()->json([
+                'url' => $url,
+                'filename' => $path
+            ]);
         };
 
-        return "done";
+        return response('Can not find image',400);
     }
 
     /**

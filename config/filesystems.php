@@ -64,7 +64,8 @@ return [
             'url' => env('AWS_URL'),
         ],
 
-
+        //Use Superbalist/laravel-google-cloud-storage
+        //doc:: https://github.com/Superbalist/laravel-google-cloud-storage
         'gcs' => [
             'driver' => 'gcs',
             'project_id' => env('GOOGLE_CLOUD_PROJECT_ID', 'alpine-anvil-199414'),

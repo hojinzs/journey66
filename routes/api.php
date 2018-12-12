@@ -25,9 +25,9 @@ Route::post('/newjourney','journeyController@store');
 /**
  * Upload Tmp Image File
  */
-Route::post('/imageuploader','imageupload@store');
+Route::post('/imageuploader','ImageUploader@store');
 
 /**
  * Set Waypoint Image File
  */
-Route::post('/setwaypointimg','waypointimage@store');
+Route::post('/setwaypointimg','WaypointImageController@store');

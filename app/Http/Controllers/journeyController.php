@@ -7,6 +7,8 @@ use App\journey;
 use App\waypoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+
 use App\Http\Controllers\Controller;
 
 class journeyController extends Controller

@@ -1,12 +1,10 @@
 // Waypoint Marker
 
-function JournalLogger(map,form){
-    this.$form = form;
-    this.$waypointlist = this.$form.find('#waypoint-list');
-    this.$dummywp = $('#DUMMY');
+function JournalLogger(map){
     this.map = map;
     this.waypoints = [];
     this.path = [];
+    this.zoom = this.map.getZoom();
 
     //track setting
     this.trackcolour = "#ff00ff"; // red
@@ -14,9 +12,22 @@ function JournalLogger(map,form){
     this.mintrackpointdelta = 0.0001
 };
 
-JournalLogger.prototype.setForm = function(){
+JournalLogger.prototype.setForm = function(form_id){
+    this.$form=$(form_id);
+
     this.$form.show();
+    this.$waypointlist = this.$form.find('#waypoint-list');
+    this.$dummywp = $('#DUMMY');
 };
+
+JournalLogger.prototype.CreateJourney = function(){
+    var Logger = this;
+    this.$form.on("submit", function(event) {
+        event.preventDefault();
+        Logger.SubmitNew();
+    });
+
+}
 
 JournalLogger.prototype.TrackMarker = function(track){
     var colour = this.trackcolour;
@@ -72,13 +83,13 @@ JournalLogger.prototype.TrackMarker = function(track){
         var plng = event.latLng.lng();
         var point = new google.maps.LatLng(plat,plng);
 
-        Logger.Waypoint(point);
+        Logger.NewWaypoint(point);
         
     });
 
 }
 
-JournalLogger.prototype.Waypoint = function(latlng){
+JournalLogger.prototype.NewWaypoint = function(latlng){
     var Logger = this;
     var $form = this.$waypointlist;
     var $dummywp = this.$dummywp;
@@ -137,7 +148,7 @@ JournalLogger.prototype.Waypoint = function(latlng){
     });
 
     //set Static Google Maps
-    var currentzoom = map.getZoom();
+    var currentzoom = this.zoom;
 
     var staticmap = "https://maps.googleapis.com/maps/api/staticmap?";
     staticmap = staticmap + "size=150x150";
@@ -234,7 +245,7 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
         },
         success: function(data){
 
-            $newImg.attr('src',data);
+            $newImg.attr('src',data.url);
     
             $newImg.mouseenter(function(){
                 $(this).addClass('shadow');
@@ -248,9 +259,16 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
                 $(this).remove();
             })
 
-            $newImg.src = data;
+            var img = [];
             
-            $wp.imgs.push($newImg[0]);
+            img.$img = $newImg;
+            img.src = data.url;
+            img.path = data.filename;
+            img.stored = 'temp';
+            
+            $wp.imgs.push(img);
+
+            console.log($wp.imgs);
         },
         error: function(xhr,status,error){
             $newImg.remove();
@@ -260,7 +278,7 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
 
 };
 
-JournalLogger.prototype.Submit =function(){
+JournalLogger.prototype.SubmitNew =function(){
         // form data
         var FormArray = {};
         var Logger = this;
@@ -315,9 +333,12 @@ JournalLogger.prototype.Submit =function(){
 
                 uwid = arr['UWID'][i];
                 wp.attr("UWID",uwid);
+
                 wp.imgs.forEach(function(f){
                     img = {};
-                    img.file =  f.currentSrc;
+                    img.url = f.$img.currentSrc;
+                    img.path = f.path;
+                    img.stored = f.stored;
                     img.target = uwid;
                     ImgStore.ImgList.push(img);
                 })

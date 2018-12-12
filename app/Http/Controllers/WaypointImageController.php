@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\journey;
+use App\waypoint;
+use App\waypoint_image;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
-class waypointimage extends Controller
+class WaypointImageController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,8 +38,30 @@ class waypointimage extends Controller
      */
     public function store(Request $request)
     {
-        //
-        return "success";
+        $imgArr = $request->input('ImgList');
+
+        try {
+            $v = [];
+
+            foreach($imgArr as $k => $img){
+                $path = WaypointImageController::StoreImgFile($img['path']);
+                $waypoint = waypoint::where('UWID',$img['target'])->first();
+    
+                $img = new waypoint_image;
+    
+                $img->waypoint_id = $waypoint['id'];
+                $img->number = $k;
+                $img->type = 'image';
+                $img->path = $path;
+    
+                $img->save();
+            }
+
+            return response('success',200);
+        } catch (\Throwable $th) {
+            return $th;
+        }
+
     }
 
     /**
@@ -82,4 +108,16 @@ class waypointimage extends Controller
     {
         //
     }
+
+    private function StoreImgFile($path){
+        $disk = Storage::disk('gcs');
+        $moved_path = 'imgs/'.basename($path);
+        
+        $disk->move($path,$moved_path);
+        $moved_url = $disk->url($moved_path);
+
+        return $moved_url;
+    }
 }
+
+
