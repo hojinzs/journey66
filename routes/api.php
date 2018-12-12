@@ -20,14 +20,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 /**
  * Posting New Journey
  */
-Route::post('/newjourney/','journeyController@store');
+Route::post('/newjourney','journeyController@store');
 
 /**
  * Upload Tmp Image File
  */
-Route::post('/imageuploader/','imageupload@store');
+Route::post('/imageuploader','imageupload@store');
 
 /**
  * Set Waypoint Image File
  */
-Route::post('/setwaypointimg/','waypointimage@store');
+Route::post('/setwaypointimg','waypointimage@store');

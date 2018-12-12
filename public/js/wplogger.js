@@ -223,7 +223,7 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
     filedata.append('image', f);
 
     $.ajax({
-        url: "/api/imageuploader/",
+        url: "/api/imageuploader",
         type: "POST",
         data: filedata,
         contentType: false,
@@ -299,7 +299,7 @@ JournalLogger.prototype.Submit =function(){
     
         //send
         $.ajax({
-          url: "/api/newjourney/",
+          url: "/api/newjourney",
           type: "POST",
           contentType: "application/json",
           data: jsonData,
@@ -328,11 +328,11 @@ JournalLogger.prototype.Submit =function(){
 
             //send2
             $.ajax({
-                url: "/api/setwaypointimg/",
+                url: "/api/setwaypointimg",
                 type: "POST",
                 contentType: "application/json",
-                data: jsonData2,
                 dataType: "text",
+                data: jsonData2,
                 success: function(data){
                     alert(data);
                 },
