@@ -75,6 +75,9 @@ class journeyController extends Controller
     public function show($id)
     {
         //
+        return view('show_journey',[
+            'id' => $id
+            ]);
     }
 
     /**
