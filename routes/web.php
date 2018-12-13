@@ -15,15 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/write', function () {
-    $journey_labels = App\label::getWhere('journey_type');
-    $waypoint_labels = App\label::getWhere('waypoint_type');
-
-    return view('create',[
-        'journey_labels' => $journey_labels,
-        'waypoint_labels' => $waypoint_labels,
-    ]);
-});
+Route::get('/write','journeyController@create');
 
 Route::get('/journey/{id}','journeyController@show');
 

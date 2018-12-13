@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\gpx;
+use App\label;
 use App\journey;
 use App\waypoint;
+use App\waypoint_image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -30,7 +32,14 @@ class journeyController extends Controller
      */
     public function create(Request $request)
     {
-        //
+        // get Label Data
+        $journey_labels = label::getWhere('journey_type');
+        $waypoint_labels = label::getWhere('waypoint_type');
+
+        return view('create',[
+            'journey_labels' => $journey_labels,
+            'waypoint_labels' => $waypoint_labels,
+        ]);
     }
 
     /**
@@ -43,27 +52,27 @@ class journeyController extends Controller
     {
         //
 
-        $Response = [];
-
         try {
 
             // set new Journeys
             $jn = journeyController::setJourney($request);
-            $Response['UJUD'] = $jn['UJID'];
+            $UJID = $jn['UJID'];
 
             // set new Waypoints
             $wpArr = $request->input('waypoints');
             $wps = journeyController::setWaypoints($wpArr,$jn['id']);
-            $Response['UWID'] = $wps;
-
-            $Response['status'] = 'success';
+            $UWID = $wps;
 
         } catch (\Throwable $th) {
             //throw $th;
             return $th;
         }
 
-        return $Response;
+        return response()->json([
+            'UJID' => $UJID,
+            'UWID' => $UWID,
+            'stauts' => 'success'
+        ]);
     }
 
     /**
@@ -72,12 +81,28 @@ class journeyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($UJID)
     {
         //
-        return view('show_journey',[
-            'id' => $id
-            ]);
+        $journey = journey::where('UJID',$UJID)->first();
+        if($journey){
+            $arr = waypoint::where('journey_id',$journey->id)->get();
+            $waypoints = array();
+
+            foreach($arr as $k => $waypoint){
+                $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
+                if($images){
+                    $waypoint['images'] = $images;
+                }
+                array_push($waypoints,$waypoint);
+            };
+
+            return view('show_journey',[
+                'journey' => $journey,
+                'waypoints' => $waypoints
+                ]);
+        };
+        return redirect('404');
     }
 
     /**

@@ -23,7 +23,19 @@
 
 <div class="container">
 
-    {{$id}}
+    @php
+        var_dump($journey['id']);
+
+        foreach ($waypoints as $key => $value) {
+            # code...
+            var_dump($value);
+            echo $value['id'];
+            foreach ($value['images'] as $key => $value) {
+                # code...
+                echo '<img src="'.$value['path'].'"/>';
+            }
+        }
+    @endphp
 
 </div>
 
