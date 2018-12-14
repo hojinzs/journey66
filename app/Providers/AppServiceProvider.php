@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-        Blade::component('components.input_waypoint', 'input_waypoint');
+
     }
 
     /**

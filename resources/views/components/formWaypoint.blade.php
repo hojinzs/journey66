@@ -13,8 +13,8 @@
                     <div class="form-group row">
                         <label for="Lat Lng" class="col-md-2 col-form-label">Location</label>
                         <div class="col-md-10">
-                            <input id="Lat" name="Lat" class="disabled" type="number" value="12" readonly>
-                            <input id="Lng" name="Lng" class="disabled" type="number" value="32" readonly>
+                            <input id="Lat" name="Lat" class="form-control disabled" type="number" value="12" required readonly>
+                            <input id="Lng" name="Lng" class="form-control disabled" type="number" value="32" required readonly>
                         </div>
                     </div>
                     <div class="form-group row">

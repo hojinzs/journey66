@@ -4,7 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Journey66 - @yield('title')</title>
+        <title>@yield('title') - Journey66</title>
+        @stack('meta')
 
         <!-- Load JS Plugin-->
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

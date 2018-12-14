@@ -36,7 +36,7 @@ class journeyController extends Controller
         $journey_labels = label::getWhere('journey_type');
         $waypoint_labels = label::getWhere('waypoint_type');
 
-        return view('create',[
+        return view('createJourney',[
             'journey_labels' => $journey_labels,
             'waypoint_labels' => $waypoint_labels,
         ]);
@@ -97,7 +97,7 @@ class journeyController extends Controller
                 array_push($waypoints,$waypoint);
             };
 
-            return view('show_journey',[
+            return view('showJourney',[
                 'journey' => $journey,
                 'waypoints' => $waypoints
                 ]);
