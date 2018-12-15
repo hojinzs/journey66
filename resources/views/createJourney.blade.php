@@ -1,3 +1,7 @@
+@php
+    $gmapkey = env('GOOGLE_MAPS_KEY',null)
+@endphp
+
 @extends('layout.app')
 
 @section('title', 'Write the new Journey')
@@ -19,7 +23,7 @@
     @endcomponent
 
     <div id="map"></div>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC24oO9KSFgwoDRSdQQzOEhbHYOAX4ldsc&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&callback=initMap"></script>
 
     <div class="container">
 

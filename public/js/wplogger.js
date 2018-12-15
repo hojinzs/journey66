@@ -185,10 +185,6 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
     //pair marker in waypoint
     $newWaypoint.marker = marker;
     $newWaypoint.imgs = [];
-    
-    // Legarcy
-    // this.map.markers.push(marker);
-    // $newWaypoint.data("marker-index",'Marker #'+Idx);
 
     Logger.waypoints.push($newWaypoint);
 

@@ -18,7 +18,7 @@ class gpx
             //upload gpx
             $disk = Storage::disk('gcs');
             $disk->put($path,$gpx);
-            $url = $disk->url($path);
+            // $url = $disk->url($path);
         } catch (\Throwable $th) {
             //throw $th;
             
@@ -26,7 +26,7 @@ class gpx
         }
 
         //return path, URL
-        return $url;
+        return $path;
     }
     
 }

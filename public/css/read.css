@@ -5,3 +5,27 @@
     width: 100%;
     margin-bottom: 1em;
 }
+
+.waypoint-galarry {
+    overflow: hidden;
+    overflow-x: scroll;
+    border: 3px;
+    border-color: red;
+    border-style: solid;
+}
+
+.waypoint-galarry .galarry-images{
+    width: max-content;
+}
+
+.waypoint-galarry .galarry-images .img-container {
+    display: inline-block;
+    height: 250px;
+    border: 3px;
+    border-style: solid;
+}
+
+.waypoint-galarry .galarry-images .img-container img {
+    width: auto;
+    height: 100%;
+}
