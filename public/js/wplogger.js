@@ -278,10 +278,12 @@ JournalLogger.prototype.SubmitNew =function(){
 
         })
 
-        // serialize gpx file
-        var oSerializer = new XMLSerializer();
-        var sXML = oSerializer.serializeToString(JLogger.gpx); 
-        FormArray.gpx = window.btoa(encodeURIComponent(sXML));
+        // // serialize gpx file
+        // var oSerializer = new XMLSerializer();
+        // var sXML = oSerializer.serializeToString(JLogger.gpx); 
+        // FormArray.gpx = window.btoa(encodeURIComponent(sXML));
+
+        FormArray.gpx = this.$form.data('gpx');
     
         // ready to json
         var jsonData = JSON.stringify(FormArray);
@@ -331,7 +333,6 @@ JournalLogger.prototype.SubmitNew =function(){
                 },
                 error: function(xhr,status,error){
                     alert(error);
-                    location.href='/journey'+newUJID;
                 }
             })
 

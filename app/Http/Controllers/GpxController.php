@@ -36,6 +36,19 @@ class GpxController extends Controller
     public function store(Request $request)
     {
         //
+        if($request->hasFile('gpx')){
+            try {
+                //code...
+                $filename = md5(microtime())."-".$request->gpx->getClientOriginalName();
+                $path = $request->gpx->storeAs('tmp',$filename,'gcs');
+                return response($path);
+            } catch (\Throwable $th) {
+                //throw $th;
+                return $th;
+            }
+        };
+
+        return response('not gpx file',400);
     }
 
     /**
@@ -47,8 +60,14 @@ class GpxController extends Controller
     public function show($id)
     {
         //
-        $get = Storage::disk('gcs')->get('gpxs/'.$id);
+        try {
+            //code...
+            $get = Storage::disk('gcs')->get('gpxs/'.$id);
         return response($get,200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $th;
+        }
     }
 
     /**

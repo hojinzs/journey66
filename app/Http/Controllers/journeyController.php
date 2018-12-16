@@ -145,11 +145,10 @@ class journeyController extends Controller
         $journey = new journey;
 
         // make resource
-        $gpx = urldecode(base64_decode($request->input('gpx')));
         $email = $request->input('email');
         $author = $request->input('author');
         $key = Hash::make($email.$author);
-        $gpx_path = gpx::uploadGPX($gpx);
+        $gpx_path = journeyController::StoreGpxFile($request->input('gpx'));
 
         $journey->UJID = 'tmp'.time();
         $journey->name = $request->input('title');
@@ -207,6 +206,22 @@ class journeyController extends Controller
         };
 
         return $v;
+
+    }
+
+    private function StoreGpxFile($path){
+
+        try {
+            //code...
+            $disk = Storage::disk('gcs');
+            $moved_path = 'gpxs/'.basename($path);
+            $disk->move($path,$moved_path);
+
+            return $moved_path;
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $th;
+        }
 
     }
 

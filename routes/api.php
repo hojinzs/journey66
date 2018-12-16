@@ -32,4 +32,10 @@ Route::post('/imageuploader','ImageUploader@store');
  */
 Route::post('/setwaypointimg','WaypointImageController@store');
 
+/**
+ * Gpx Controller Routing
+ */
+
 Route::post('/gpx/{id}','GpxController@show');
+
+Route::post('/gpxupload','GpxController@store');
