@@ -1,7 +1,7 @@
 var map;
 var form = '#journey';
 var JLogger;
-var gMapKey = "AIzaSyC24oO9KSFgwoDRSdQQzOEhbHYOAX4ldsc";
+var gMapKey;
 
 $(document).ready(function(){
   $('#gpx-upload-file').on('change',gpxupload);
@@ -14,6 +14,7 @@ function initMap(){
     center: {lat: 1.0, lng: 1.0}
   });
 
+  gMapKey = $('#map').data('gmapkey');
 };
 
 function loadGPXFileIntoGoogleMap(map, filename) {

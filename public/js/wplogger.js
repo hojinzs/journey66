@@ -162,8 +162,6 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
     $newWaypoint.marker = marker;
     $newWaypoint.imgs = [];
 
-    console.log(marker);
-
     Logger.waypoints.push($newWaypoint);
 
     //add Waypoint
@@ -278,11 +276,6 @@ JournalLogger.prototype.SubmitNew =function(){
 
         })
 
-        // // serialize gpx file
-        // var oSerializer = new XMLSerializer();
-        // var sXML = oSerializer.serializeToString(JLogger.gpx); 
-        // FormArray.gpx = window.btoa(encodeURIComponent(sXML));
-
         FormArray.gpx = this.$form.data('gpx');
     
         // ready to json
@@ -329,7 +322,7 @@ JournalLogger.prototype.SubmitNew =function(){
                 dataType: "text",
                 data: jsonData2,
                 success: function(data){
-                    alert(data);
+                    window.location.href = "/journey/"+newUJID;
                 },
                 error: function(xhr,status,error){
                     alert(error);
@@ -343,6 +336,78 @@ JournalLogger.prototype.SubmitNew =function(){
           }
         });
 } 
+
+JournalLogger.prototype.setWaypoint = function(waypoint){
+    var Logger = this;
+    var $target = $(waypoint);
+    var Idx = $target.attr("id");
+
+    latitude = $target.find("[name=Lat]").val();
+    longitude = $target.find("[name=Lng]").val();
+    LatLng = new google.maps.LatLng(latitude,longitude);
+
+    //set Static Map
+    smap = $target.find('#static-map');
+    Journal.setStaticMap(smap,{
+    width : "300",
+    height : "300",
+    zoom : map.getZoom(),
+    lat : latitude,
+    lng : longitude
+    });
+
+    //set Marker
+    marker = new Journal.setMarker(map,$target,Idx,LatLng);
+
+    //set NewWaypointEvent
+    $target.find('#waypoint-delete').on('click',function(e){
+        $target.detach();
+        $target.marker.setMap(null);
+
+        var index = Logger.waypoints.indexOf($target);
+        console.log(index);
+        Logger.waypoints.splice(index,1);
+        Logger.setWaypointReindex();
+    });
+    $target.find('#waypoint-up').on('click',function(e){
+        var oi = Logger.waypoints.indexOf($target);
+        if (oi == 0){return;}
+
+        var ti = oi - 1;
+        swap(Logger.waypoints,oi,ti);
+        Logger.setWaypointReindex();
+        
+        $target.after($target.prev());        
+        $('html, body').stop().animate({
+            scrollTop: $target.offset().top 
+            }, 500);
+    });
+    $target.find('#waypoint-down').on('click',function(e){
+        var oi = Logger.waypoints.indexOf($target);
+        if (oi == Logger.waypoints.length-1){return;}
+
+        var ti = oi + 1;
+        swap(Logger.waypoints,oi,ti);
+        Logger.setWaypointReindex();
+
+        $target.before($target.next());
+        $('html, body').stop().animate({
+            scrollTop: $target.offset().top 
+            }, 500);
+    });
+    $target.find('#input_img').on('change',function(e){
+        Logger.handleImgsFilesSelect(e,$target);
+    });
+
+    $target.marker = marker;
+    $target.imgs = [];
+
+    Logger.waypoints.push($target);
+    console.log(Logger.waypoints.indexOf($target));
+
+    console.log($target);
+    console.log(Logger.waypoints);
+}
 
 function swap(array, i1, i2) {
     var temp = array[i2];

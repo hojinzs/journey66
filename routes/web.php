@@ -19,6 +19,8 @@ Route::get('/write','journeyController@create');
 
 Route::get('/journey/{id}','journeyController@show');
 
+Route::get('/journey/{id}/edit','journeyController@edit');
+
 Route::get('/test', function () {
 
     $journey_labels = App\label::getWhere('journey_type');

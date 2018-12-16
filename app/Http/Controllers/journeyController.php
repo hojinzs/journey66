@@ -81,10 +81,10 @@ class journeyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($UJID)
+    public function show($id)
     {
         //
-        $journey = journey::where('UJID',$UJID)->first();
+        $journey = journey::where('UJID',$id)->first();
         if($journey){
             $arr = waypoint::where('journey_id',$journey->id)->get();
             $waypoints = array();
@@ -115,6 +115,31 @@ class journeyController extends Controller
     public function edit($id)
     {
         //
+        $journey = journey::where('UJID',$id)->first();
+        if($journey){
+            $arr = waypoint::where('journey_id',$journey->id)->get();
+            $waypoints = array();
+
+            foreach($arr as $k => $waypoint){
+                $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
+                if($images){
+                    $waypoint['images'] = $images;
+                }
+                array_push($waypoints,$waypoint);
+            };
+
+            $journey_labels = label::getWhere('journey_type');
+            $waypoint_labels = label::getWhere('waypoint_type');
+
+            return view('editJourney',[
+                'journey' => $journey,
+                'waypoints' => $waypoints,
+                'gpx' => basename($journey->file_path),
+                'journey_labels' => $journey_labels,
+                'waypoint_labels' => $waypoint_labels,
+                ]);
+        };
+        return redirect('404');
     }
 
     /**
@@ -127,6 +152,7 @@ class journeyController extends Controller
     public function update(Request $request, $id)
     {
         //
+        return response('done',200);
     }
 
     /**

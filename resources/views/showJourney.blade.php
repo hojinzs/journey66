@@ -13,9 +13,9 @@
 
 @push('scripts')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
-    <script type="text/javascript" src="../js/loadgpx.js"></script>
-    <script type="text/javascript" src="../js/wplogger.js"></script>
-    <script type="text/javascript" src="../js/read.js"></script>
+    <script type="text/javascript" src="{{url('/')}}/js/loadgpx.js"></script>
+    <script type="text/javascript" src="{{url('/')}}/js/wplogger.js"></script>
+    <script type="text/javascript" src="{{url('/')}}/js/read.js"></script>
 @endpush
 
 @push('css')
@@ -24,7 +24,7 @@
 
 @section('contents')
 
-    @component('components.topMenu')
+    @component('components.TopMenu')
     @endcomponent
 
     <div class="container">
