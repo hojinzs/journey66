@@ -1,5 +1,6 @@
 @php
-    $gmapkey = env('GOOGLE_MAPS_KEY',null)
+    $gmapkey = env('GOOGLE_MAPS_KEY',null);
+    App::setLocale("ko");
 @endphp
 
 @extends('layout.app')
@@ -29,7 +30,8 @@
 
         <!-- Gpx Upload-->
         <form id="GPX-upload">
-            <h3>Select GPX file</h3>
+            <h3>{{__('journey.form.gpxupload.title')}}</h3>
+            <p>{{__('journey.form.gpxupload.description')}}</p>
             <input id="gpx-upload-file" name="gpx" type="file" accept=".gpx">
             <a href="#" onclick="javascriot:gpxupload_test()">use sample gpx file</a>
         </form>
@@ -42,25 +44,25 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="form-group row">
-                                    <label for="journey-title" class="col-md-2 col-form-label">Journey title</label>
+                                <label for="journey-title" class="col-md-2 col-form-label">{{__('journey.form.title')}}</label>
                                     <div class="col-md-10">
                                         <input id="journey-title" name="journey-title" class="form-control" type="text" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="journey-type" class="col-md-2 col-form-label">Journey Style</label>
+                                    <label for="journey-type" class="col-md-2 col-form-label">{{__('journey.form.style')}} </label>
                                     <div class="col-md-10">
                                         <select id="journey-type" name="journey-type" class="form-control">
                                             @foreach ($journey_labels as $label)
-                                                <option>{{$label->name}}</option>
+                                            <option value="{{$label->name}}">{{__('journey.label.journey.'.$label->name)}}</option>
                                             @endforeach
                                         </select>                                
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="journey-description" class="col-md-2 col-form-label">description</label>
+                                    <label for="journey-description" class="col-md-2 col-form-label">{{__('journey.form.description')}}</label>
                                     <div class="col-md-10">
-                                        <textarea id="journey-description" name="journey-description" class="form-control" type="text" rows="5" placeholder="text something about your journey"></textarea>
+                                        <textarea id="journey-description" name="journey-description" class="form-control" type="text" rows="5" placeholder="{{__('journey.form.description_ph')}}"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +72,7 @@
             </fieldset>
 
             <div class="alert alert-secondary" id="waypoint-guide">
-                Click on the memorable point. And tell me about your journey.
+                {{__('journey.form.inform.setmarker')}}
             </div>
 
             <fieldset name="waypoint-list" id="waypoint-list">
@@ -82,15 +84,15 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">Confirm & Publish your Journey</h4>
+                                <h4 class="card-title">{{__('journey.form.confirm_title')}}</h4>
                                 <div class="form-group row">
-                                    <label for="author" class="col-md-2 col-form-label">author</label>
+                                    <label for="author" class="col-md-2 col-form-label">{{__('journey.form.author')}}</label>
                                     <div class="col-md-10">
-                                        <input id="author" name="author" class="form-control" placeholder="let us to know who writen this wonderful journey" required>
+                                        <input id="author" name="author" class="form-control" placeholder="{{__('journey.form.author_ph')}}" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label for="email" class="col-md-2 col-form-label">email</label>
+                                    <label for="email" class="col-md-2 col-form-label">{{__('journey.form.email')}}</label>
                                     <div class="col-md-10">
                                         <input id="email" name="email" class="form-control" type="email" required>
                                     </div>
@@ -99,7 +101,7 @@
                                     <label for="check_email" class="col-md-2 col-form-label"></label>
                                     <div class="col-md-10">
                                         <input name="check_email" class="form-check-label" type="checkbox" required>
-                                        <label>accept subscriptions email information for edit or delete the journey, not use for advertising or mailing</label>
+                                        <label>{{__('journey.form.email_check')}}</label>
                                     </div>
                                 </div>
                                 <div class="form-group row">

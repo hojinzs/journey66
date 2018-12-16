@@ -1,6 +1,6 @@
 // Waypoint Marker
 
-function JournalLogger(map){
+var JournalLogger = function(map){
     this.map = map;
     this.waypoints = [];
     this.path = [];
@@ -10,6 +10,7 @@ function JournalLogger(map){
     this.trackcolour = "#ff00ff"; // red
     this.trackwidth = 3;
     this.mintrackpointdelta = 0.0001
+
 };
 
 JournalLogger.prototype.setForm = function(form_id){
@@ -147,44 +148,21 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
         Logger.handleImgsFilesSelect(e,$newWaypoint);
     });
 
-    //set Static Google Maps
-    var currentzoom = this.zoom;
-
-    var staticmap = "https://maps.googleapis.com/maps/api/staticmap?";
-    staticmap = staticmap + "size=150x150";
-    staticmap = staticmap + "&markers=color:red|"+latlng.lat()+","+latlng.lng();
-    staticmap = staticmap + "&zoom=" + currentzoom;
-    staticmap = staticmap + "&key=" + gMapKey;
-
-    // track line in static map..
-    // var colour = this.trackcolour;
-    // var width = this.trackwidth;
-    // var path = Logger.path;
-    // var encpath = google.maps.geometry.encoding.encodePath(path);
-    // staticmap = staticmap + "&path=weight:" + width + "%7Ccolor:"+ colour + "%7Cenc:"+ encpath;
-
-    $newWaypoint.find('#static-map').attr('src',staticmap);
-
-    //get marker node
-    var marker = new google.maps.Marker({
-        position: latlng,
-        map: map,
-        title: 'Marker #'+Idx,
-        label: 'W'+ Idx
-    });
-    
-    //set MarkerEvent
-    google.maps.event.addListener(marker,'click',function(event){
-        $('html, body').stop().animate({
-            scrollTop: $newWaypoint.offset().top 
-            }, 500,function(){
-                $newWaypoint.focus();
-            });
+    $StaticMap = $newWaypoint.find('#static-map');
+    Journal.setStaticMap($StaticMap,{
+        width : "250",
+        height : "250",
+        zoom : this.zoom,
+        lat : latlng.lat(),
+        lng : latlng.lng()
     });
 
-    //pair marker in waypoint
+    marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng);
+
     $newWaypoint.marker = marker;
     $newWaypoint.imgs = [];
+
+    console.log(marker);
 
     Logger.waypoints.push($newWaypoint);
 
@@ -274,6 +252,7 @@ JournalLogger.prototype.SubmitNew =function(){
         // form data
         var FormArray = {};
         var Logger = this;
+        var newUJID;
 
         // set journey data
         FormArray.title = this.$form.find("[name=journey-title]").val();
@@ -318,6 +297,7 @@ JournalLogger.prototype.SubmitNew =function(){
 
             arr = JSON.parse(data);
 
+            newUJID = arr['UJID'];
             var ImgStore = {};
             ImgStore.ImgList = [];
 
@@ -350,7 +330,8 @@ JournalLogger.prototype.SubmitNew =function(){
                     alert(data);
                 },
                 error: function(xhr,status,error){
-                alert(error);
+                    alert(error);
+                    location.href='/journey'+newUJID;
                 }
             })
 
@@ -367,3 +348,53 @@ function swap(array, i1, i2) {
     array[i2] = array[i1];
     array[i1] = temp;
 }
+
+
+var Journal = {};
+
+Journal.setStaticMap = function(target,param){
+  var staticmap = "https://maps.googleapis.com/maps/api/staticmap?"
+    +"size="+param.width+"x"+param.height
+    +"&markers=color:red|"+param.lat+","+param.lng
+    +"&zoom=" + param.zoom
+    +"&scale=2"
+    +"&key=" + gMapKey;
+
+    $(target).attr('src',staticmap);
+
+    // track line in static map..
+    // var colour = this.trackcolour;
+    // var width = this.trackwidth;
+    // var path = Logger.path;
+    // var encpath = google.maps.geometry.encoding.encodePath(path);
+    // staticmap = staticmap + "&path=weight:" + width + "%7Ccolor:"+ colour + "%7Cenc:"+ encpath;
+}
+
+Journal.setGallary = function(target){
+  $.each(target,function(k,v){
+    console.log(v);
+  })
+};
+
+Journal.setMarker = function(map,target,Idx,latlng){
+    var $target = target
+
+    //get marker node
+    marker = new google.maps.Marker({
+        position: latlng,
+        map: map,
+        title: 'Marker #'+Idx,
+        label: 'W'+ Idx
+    });
+    
+    //set MarkerEvent
+    google.maps.event.addListener(marker,'click',function(event){
+        $('html, body').stop().animate({
+            scrollTop: $target.offset().top 
+            }, 500,function(){
+                $target.focus();
+            });
+    });
+
+    return marker;
+};

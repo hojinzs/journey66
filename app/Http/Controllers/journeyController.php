@@ -89,14 +89,6 @@ class journeyController extends Controller
             $arr = waypoint::where('journey_id',$journey->id)->get();
             $waypoints = array();
 
-
-            //todo:: edit to use cache
-            $get = Storage::disk('gcs')->get($journey->file_path);
-            $moved_path = 'tmp_'.date("YmdHis").'_'.basename($journey->file_path);
-            $disk = Storage::disk('public');
-            $disk->put($moved_path,$get);
-            $tmp_url = $disk->url($moved_path);
-
             foreach($arr as $k => $waypoint){
                 $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
                 if($images){
@@ -108,7 +100,7 @@ class journeyController extends Controller
             return view('showJourney',[
                 'journey' => $journey,
                 'waypoints' => $waypoints,
-                'gpx' => $tmp_url
+                'gpx' => basename($journey->file_path)
                 ]);
         };
         return redirect('404');

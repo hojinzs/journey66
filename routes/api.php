@@ -31,3 +31,5 @@ Route::post('/imageuploader','ImageUploader@store');
  * Set Waypoint Image File
  */
 Route::post('/setwaypointimg','WaypointImageController@store');
+
+Route::post('/gpx/{id}','GpxController@show');

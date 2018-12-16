@@ -1,6 +1,5 @@
 var map;
 var form = '#journey';
-var JLogger;
 var gMapKey;
 
 function initMap(){
@@ -10,51 +9,56 @@ function initMap(){
   });
 
   gMapKey = $('#map').data('gmapkey');
-  var gpxurl = $('#map').data('gpx');
+  var gpxurl = "/api/gpx/"+$('#map').data('gpx');
 
   function getData(callback){
     return new Promise(function(resolve,reject){
         $.ajax({
-              url: gpxurl,
-              dataType: "xml",
-              success: function(data) {
-                var parser = new GPXParser(data, map);
-                parser.setTrackColour("#ff0000");     // Set the track line colour
-                parser.setTrackWidth(3);          // Set the track line width
-                parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
-                parser.centerAndZoom(data);
-                parser.addTrackpointsToMap();         // Add the trackpoints
-                // parser.addRoutepointsToMap();         // Add the routepoints
-                // parser.addWaypointsToMap();           // Add the waypoints
+          type: "POST",
+          url: gpxurl,
+          dataType: "xml",
+          success: function(data) {
+            var parser = new GPXParser(data, map);
+            parser.setTrackColour("#ff0000");     // Set the track line colour
+            parser.setTrackWidth(3);          // Set the track line width
+            parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
+            parser.centerAndZoom(data);
+            parser.addTrackpointsToMap();         // Add the trackpoints
+            // parser.addRoutepointsToMap();         // Add the routepoints
+            // parser.addWaypointsToMap();           // Add the waypoints
 
-                resolve(parser);
-            }
+            resolve(parser);
+          }
         });
     });
   }
 
   getData().then(function(parser){
-    var track = parser.track.getPath();
-    var xml = parser.xmlDoc;
-
     waypoints = $('.waypoint');
 
     $.each(waypoints,function(k,waypoint){
-      latitude = $(waypoint).data("latitude");
-      longitude = $(waypoint).data("longitude");
-      zoom = map.getZoom();
+      target = $(waypoint);
 
-      target = $(waypoint).find('.gmap-static-img');
-      JournalReader.setStaticMap(target,{
+      latitude = target.data("latitude");
+      longitude = target.data("longitude");
+      LatLng = new google.maps.LatLng(latitude,longitude);
+
+      //set Static Map
+      smap = target.find('.gmap-static-img');
+      Journal.setStaticMap(smap,{
         width : "300",
         height : "300",
-        zoom : zoom,
+        zoom : map.getZoom(),
         lat : latitude,
         lng : longitude
       });
+      
+      //set Marker
+      Journal.setMarker(map,target,k+1,LatLng);
 
+      //set Img Gallary
       galimgs = $('.waypoint-galarry').children();
-      JournalReader.setGallary(galimgs);
+      Journal.setGallary(galimgs);
     })
   });
 };
@@ -62,22 +66,3 @@ function initMap(){
 $(document).ready(function(){
 
 });
-
-var JournalReader = {};
-
-JournalReader.setStaticMap = function(target,param){
-  var staticmap = "https://maps.googleapis.com/maps/api/staticmap?"
-    +"size="+param.width+"x"+param.height
-    +"&markers=color:red|"+param.lat+","+param.lng
-    +"&zoom=" + param.zoom
-    +"&scale=2"
-    +"&key=" + gMapKey;
-
-    $(target).attr('src',staticmap);
-}
-
-JournalReader.setGallary = function(target){
-  $.each(target,function(k,v){
-    console.log(v);
-  })
-};
