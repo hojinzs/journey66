@@ -49,5 +49,6 @@ function initMap(){
         $.each(waypoints,function(k,waypoint){
           Journey.setWaypoint(waypoint);
         });
+        Journey.UpdateJourney();
     });
   };

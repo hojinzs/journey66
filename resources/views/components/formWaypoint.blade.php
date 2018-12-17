@@ -44,7 +44,7 @@
                             <div class="image" style="overflow: hidden;">
                                 @isset($waypoint['images'])
                                     @foreach ($waypoint['images'] as $img)
-                                        <img src="{{$img['path']}}" class="gallary rounded float-left" mode="edit">
+                                        <img data-type="cur" data-imgid={{$img['id']}} src="{{$img['path']}}" class="gallary rounded float-left" mode="edit">
                                     @endforeach
                                 @endisset
                             </div>

@@ -30,6 +30,15 @@ JournalLogger.prototype.CreateJourney = function(){
 
 }
 
+JournalLogger.prototype.UpdateJourney = function(){
+    var Logger = this;
+    this.$form.on("submit", function(event) {
+        event.preventDefault();
+        Logger.SubmitUpdate();
+    });
+
+}
+
 JournalLogger.prototype.TrackMarker = function(track){
     var colour = this.trackcolour;
     var width = this.trackwidth;
@@ -187,7 +196,7 @@ JournalLogger.prototype.setWaypointReindex = function(){
 
 JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
     var $newImg = $('<img/>',{
-        class: 'gallary rounded float-left'
+        class: 'gallary rounded float-left',
     })
 
     var $target = $wp.find('.image');
@@ -234,7 +243,7 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
             img.$img = $newImg;
             img.src = data.url;
             img.path = data.filename;
-            img.stored = 'temp';
+            img.type = 'tmp';
             
             $wp.imgs.push(img);
         },
@@ -246,10 +255,9 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
 
 };
 
-JournalLogger.prototype.SubmitNew =function(){
+JournalLogger.prototype.SubmitNew = function(){
         // form data
         var FormArray = {};
-        var Logger = this;
         var newUJID;
 
         // set journey data
@@ -273,11 +281,12 @@ JournalLogger.prototype.SubmitNew =function(){
             wp.Lat = w.find("[name=Lat]").val();
             wp.Lng = w.find("[name=Lng]").val();
 
+            // set image data
             w.imgs.forEach(function(f){
                 img = {};
                 img.url = f.$img.currentSrc;
                 img.path = f.path;
-                img.stored = f.stored;
+                img.type = f.type;
 
                 wp.imgs.push(img);
             })
@@ -301,49 +310,8 @@ JournalLogger.prototype.SubmitNew =function(){
           data: jsonData,
           dataType: "text",
           success: function(data){
-
             alert(data);
-
-            // arr = JSON.parse(data);
-
-            // newUJID = arr['UJID'];
-            // var ImgStore = {};
-            // ImgStore.ImgList = [];
-
-            // Logger.waypoints.forEach(function(wp,i){
-
-            //     uwid = arr['UWID'][i];
-            //     wp.attr("UWID",uwid);
-
-            //     wp.imgs.forEach(function(f){
-            //         img = {};
-            //         img.url = f.$img.currentSrc;
-            //         img.path = f.path;
-            //         img.stored = f.stored;
-            //         img.target = uwid;
-            //         ImgStore.ImgList.push(img);
-            //     })
-            // });
-
-            // ImgStore.status = "done";
-            // var jsonData2 = JSON.stringify(ImgStore);
-
-            // //send2
-            // $.ajax({
-            //     url: "/api/setwaypointimg",
-            //     type: "POST",
-            //     contentType: "application/json",
-            //     dataType: "text",
-            //     data: jsonData2,
-            //     success: function(data){
-            //         alert(data);
-            //         // window.location.href = "/journey/"+newUJID;
-            //     },
-            //     error: function(xhr,status,error){
-            //         alert(error);
-            //     }
-            // })
-
+            window.location.href = "/journey/"+newUJID;
 
           },
           error: function(xhr,status,error){
@@ -373,6 +341,7 @@ JournalLogger.prototype.setWaypoint = function(waypoint){
 
     //set Marker
     marker = new Journal.setMarker(map,$target,Idx,LatLng);
+    $target.marker = marker;
 
     //set NewWaypointEvent
     $target.find('#waypoint-delete').on('click',function(e){
@@ -380,7 +349,6 @@ JournalLogger.prototype.setWaypoint = function(waypoint){
         $target.marker.setMap(null);
 
         var index = Logger.waypoints.indexOf($target);
-        console.log(index);
         Logger.waypoints.splice(index,1);
         Logger.setWaypointReindex();
     });
@@ -414,22 +382,87 @@ JournalLogger.prototype.setWaypoint = function(waypoint){
         Logger.handleImgsFilesSelect(e,$target);
     });
 
-    $target.marker = marker;
-    $target.imgs = [];
+    //set Waypoint images
+    $imgArr = $target.find('.image').children('img');
+    $target.imgs = Journal.setCurrentImageArr($imgArr);
 
+    //push Waypoint Array
     Logger.waypoints.push($target);
-    console.log(Logger.waypoints.indexOf($target));
-
-    console.log($target);
-    console.log(Logger.waypoints);
 }
+
+JournalLogger.prototype.SubmitUpdate = function(){
+    // form data
+    var FormArray = {};
+    var updatedUJID;
+
+    var UJID = this.$form.data('ujid');
+
+    // set journey data
+    FormArray.UJID = UJID;
+    FormArray.title = this.$form.find("[name=journey-title]").val();
+    FormArray.description = this.$form.find("[name=journey-description]").val();
+    FormArray.type = this.$form.find("[name=journey-type]").val();
+    FormArray.author = this.$form.find("[name=author]").val();
+    FormArray.email = this.$form.find("[name=email]").val();
+
+    // set waypoint data
+    FormArray.waypoints = [];
+    this.waypoints.forEach(function(w){
+        var wp={};
+        
+        wp.uwid = w.data('uwid');
+        wp.id = w.find("[name=waypoint-name]").val();
+        wp.name = w.find("[name=waypoint-name]").val();
+        wp.description = w.find("[name=description]").val();
+        wp.type = w.find("[name=waypoint-type]").val();
+        wp.Lat = w.find("[name=Lat]").val();
+        wp.Lng = w.find("[name=Lng]").val();
+
+        // set image data
+        wp.imgs = [];
+        w.imgs.forEach(function(f){
+            img = {};
+            img.id = f.id;
+            img.url = f.$img.currentSrc;
+            img.path = f.path;
+            img.type = f.type;
+
+            wp.imgs.push(img);
+        })
+
+        FormArray.waypoints.push(wp);
+
+    })
+
+    console.log(FormArray);
+
+    // ready to json
+    var jsonData = JSON.stringify(FormArray);
+
+    //send
+    $.ajax({
+        url: "/api/editjourney/"+UJID,
+        type: "POST",
+        contentType: "application/json",
+        data: jsonData,
+        dataType: "text",
+        success: function(data){
+        alert(data);
+        window.location.href = "/journey/"+newUJID;
+
+        },
+        error: function(xhr,status,error){
+        alert(error);
+        }
+    });
+}
+
 
 function swap(array, i1, i2) {
     var temp = array[i2];
     array[i2] = array[i1];
     array[i1] = temp;
 }
-
 
 var Journal = {};
 
@@ -479,3 +512,35 @@ Journal.setMarker = function(map,target,Idx,latlng){
 
     return marker;
 };
+
+Journal.setCurrentImageArr = function(Arr = {}){
+    var imgs = [];
+
+    $.each(Arr,function(key,val){
+        $img = $(val);
+        var img = [];
+
+        $img.mouseenter(function(){
+            $(this).addClass('shadow');
+        });
+        $img.mouseleave(function(){
+            $(this).removeClass('shadow');
+        })
+        $img.click(function(){
+            $(this).addClass('delete');
+            img.type = 'del';
+        })
+        
+        img.$img = $img;
+        img.id = $img.data('imgid');
+        img.src = $img.attr('src');
+        img.path = $img.attr('src');
+        img.type = 'cur';
+
+        imgs.push(img);
+
+    });
+
+    return imgs;
+
+}

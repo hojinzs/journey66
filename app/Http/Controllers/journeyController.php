@@ -53,24 +53,32 @@ class journeyController extends Controller
         //
 
         try {
-
             // set new Journeys
-            $jn = journeyController::setJourney($request);
-            $UJID = $jn['UJID'];
+            $new_journey = journeyController::setJourney($request);
 
             // set new Waypoints
             $wpArr = $request->input('waypoints');
-            $wps = journeyController::setWaypoints($wpArr,$jn['id']);
-            $UWID = $wps;
+            foreach ($wpArr as $key => $waypoint) {
+                $new_waypoint = journeyController::setWaypoint($waypoint,$new_journey['id'],$key+1);
+                $UWID[] = $new_waypoint['UWID'];
+
+                //set Waypoint images
+                $imgs = $waypoint['imgs'];
+                foreach ($imgs as $key => $img) {
+                    $new_image = journeyController::StoreImg($img,$new_waypoint['id'],$key);
+                    $images[] = $new_image['path'];
+                };
+            }
 
         } catch (\Throwable $th) {
             //throw $th;
-            return $th;
+            return response($th,400);
         }
 
         return response()->json([
-            'UJID' => $UJID,
+            'UJID' => $new_journey['UJID'],
             'UWID' => $UWID,
+            'IMGS' => $images,
             'stauts' => 'success'
         ]);
     }
@@ -151,8 +159,51 @@ class journeyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        return response('done',200);
+        // find target journey data
+        $get_journey = journey::where('UJID',$id)->first();
+        if(!$get_journey){
+            return response('can not find journey '.$id,400);
+        }
+
+        try {
+            // update Journey Data
+            $saved_journeyid = journeyController::UpdateJourney($request,$get_journey->id);
+
+            // update Waypoint Data
+            foreach ($request->input('waypoints') as $key => $waypoint) {
+
+                $sequnce = $key + 1;
+
+                if (isset($waypoint['uwid'])) {
+                    # currnet Waypoint. update it
+                    $updated_waypoint = journeyController::UpdateWaypoint($waypoint,$waypoint['uwid'],$sequnce);
+
+                    # control images
+                    journeyController::ImgClasification($waypoint['imgs'],$updated_waypoint['id']);
+
+                } else {
+                    # new Waypoint. make it
+                    $new_waypoint = journeyController::setWaypoint($waypoint,$saved_journeyid,$sequnce);
+
+                    # control images
+                    journeyController::ImgClasification($waypoint['imgs'],$new_waypoint['id']);
+
+                }
+
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $th;
+        }
+    
+
+        // return response()->json([
+        //     'UJID' => $new_journey['UJID'],
+        //     'UWID' => $UWID,
+        //     'IMGS' => $images,
+        //     'stauts' => 'success'
+        // ]);
+        return "success";
     }
 
     /**
@@ -204,77 +255,144 @@ class journeyController extends Controller
     /**
      * 
      */
-    private function setWaypoints($WArr,$j_id){
+    private function setWaypoint($request,$journey_id,$sequnce){
 
-        $v = [];
-        
-        foreach ($WArr as $k => $wp) {
-            // make resource
-            $sequnce = $k +1;
-            $UWID = 'WP'.hash('crc32b',$j_id.'.'.$k);
+        // make resource
+        $UWID = 'WP'.hash('crc32b',$journey_id.'.'.$sequnce.'.'.microtime());
 
-            // set
-            $waypoint = new waypoint;
+        // set
+        $waypoint = new waypoint;
 
-            $waypoint->UWID = $UWID;
-            $waypoint->journey_id = $j_id;
-            $waypoint->sequence = $sequnce;
-            $waypoint->name = $wp['name'];
-            $waypoint->description = $wp['description'];
-            $waypoint->type = $wp['type'];
-            $waypoint->latitude = $wp['Lat'];
-            $waypoint->longitude = $wp['Lng'];
+        $waypoint->UWID = $UWID;
+        $waypoint->journey_id = $journey_id;
+        $waypoint->sequence = $sequnce;
+        $waypoint->name = $request['name'];
+        $waypoint->description = $request['description'];
+        $waypoint->type = $request['type'];
+        $waypoint->latitude = $request['Lat'];
+        $waypoint->longitude = $request['Lng'];
 
-            // input
-            $waypoint->save();
+        // input
+        $waypoint->save();
 
-            $imgresult = journeyController::StoreImgs($wp['imgs'],$waypoint->id);
-
-            $v[$k] = $waypoint->UWID;
-        };
-
-        return $v;
+        return $waypoint;
 
     }
 
-    private function StoreImgs($imgArr = [],$waypoint_id){
-        foreach($imgArr as $k => $img){
-            $path = journeyController::StoreImgFile($img['path']);
+    private function StoreImg($request,$waypoint_id,$key){
+        $path = journeyController::StoreTmpImgFile($request['path']);
 
-            $img = new waypoint_image;
-            $img->waypoint_id = $waypoint_id;
-            $img->number = $k;
-            $img->type = 'image';
-            $img->path = $path;
+        $img = new waypoint_image;
+        $img->waypoint_id = $waypoint_id;
+        $img->number = $key;
+        $img->type = 'image';
+        $img->path = $path;
 
-            $img->save();
-        }
+        $img->save();
+
+        return $img;
     }
 
-    private function StoreGpxFile($path){
+    private function StoreGpxFile($temp_path){
 
-        try {
-            //code...
-            $disk = Storage::disk('gcs');
-            $moved_path = 'gpxs/'.basename($path);
-            $disk->move($path,$moved_path);
-
-            return $moved_path;
-        } catch (\Throwable $th) {
-            //throw $th;
-            return response($th,400);
-        }
-
-    }
-
-    private function StoreImgFile($path){
+        //move tmp gpx file to gpx folder
         $disk = Storage::disk('gcs');
-        $moved_path = 'imgs/'.basename($path);
+        $moved_path = 'gpxs/'.basename($temp_path);
+        $disk->move($temp_path,$moved_path);
+
+        return $moved_path;
+    }
+
+    private function StoreTmpImgFile($temp_path){
+        $disk = Storage::disk('gcs');
+        $moved_path = 'imgs/'.basename($temp_path);
         
-        $disk->move($path,$moved_path);
+        $disk->move($temp_path,$moved_path);
         $moved_url = $disk->url($moved_path);
 
         return $moved_url;
+    }
+
+    private function UpdateJourney($request,$id){
+
+        //set Journey
+        $journey = journey::where('id',$id)->first();
+
+        //set Data
+        $journey->name = $request->input('title');
+        $journey->type = $request->input('type');
+        $journey->description = $request->input('description');
+        $journey->author_email = $request->input('email');
+        $journey->author_name = $request->input('author');
+
+        //update
+        $journey->save();
+
+        return $journey->id;
+    }
+
+    private function UpdateWaypoint($request,$uwid,$sequnce = NULL){
+
+        // find
+        $waypoint = waypoint::where('UWID',$uwid)->first();
+
+        // set data
+        if($sequnce){
+            $waypoint->sequence = $sequnce;
+        };
+        $waypoint->name = $request['name'];
+        $waypoint->description = $request['description'];
+        $waypoint->type = $request['type'];
+        $waypoint->latitude = $request['Lat'];
+        $waypoint->longitude = $request['Lng'];
+
+        // update
+        $waypoint->save();
+
+        return $waypoint;
+
+    }
+
+    private function ImgClasification($images = [],$waypoint_id){
+
+        foreach ($images as $key => $img) {
+            # Clasification Images
+            switch ($img['type']) {
+                case 'tmp':
+                    # temponary saved image file. store it
+                    journeyController::StoreImg($img,$waypoint_id,$key);
+                    break;
+
+                case 'del':
+                    # delete this image file. destroy it
+                    journeyController::DeleteImg($img['id']);
+                    break;
+
+                case 'cur':
+                    # current image file. just update index number
+                    journeyController::UpdateImg($img['id'],$key);
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+            
+        }
+        
+    }
+
+    private function DeleteImg($img_id){
+        $img = waypoint_image::where('id',$img_id)->first();
+        $img->delete();
+        return $img;
+    }
+
+    private function UpdateImg($img_id,$key){
+        $img = waypoint_image::where('id',$img_id)->first();
+        $img->number = $key;
+        $img->save();
+        return $img;
     }
 
 }
