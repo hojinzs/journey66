@@ -174,6 +174,7 @@ class journeyController extends Controller
         $email = $request->input('email');
         $author = $request->input('author');
         $key = Hash::make($email.$author);
+
         $gpx_path = journeyController::StoreGpxFile($request->input('gpx'));
 
         $journey->UJID = 'tmp'.time();
@@ -227,12 +228,27 @@ class journeyController extends Controller
             // input
             $waypoint->save();
 
-            $v[$k] = $waypoint->UWID;
+            $imgresult = journeyController::StoreImgs($wp['imgs'],$waypoint->id);
 
+            $v[$k] = $waypoint->UWID;
         };
 
         return $v;
 
+    }
+
+    private function StoreImgs($imgArr = [],$waypoint_id){
+        foreach($imgArr as $k => $img){
+            $path = journeyController::StoreImgFile($img['path']);
+
+            $img = new waypoint_image;
+            $img->waypoint_id = $waypoint_id;
+            $img->number = $k;
+            $img->type = 'image';
+            $img->path = $path;
+
+            $img->save();
+        }
     }
 
     private function StoreGpxFile($path){
@@ -246,9 +262,19 @@ class journeyController extends Controller
             return $moved_path;
         } catch (\Throwable $th) {
             //throw $th;
-            return $th;
+            return response($th,400);
         }
 
+    }
+
+    private function StoreImgFile($path){
+        $disk = Storage::disk('gcs');
+        $moved_path = 'imgs/'.basename($path);
+        
+        $disk->move($path,$moved_path);
+        $moved_url = $disk->url($moved_path);
+
+        return $moved_url;
     }
 
 }

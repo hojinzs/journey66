@@ -263,7 +263,8 @@ JournalLogger.prototype.SubmitNew =function(){
 
         // set waypoint data
         this.waypoints.forEach(function(w){
-            wp={};
+            var wp={};
+            wp.imgs = [];
             
             wp.id = w.find("[name=waypoint-name]").val();
             wp.name = w.find("[name=waypoint-name]").val();
@@ -272,9 +273,20 @@ JournalLogger.prototype.SubmitNew =function(){
             wp.Lat = w.find("[name=Lat]").val();
             wp.Lng = w.find("[name=Lng]").val();
 
+            w.imgs.forEach(function(f){
+                img = {};
+                img.url = f.$img.currentSrc;
+                img.path = f.path;
+                img.stored = f.stored;
+
+                wp.imgs.push(img);
+            })
+
             FormArray.waypoints.push(wp);
 
         })
+
+        console.log(FormArray);
 
         FormArray.gpx = this.$form.data('gpx');
     
@@ -290,44 +302,47 @@ JournalLogger.prototype.SubmitNew =function(){
           dataType: "text",
           success: function(data){
 
-            arr = JSON.parse(data);
+            alert(data);
 
-            newUJID = arr['UJID'];
-            var ImgStore = {};
-            ImgStore.ImgList = [];
+            // arr = JSON.parse(data);
 
-            Logger.waypoints.forEach(function(wp,i){
+            // newUJID = arr['UJID'];
+            // var ImgStore = {};
+            // ImgStore.ImgList = [];
 
-                uwid = arr['UWID'][i];
-                wp.attr("UWID",uwid);
+            // Logger.waypoints.forEach(function(wp,i){
 
-                wp.imgs.forEach(function(f){
-                    img = {};
-                    img.url = f.$img.currentSrc;
-                    img.path = f.path;
-                    img.stored = f.stored;
-                    img.target = uwid;
-                    ImgStore.ImgList.push(img);
-                })
-            });
+            //     uwid = arr['UWID'][i];
+            //     wp.attr("UWID",uwid);
 
-            ImgStore.status = "done";
-            var jsonData2 = JSON.stringify(ImgStore);
+            //     wp.imgs.forEach(function(f){
+            //         img = {};
+            //         img.url = f.$img.currentSrc;
+            //         img.path = f.path;
+            //         img.stored = f.stored;
+            //         img.target = uwid;
+            //         ImgStore.ImgList.push(img);
+            //     })
+            // });
 
-            //send2
-            $.ajax({
-                url: "/api/setwaypointimg",
-                type: "POST",
-                contentType: "application/json",
-                dataType: "text",
-                data: jsonData2,
-                success: function(data){
-                    window.location.href = "/journey/"+newUJID;
-                },
-                error: function(xhr,status,error){
-                    alert(error);
-                }
-            })
+            // ImgStore.status = "done";
+            // var jsonData2 = JSON.stringify(ImgStore);
+
+            // //send2
+            // $.ajax({
+            //     url: "/api/setwaypointimg",
+            //     type: "POST",
+            //     contentType: "application/json",
+            //     dataType: "text",
+            //     data: jsonData2,
+            //     success: function(data){
+            //         alert(data);
+            //         // window.location.href = "/journey/"+newUJID;
+            //     },
+            //     error: function(xhr,status,error){
+            //         alert(error);
+            //     }
+            // })
 
 
           },

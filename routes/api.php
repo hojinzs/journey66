@@ -33,11 +33,6 @@ Route::post('/editjourney/{id}','journeyController@update');
 Route::post('/imageuploader','ImageUploader@store');
 
 /**
- * Set Waypoint Image File
- */
-Route::post('/setwaypointimg','WaypointImageController@store');
-
-/**
  * Gpx Controller Routing
  */
 
