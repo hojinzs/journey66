@@ -311,7 +311,8 @@ JournalLogger.prototype.SubmitNew = function(){
           dataType: "text",
           success: function(data){
             alert(data);
-            window.location.href = "/journey/"+newUJID;
+            parse = JSON.parse(data);
+            window.location.href = "/journey/"+parse.UJID;
 
           },
           error: function(xhr,status,error){
@@ -447,12 +448,13 @@ JournalLogger.prototype.SubmitUpdate = function(){
         data: jsonData,
         dataType: "text",
         success: function(data){
-        alert(data);
-        window.location.href = "/journey/"+newUJID;
+            alert(data);
+            parse = JSON.parse(data);
+            window.location.href = "/journey/"+parse.UJID;
 
         },
         error: function(xhr,status,error){
-        alert(error);
+            alert(error);
         }
     });
 }

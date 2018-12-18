@@ -76,7 +76,7 @@ class journeyController extends Controller
         }
 
         return response()->json([
-            'UJID' => $new_journey['UJID'],
+            'UJID' => $new_journey->UJID,
             'UWID' => $UWID,
             'IMGS' => $images,
             'stauts' => 'success'
@@ -237,19 +237,16 @@ class journeyController extends Controller
         $journey->author_email = $email;
         $journey->author_name = $author;
 
-        // insert
+        //insert
         $journey->save();
+
+        //update
         $insertedId = $journey->id;
         $UJID = 'JN'.hash('crc32b',$insertedId);
         $journey->UJID = $UJID;
         $journey->save();
 
-        $v['id'] = $insertedId;
-        $v['UJID'] = $UJID;
-
-        //update
-
-        return $v;
+        return $journey;
     }
 
     /**
