@@ -2,6 +2,9 @@
 
 namespace App\Mail;
 
+
+use App\journey;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -11,14 +14,21 @@ class JourneyPosted extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $journey;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Journey $journey)
     {
         //
+        $this->subject($journey->name.' Saved');
+
+        $this->journey = $journey;
+        $this->link = url("/journey/{$journey->UJID}/edit?key={$journey->key}");
+        $this->currnetTime = date('Y-m-d H:i:s', time());
 
     }
 
@@ -29,6 +39,12 @@ class JourneyPosted extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.JourneyCreated');
+        return $this->view('emails.JourneyCreated')
+                    ->with([
+                        'journey' => $this->journey,
+                        'link' => $this->link,
+                        'currnetTime' => $this->currnetTime
+                    ]);
+
     }
 }

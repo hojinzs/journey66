@@ -7,7 +7,9 @@ use App\label;
 use App\journey;
 use App\waypoint;
 use App\waypoint_image;
+use App\Mail\JourneyPosted;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -57,6 +59,8 @@ class journeyController extends Controller
             $new_journey = journeyController::setJourney($request);
 
             // set new Waypoints
+            $UWID = [];
+            $images = [];
             $wpArr = $request->input('waypoints');
             foreach ($wpArr as $key => $waypoint) {
                 $new_waypoint = journeyController::setWaypoint($waypoint,$new_journey['id'],$key+1);
@@ -75,11 +79,24 @@ class journeyController extends Controller
             return response($th,400);
         }
 
+        // Send Mail
+        try {
+            Mail::to($new_journey->author_email)
+            ->send(new JourneyPosted($new_journey));
+
+            $mail_status = 'sent';
+        } catch (\Throwable $th) {
+            //throw $th;
+            // $mail_status = 'fail';
+            return response($th,400);
+        }
+
         return response()->json([
             'UJID' => $new_journey->UJID,
             'UWID' => $UWID,
             'IMGS' => $images,
-            'stauts' => 'success'
+            'stauts' => 'success',
+            'mailsend' => $mail_status
         ]);
     }
 
