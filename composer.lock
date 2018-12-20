@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff7b328040b1551729fe4984d1b15e34",
+    "content-hash": "7140a2f2783523a8e8057d99c22c06c1",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1210,7 +1210,7 @@
                 {
                     "name": "Luís Otávio Cobucci Oblonczyk",
                     "email": "lcobucci@gmail.com",
-                    "role": "Developer"
+                    "role": "developer"
                 }
             ],
             "description": "A simple library to work with JSON Web Token and JSON Web Signature",

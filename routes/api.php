@@ -39,3 +39,9 @@ Route::post('/imageuploader','ImageUploader@store');
 Route::post('/gpx/{id}','GpxController@show');
 
 Route::post('/gpxupload','GpxController@store');
+
+
+/**
+ * Test Controller
+ */
+Route::post('/test/{id}','TestController@api');
