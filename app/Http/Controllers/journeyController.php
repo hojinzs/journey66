@@ -132,39 +132,81 @@ class journeyController extends Controller
     }
 
     /**
+     * Check key and confirm edit
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param int $id
+     * @param string $key
+     * @return \Illuminate\Http\Response
+     */
+    public function getEditAuth(Request $request, $id){
+
+        if ($request->has('key')) {
+            # code...
+            $request->session()->forget('journeyKey');
+            $requestKey = $request->query('key');
+
+            $request->session()->put('journeyKey',$requestKey);
+            return redirect('journey/'.$id.'/editor');
+        } else {
+            # code...
+            return redirect(404);
+        }
+        
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        //
-        $journey = journey::where('UJID',$id)->first();
-        if($journey){
-            $arr = waypoint::where('journey_id',$journey->id)->get();
-            $waypoints = array();
+        // get journey ID
+        try {
+            //find journey
+            $journey = journey::where('UJID',$id)->firstOrFail();
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect(404);
+        }
 
-            foreach($arr as $k => $waypoint){
-                $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
-                if($images){
-                    $waypoint['images'] = $images;
-                }
-                array_push($waypoints,$waypoint);
+        // check Auth
+        if ($request->session()->has('journeyKey')) {
+            # check sessionkey
+            $sessionKey = $request->session()->get('journeyKey');
+            if($journey->key != $sessionKey){
+                return redirect(404);
             };
+        } else {
+            # redirect
+            return redirect(404);
+        }
 
-            $journey_labels = label::getWhere('journey_type');
-            $waypoint_labels = label::getWhere('waypoint_type');
+        // set journey data
+        $arr = waypoint::where('journey_id',$journey->id)->get();
+        $waypoints = array();
 
-            return view('editJourney',[
-                'journey' => $journey,
-                'waypoints' => $waypoints,
-                'gpx' => basename($journey->file_path),
-                'journey_labels' => $journey_labels,
-                'waypoint_labels' => $waypoint_labels,
-                ]);
+        foreach($arr as $k => $waypoint){
+            $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
+            if($images){
+                $waypoint['images'] = $images;
+            }
+            array_push($waypoints,$waypoint);
         };
-        return redirect('404');
+
+        $journey_labels = label::getWhere('journey_type');
+        $waypoint_labels = label::getWhere('waypoint_type');
+
+        return view('editJourney',[
+            'journey' => $journey,
+            'waypoints' => $waypoints,
+            'gpx' => basename($journey->file_path),
+            'journey_labels' => $journey_labels,
+            'waypoint_labels' => $waypoint_labels,
+        ]);
+
     }
 
     /**

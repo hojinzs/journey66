@@ -19,7 +19,9 @@ Route::get('/write','journeyController@create');
 
 Route::get('/journey/{id}','journeyController@show');
 
-Route::get('/journey/{id}/edit','journeyController@edit');
+Route::get('/journey/{id}/edit','journeyController@getEditAuth');
+
+Route::get('/journey/{id}/editor','journeyController@edit');
 
 Route::get('/test', function () {
     return view('test');
