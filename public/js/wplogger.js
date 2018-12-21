@@ -400,6 +400,7 @@ JournalLogger.prototype.SubmitUpdate = function(){
 
     // set journey data
     FormArray.UJID = UJID;
+    FormArray.key = this.$form.data('key');
     FormArray.title = this.$form.find("[name=journey-title]").val();
     FormArray.description = this.$form.find("[name=journey-description]").val();
     FormArray.type = this.$form.find("[name=journey-type]").val();

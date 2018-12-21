@@ -146,7 +146,7 @@ class journeyController extends Controller
             $request->session()->forget('journeyKey');
             $requestKey = $request->query('key');
 
-            $request->session()->put('journeyKey',$requestKey);
+            $request->session()->flash('journeyKey',$requestKey);
             return redirect('journey/'.$id.'/editor');
         } else {
             # code...
@@ -184,7 +184,7 @@ class journeyController extends Controller
             return redirect(404);
         }
 
-        // set journey data
+        // set waypoint data
         $arr = waypoint::where('journey_id',$journey->id)->get();
         $waypoints = array();
 
@@ -222,6 +222,11 @@ class journeyController extends Controller
         $get_journey = journey::where('UJID',$id)->first();
         if(!$get_journey){
             return response('can not find journey '.$id,400);
+        }
+
+        // check key
+        if($get_journey->key != $request->input('key')){
+            return response('invail journey key',400);
         }
 
         try {

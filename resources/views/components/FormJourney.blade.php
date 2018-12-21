@@ -1,7 +1,7 @@
 <!-- Journey input form-->
 <form method="POST" id="journey"
     @isset($journey)
-        data-mode="edit" data-UJID="{{$journey['UJID']}}" action="/api/editjourney/{{$journey['UJID']}}" data-gpx="{{basename($journey['file_path'])}}"
+        data-mode="edit" data-UJID="{{$journey['UJID']}}" action="/api/editjourney/{{$journey['UJID']}}" data-gpx="{{basename($journey['file_path'])}}" data-key="{{$journey['key']}}"
     @endisset
     @empty($journey)
         data-mode="create" action="/api/newjourney" style="display:none"
