@@ -1,5 +1,9 @@
+@php
+    $lang = str_replace('_', '-', app()->getLocale());
+@endphp
+
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{$lang}}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,6 +27,19 @@
         @stack('css')
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <!-- Load Font By Language -->
+        @switch($lang)
+            @case('ko')
+                <link href="https://fonts.googleapis.com/css?family=Nanum+Myeongjo:700&amp;subset=korean" rel="stylesheet">
+                <style>body{font-family: 'Nanum Myeongjo', serif; !important} </style>
+                @break
+            @case('en')
+                
+                @break
+            @default
+            
+        @endswitch
 
     </head>
     <body>

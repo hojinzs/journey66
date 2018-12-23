@@ -4,4 +4,12 @@
 
 @section('contents')
 
+@php
+echo $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+@endphp
+<br>
+@php
+echo App::getLocale()    
+@endphp
+
 @endsection

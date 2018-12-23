@@ -4,56 +4,88 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Journey 66 Language Lines - ko
+    | Journey 66 Language Lines - en
     |--------------------------------------------------------------------------
     |
     |
     */
 
     'form' => [
-        'gpxupload' => [
-            'title' => 'gpx 업로드',
-            'description' => 'upload gpx file for write new journey',
+        'getPath' => [
+            'title' => '경로 가져오기',
+            'description' => '새 여행기를 작성합니다.',
+            'envnotice' => '여행기 작성은 데스크탑 웹 브라우저에 최적화 되어있습니다.',
+            'gpx' => [
+                'title' => 'gpx 사용',
+                'description' => '경로를 gpx파일에서 가져옵니다.',
+            ],
+            'strava' => [
+                'title' => 'strava 연동',
+                'description' => '개발중입니다.'
+            ],
         ],
-        'title' => 'Journey Title',
-        'style' => 'Journey Style',
-        'description' => 'description',
-        'description_ph' => 'text something about your journey',
-        'confirm_title' => 'Confirm & Publish your Journey',
-        'author' => 'author',
-        'author_ph' => 'let us to know who writen this wonderful journey',
-        'email' => 'email',
-        'email_check' => 'accept subscriptions email information for edit or delete the journey, not use for advertising or mailing',
+        'title' => '제목',
+        'style' => '여행 스타일',
+        'description' => '설명',
+        'description_ph' => '여행에 대한 짧은 설명이나 개요 등',
+        'confirm_title' => '여행기 검토 및 발행',
+        'author' => '저자',
+        'author_ph' => '누가 이 멋진 여행기를 작성했는지 알려주세요',
+        'email' => '이메일 주소',
+        'email_check' => '작성한 여행기의 수정/삭제를 위한 이메일 수집에 동의합니다. 광고나 메일링에 사용되지 않습니다.',
         'inform' => [
-            'setmarker' => 'Click on the memorable point. And tell me about your journey.'
+            'setmarker' => '경로상에서 기억에 남는 장소를 선택해주세요. 그리고 그곳에 대해 알려주세요.'
         ],
         'waypoint' => [
-            'waypoint' => 'Waypoint',
-            'location' => 'Location',
-            'type' => 'Type',
-            'photo' => 'Photo',
-            'name' => 'name',
-            'description' => 'description',
-            'btn_up' => 'up',
-            'btn_down' => 'down',
-            'btn_delete' => 'delete'
+            'waypoint' => '장소',
+            'location' => '위치',
+            'type' => '타입',
+            'photo' => '사진',
+            'name' => '주제',
+            'description' => '설명',
+            'btn_up' => '위로',
+            'btn_down' => '아래로',
+            'btn_delete' => '삭제',
+            'btn_undelete' => '삭제 취소',
         ],
+        'posted' => [
+            'title' => '여행기 업로드중',
+            'ing' => '서버에 여행기를 업로드 하고 있습니다.',
+            'done1' => '여행기 검토 링크를 포함한 이메일을 발송해드렸습니다!',
+            'done2' => '여행기가 정상적으로 저장되었으나, 아직 공개된 상태는 아닙니다.',
+            'done3' => '이메일을 확인해주시고, 공개 상태로 전환해주세요.',
+        ],
+        'edited' => [
+            'title' => 'Edit your journey',
+            'ing' => 'saving on server',
+            'done1' => 'Your edits were successfully saved!',
+            'gojourney' => 'read your journey',
+        ],
+        'published_stages' => [
+            'pending' => '대기',
+            'pending_description' => '공개 되기 전 검토중입니다.',
+            'published' => '공개',
+            'published_description' => '웹상에 여행기를 공개합니다.',
+            'private' => '비공개',
+            'private_description' => '비공개로 전환합니다.',
+        ]
     ],
     'label' => [
         'journey' => [
-            'cycling' => 'cycling',
-            'mtb' => 'mtb',
-            'motorbike' => 'motorbike',
-            'smart mobi' => 'smart mobi',
-            'hiking' => 'hiking'
+            'cycling' => '자전거라이딩',
+            'mtb' => '산악자전거',
+            'motorbike' => '모터싸이클',
+            'smart mobi' => '스마트모빌리티',
+            'hiking' => '하이킹'
         ],
         'waypoint' => [
-            'marker' => 'marking this point',
-            'landmark' => 'landmark',
-            'restaurant' => 'restaurant',
-            'supplypoint' => 'supplypoint',
-            'rest' => 'restpoint',
-            'event' => 'event',
+            'marker' => '기억에 남는 지점',
+            'landmark' => '랜드마크 혹은 볼거리',
+            'restaurant' => '음식집',
+            'supplypoint' => '보급장소',
+            'rest' => '휴식장소',
+            'event' => '특별한 이벤트',
+            'accident' => '사건사고',
         ],
     ]
 

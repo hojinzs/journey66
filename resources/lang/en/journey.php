@@ -85,6 +85,7 @@ return [
             'supplypoint' => 'supplypoint',
             'rest' => 'restpoint',
             'event' => 'event',
+            'accident' => 'accident',
         ],
     ]
 

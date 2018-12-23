@@ -193,6 +193,15 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
 
     //add Waypoint
     $form.append($newWaypoint);
+
+    var timer = setTimeout(function(){
+        $('html, body').stop().animate({
+            scrollTop: $newWaypoint.offset().top 
+            }, 500,function(){
+                $newWaypoint.focus();
+                clearTimeout(timer);
+        });
+    },700);
 };
 
 JournalLogger.prototype.setWaypointReindex = function(){
