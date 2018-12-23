@@ -1,10 +1,10 @@
 <!-- Dummy Waypoint form-->
 <fieldset class="waypoint"
 @isset($waypoint)
-    id="{{$id}}" data-mode="edit" data-UWID="{{$waypoint['UWID']}}"
+    id="{{$id}}" data-UWID="{{$waypoint['UWID']}}"
 @endisset
 @empty($waypoint)
-    id="DUMMY" data-mode="create" style="display:none"
+    id="DUMMY" style="display:none"
 @endif>
     <div class="row">
         <div class="col-md-3">
@@ -70,6 +70,7 @@
                     <button id="waypoint-up" type="button" class="btn btn-light">{{__('journey.form.waypoint.btn_up')}}</button>
                     <button id="waypoint-down" type="button" class="btn btn-light">{{__('journey.form.waypoint.btn_down')}}</button>
                     <button id="waypoint-delete" type="button" class="btn btn-danger">{{__('journey.form.waypoint.btn_delete')}}</button>
+                    <button id="waypoint-undelete" type="button" class="btn btn-outline-primary" style="display:none">{{__('journey.form.waypoint.btn_undelete')}}</button>
                 </div>
             </div>
         </div>

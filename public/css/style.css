@@ -32,10 +32,18 @@
     filter: progid:DXImageTransform.Microsoft.Shadow(Strength = 4, Direction = 135, Color = '#cccccc');
 }
 
+.delete{
+    opacity: 0.5;
+}
+
 #journeyPosted .modal-body{
     text-align: center;
 }
 
 #journeyPosted .modal-body author-email{
     color: #2361c4;
+}
+
+#journey .form-check-input{
+    margin-left: 0em !important;
 }

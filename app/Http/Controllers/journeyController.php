@@ -111,22 +111,25 @@ class journeyController extends Controller
         //
         $journey = journey::where('UJID',$id)->first();
         if($journey){
-            $arr = waypoint::where('journey_id',$journey->id)->get();
-            $waypoints = array();
-
-            foreach($arr as $k => $waypoint){
-                $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
-                if($images){
-                    $waypoint['images'] = $images;
-                }
-                array_push($waypoints,$waypoint);
+            if($journey['publish_stage']=='Published'){
+                $arr = waypoint::where('journey_id',$journey->id)->get();
+                $waypoints = array();
+    
+                foreach($arr as $k => $waypoint){
+                    $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
+                    if($images){
+                        $waypoint['images'] = $images;
+                    }
+                    array_push($waypoints,$waypoint);
+                };
+    
+                return view('showJourney',[
+                    'journey' => $journey,
+                    'waypoints' => $waypoints,
+                    'gpx' => basename($journey->file_path)
+                    ]);
             };
-
-            return view('showJourney',[
-                'journey' => $journey,
-                'waypoints' => $waypoints,
-                'gpx' => basename($journey->file_path)
-                ]);
+            return redirect('404');
         };
         return redirect('404');
     }
@@ -233,21 +236,34 @@ class journeyController extends Controller
 
             // update Waypoint Data
             $UWID = [];
+            $waypoints_index = 0;
             foreach ($request->input('waypoints') as $key => $waypoint) {
 
-                $sequnce = $key + 1;
-
                 if (isset($waypoint['uwid'])) {
-                    # currnet Waypoint. update it
-                    $updated_waypoint = journeyController::UpdateWaypoint($waypoint,$waypoint['uwid'],$sequnce);
-                    $UWID[] = $updated_waypoint['UWID'];
-
-                    # control images
-                    journeyController::ImgClasification($waypoint['imgs'],$updated_waypoint['id']);
+                    # when it is currnet Waypoint
+                    switch ($waypoint['mode']) {
+                        case 'del':
+                            # delete it
+                            journeyController::DeleteWaypoint($waypoint['uwid']);
+                            break;
+                        case 'edit':
+                            # update it
+                            $waypoints_index = $waypoints_index +1;
+                            $updated_waypoint = journeyController::UpdateWaypoint($waypoint,$waypoint['uwid'],$waypoints_index);
+                            $UWID[] = $updated_waypoint['UWID'];
+        
+                            # control images
+                            journeyController::ImgClasification($waypoint['imgs'],$updated_waypoint['id']);                            
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
 
                 } else {
                     # new Waypoint. make it
-                    $new_waypoint = journeyController::setWaypoint($waypoint,$saved_journey['id'],$sequnce);
+                    $waypoints_index = $waypoints_index +1;
+                    $new_waypoint = journeyController::setWaypoint($waypoint,$saved_journey['id'],$waypoints_index);
                     $UWID[] = $new_waypoint['UWID'];
 
                     # control images
@@ -385,6 +401,7 @@ class journeyController extends Controller
         $journey->description = $request->input('description');
         $journey->author_email = $request->input('email');
         $journey->author_name = $request->input('author');
+        $journey->publish_stage = $request->input('publish_stage');
 
         //update
         $journey->save();
@@ -412,6 +429,21 @@ class journeyController extends Controller
 
         return $waypoint;
 
+    }
+
+    private function DeleteWaypoint($uwid){
+        try {
+            // find
+            $waypoint = waypoint::where('UWID',$uwid)->first();
+
+            //delete
+            $waypoint->delete();
+
+            return 'success';
+        } catch (\Throwable $th) {
+            //throw $th;
+            return 'fail';
+        }
     }
 
     private function ImgClasification($images = [],$waypoint_id){

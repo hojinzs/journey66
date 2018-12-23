@@ -93,6 +93,39 @@
                                 <label>{{__('journey.form.email_check')}}</label>
                             </div>
                         </div>
+                        @isset($journey)
+                        <div class="form-group">
+                            <div class="row">
+                                <label for="publish_stage" class="col-md-2 col-form-label">Publish</label>
+                                <div class="col-md-10">
+                                    @if ($journey['publish_stage'] == 'Pending')
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="publish_stage" id="Radio1" value="Pending" checked>
+                                            <label class="form-check-label" for="Radio1">
+                                                <b>{{__('journey.form.published_stages.pending')}}</b> -{{__('journey.form.published_stages.pending_description')}}
+                                            </label>
+                                        </div>
+                                    @endif
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="publish_stage" id="Radio2" value="Published"
+                                            @if ($journey['publish_stage'] == 'Published') checked @endif>
+                                            <label class="form-check-label" for="Radio2">
+                                                <b>{{__('journey.form.published_stages.published')}}</b> -{{__('journey.form.published_stages.published_description')}}
+                                            </label>
+                                        </div>
+                                    @if ($journey['publish_stage'] != 'Pending')
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="publish_stage" id="Radio3" value="Private"
+                                            @if ($journey['publish_stage'] == 'Private') checked @endif>
+                                            <label class="form-check-label" for="Radio3">
+                                                <b>{{__('journey.form.published_stages.private')}}</b> -{{__('journey.form.published_stages.private_description')}}
+                                            </label>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        @endisset
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <input type="submit" value="Submit" type="button" class="btn btn-primary btn-lg btn-block">

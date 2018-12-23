@@ -130,6 +130,7 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
     $newWaypoint.attr("id",Idx);
     $newWaypoint.attr("name",Idx);
     $newWaypoint.data("index",Idx);
+    $newWaypoint.data("mode",'new');
     $newWaypoint.find('#wp-name').text('Waypoint #'+Idx);
     $newWaypoint.find('#Lat').val(latlng.lat());
     $newWaypoint.find('#Lng').val(latlng.lng());
@@ -197,15 +198,44 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
 JournalLogger.prototype.setWaypointReindex = function(){
     var $list = this.waypoints;
 
+    var idx = 0;
     $list.forEach(function(v,i){
-        idx = i+1
 
-        v.attr("id",idx);
-        v.data("index",idx);
-        v.find('#wp-name').text('Waypoint #'+idx);
+        switch (v.data('mode')) {
+            case 'del':
+                v.attr("id",'');
+                v.data("index",'');
+                v.find('#wp-name').text('Deleted');
 
-        v.marker.setTitle('Marker #'+idx);
-        v.marker.setLabel('W'+ idx);
+                v.marker.setTitle('delete');
+                v.marker.setLabel('Del');
+                break;
+
+            case 'edit':
+                idx = idx +1;
+
+                v.attr("id",idx);
+                v.data("index",idx);
+                v.find('#wp-name').text('Waypoint #'+idx);
+
+                v.marker.setTitle('Marker #'+idx);
+                v.marker.setLabel('W'+ idx);
+                break;
+
+            case 'new':
+                idx = idx +1;
+
+                v.attr("id",idx);
+                v.data("index",idx);
+                v.find('#wp-name').text('Waypoint #'+idx);
+
+                v.marker.setTitle('Marker #'+idx);
+                v.marker.setLabel('W'+ idx);
+                break;
+        
+            default:
+                break;
+        }
     });
 
     return;
@@ -294,6 +324,7 @@ JournalLogger.prototype.SubmitNew = function(){
             var wp={};
             wp.imgs = [];
             
+            wp.mode = w.data('mode');
             wp.id = w.find("[name=waypoint-name]").val();
             wp.name = w.find("[name=waypoint-name]").val();
             wp.description = w.find("[name=description]").val();
@@ -359,6 +390,8 @@ JournalLogger.prototype.setWaypoint = function(waypoint){
     var $target = $(waypoint);
     var Idx = $target.attr("id");
 
+    $target.data('mode','edit');
+
     latitude = $target.find("[name=Lat]").val();
     longitude = $target.find("[name=Lng]").val();
     LatLng = new google.maps.LatLng(latitude,longitude);
@@ -379,11 +412,21 @@ JournalLogger.prototype.setWaypoint = function(waypoint){
 
     //set NewWaypointEvent
     $target.find('#waypoint-delete').on('click',function(e){
-        $target.detach();
-        $target.marker.setMap(null);
+        $target.data('mode','del');
+        $target.marker.setOptions({'opacity': 0.5});
+        $target.addClass('delete');
+        $target.find('#waypoint-undelete').show();
+        $target.find('#waypoint-delete').hide();
 
-        var index = Logger.waypoints.indexOf($target);
-        Logger.waypoints.splice(index,1);
+        Logger.setWaypointReindex();
+    });
+    $target.find('#waypoint-undelete').on('click',function(e){
+        $target.data('mode','edit');
+        $target.marker.setOptions({'opacity': 1});
+        $target.removeClass('delete');
+        $target.find('#waypoint-undelete').hide();
+        $target.find('#waypoint-delete').show();
+
         Logger.setWaypointReindex();
     });
     $target.find('#waypoint-up').on('click',function(e){
@@ -438,6 +481,7 @@ JournalLogger.prototype.SubmitUpdate = function(){
     FormArray.type = this.$form.find("[name=journey-type]").val();
     FormArray.author = this.$form.find("[name=author]").val();
     FormArray.email = this.$form.find("[name=email]").val();
+    FormArray.publish_stage = this.$form.find("input[name=publish_stage]:checked").val();
 
     // set waypoint data
     FormArray.waypoints = [];
@@ -445,6 +489,7 @@ JournalLogger.prototype.SubmitUpdate = function(){
         var wp={};
         
         wp.uwid = w.data('uwid');
+        wp.mode = w.data('mode');
         wp.id = w.find("[name=waypoint-name]").val();
         wp.name = w.find("[name=waypoint-name]").val();
         wp.description = w.find("[name=description]").val();
@@ -470,6 +515,7 @@ JournalLogger.prototype.SubmitUpdate = function(){
 
     // ready to json
     var jsonData = JSON.stringify(FormArray);
+    console.log(FormArray);
 
     //send
     $.ajax({
@@ -574,8 +620,13 @@ Journal.setCurrentImageArr = function(Arr = {}){
             $(this).removeClass('shadow');
         })
         $img.click(function(){
-            $(this).addClass('delete');
-            img.type = 'del';
+            if(img.type == 'cur'){
+                img.type = 'del';
+                $(this).addClass('delete');
+            } else {
+                img.type = 'cur';
+                $(this).removeClass('delete');
+            };
         })
         
         img.$img = $img;
