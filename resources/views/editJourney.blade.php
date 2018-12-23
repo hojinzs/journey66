@@ -42,4 +42,10 @@
 
     </div>
 
+    @component('modals.journeyPosted',[
+        'mode' => 'edit',
+        'journeyLink' => url('journey/'.$journey['UJID']),
+    ])
+    @endcomponent
+
 @endsection

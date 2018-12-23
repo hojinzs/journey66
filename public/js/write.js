@@ -4,15 +4,20 @@ var JLogger;
 var gMapKey;
 
 $(document).ready(function(){
-  $('#gpx-upload-file').on('change',gpxupload);
-  $.ajaxSetup({headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+    $('#gpx-upload-file').on('change',gpxupload);
+    $.ajaxSetup({headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+    $('#uploadPath').modal({
+      backdrop: 'static',
+      keyboard: false,
+    })
+    $('#uploadPath').modal('show');
 });
 
 function initMap(){
-  map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 1,
-    center: {lat: 1.0, lng: 1.0}
-  });
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 1,
+        center: {lat: 1.0, lng: 1.0}
+    });
 
   gMapKey = $('#map').data('gmapkey');
 };
@@ -50,6 +55,8 @@ function loadGPXFileIntoGoogleMap(map, filename) {
     JLogger.CreateJourney();
     JLogger.gpx = xml;
 
+    $('#uploadPath').modal('hide');
+    
     $('#gpx-upload-file').prependTo(form).hide();
     $('#GPX-upload').detach();
   });
@@ -71,11 +78,22 @@ function gpxupload(e) {
     data: gpx,
     contentType: false,
     processData: false,
+    beforeSend: function(){
+        var $LoadingImg = $('<img/>',{
+            src: 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif',
+        })
+        $('#uploadPath .modal-body').empty();
+        $('#uploadPath .modal-body').css('text-align','center');
+        $('#uploadPath .modal-body').append($LoadingImg);
+        $('#uploadPath .modal-body').append('<p>Uploading file...</p>');
+    },
     success: function(data){
-      console.log(data);
       $(form).attr('data-gpx',data);
 
       loadGPXFileIntoGoogleMap(map,result);
+    },
+    complete: function(){
+      // $('#uploadPath .modal-body').empty();
     }
   });
 

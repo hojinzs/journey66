@@ -19,12 +19,21 @@ JournalLogger.prototype.setForm = function(form_id){
     this.$form.show();
     this.$waypointlist = this.$form.find('#waypoint-list');
     this.$dummywp = $('#DUMMY');
+    this.$postingModal = $('#journeyPosted');
 };
 
 JournalLogger.prototype.CreateJourney = function(){
     var Logger = this;
+
     this.$form.on("submit", function(event) {
         event.preventDefault();
+
+        var loading = $('.img-loading').length;
+        if(loading > 0) {
+            alert(loading+'images upload is unfinished');
+            return;
+        };
+
         Logger.SubmitNew();
     });
 
@@ -32,8 +41,16 @@ JournalLogger.prototype.CreateJourney = function(){
 
 JournalLogger.prototype.UpdateJourney = function(){
     var Logger = this;
+
     this.$form.on("submit", function(event) {
         event.preventDefault();
+
+        var loading = $('.img-loading').length;
+        if(loading > 0) {
+            alert(loading+'images upload is unfinished');
+            return;
+        };
+
         Logger.SubmitUpdate();
     });
 
@@ -220,10 +237,10 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
         processData: false,
         beforeSend: function(){
             $newImg.appendTo($target);
+            $newImg.addClass('img-loading');
             $newImg.attr('src',"https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif");
         },
         success: function(data){
-
             $newImg.attr('src',data.url);
     
             $newImg.mouseenter(function(){
@@ -251,6 +268,9 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
             $newImg.remove();
             alert(error);
         },
+        complete: function(){
+            $newImg.removeClass('img-loading');
+        }
     });
 
 };
@@ -258,7 +278,7 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
 JournalLogger.prototype.SubmitNew = function(){
         // form data
         var FormArray = {};
-        var newUJID;
+        var Logger = this;
 
         // set journey data
         FormArray.title = this.$form.find("[name=journey-title]").val();
@@ -295,8 +315,6 @@ JournalLogger.prototype.SubmitNew = function(){
 
         })
 
-        console.log(FormArray);
-
         FormArray.gpx = this.$form.data('gpx');
     
         // ready to json
@@ -309,15 +327,30 @@ JournalLogger.prototype.SubmitNew = function(){
           contentType: "application/json",
           data: jsonData,
           dataType: "text",
+          beforeSend: function(){
+            Logger.$form.find('[type=submit]').prop("disabled",true);
+            Logger.$postingModal.find('modal-message-done').hide();
+            Logger.$postingModal.find('modal-message-error').hide();
+            Logger.$postingModal.modal({
+                backdrop: 'static',
+                keyboard: false,
+            });
+          },
           success: function(data){
-            alert(data);
+            // alert(data);
             parse = JSON.parse(data);
-            window.location.href = "/journey/"+parse.UJID;
-
+            Logger.$form.remove();
+            Logger.$postingModal.find('author-email').text(parse.mail);
+            Logger.$postingModal.find('modal-message-done').show();
           },
           error: function(xhr,status,error){
-            alert(error);
-          }
+            // alert(error);
+            Logger.$postingModal.find('modal-message-error').show();
+            Logger.$postingModal.find('modal-message-error').text(error);
+          },
+          complete: function(){
+            Logger.$postingModal.find('modal-message-loading').hide();
+          },
         });
 } 
 
@@ -394,8 +427,7 @@ JournalLogger.prototype.setWaypoint = function(waypoint){
 JournalLogger.prototype.SubmitUpdate = function(){
     // form data
     var FormArray = {};
-    var updatedUJID;
-
+    var Logger = this;
     var UJID = this.$form.data('ujid');
 
     // set journey data
@@ -436,8 +468,6 @@ JournalLogger.prototype.SubmitUpdate = function(){
 
     })
 
-    console.log(FormArray);
-
     // ready to json
     var jsonData = JSON.stringify(FormArray);
 
@@ -448,15 +478,29 @@ JournalLogger.prototype.SubmitUpdate = function(){
         contentType: "application/json",
         data: jsonData,
         dataType: "text",
+        beforeSend: function(){
+            Logger.$form.find('[type=submit]').prop("disabled",true);
+            Logger.$postingModal.find('modal-message-done').hide();
+            Logger.$postingModal.find('modal-message-error').hide();
+            Logger.$postingModal.modal({
+                backdrop: 'static',
+                keyboard: false,
+            });
+          },
         success: function(data){
-            alert(data);
             parse = JSON.parse(data);
-            window.location.href = "/journey/"+parse.UJID;
-
-        },
-        error: function(xhr,status,error){
-            alert(error);
-        }
+            Logger.$form.remove();
+            Logger.$postingModal.find('author-email').text(parse.mail);
+            Logger.$postingModal.find('modal-message-done').show();
+          },
+          error: function(xhr,status,error){
+            // alert(error);
+            Logger.$postingModal.find('modal-message-error').show();
+            Logger.$postingModal.find('modal-message-error').text(error);
+          },
+          complete: function(){
+            Logger.$postingModal.find('modal-message-loading').hide();
+          },
     });
 }
 
@@ -489,7 +533,7 @@ Journal.setStaticMap = function(target,param){
 
 Journal.setGallary = function(target){
   $.each(target,function(k,v){
-    console.log(v);
+    // console.log(v);
   })
 };
 

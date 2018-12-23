@@ -11,9 +11,18 @@ return [
     */
 
     'form' => [
-        'gpxupload' => [
-            'title' => 'Select Gpx File',
-            'description' => 'upload gpx file for write new journey',
+        'getPath' => [
+            'title' => 'get path',
+            'description' => 'for write new journey',
+            'envnotice' => 'journey writer is optimized for desktop web browser',
+            'gpx' => [
+                'title' => 'use gpx',
+                'description' => 'get route from gpx file',
+            ],
+            'strava' => [
+                'title' => 'use strava',
+                'description' => 'now construction'
+            ],
         ],
         'title' => 'Journey Title',
         'style' => 'Journey Style',
@@ -38,6 +47,27 @@ return [
             'btn_down' => 'down',
             'btn_delete' => 'delete'
         ],
+        'posted' => [
+            'title' => 'Posting your journey',
+            'ing' => 'posting on server',
+            'done1' => 'We have emailed posting confirm link!',
+            'done2' => 'the journey you wrote was successfully saved, but now private',
+            'done3' => 'check your email and turn it public',
+        ],
+        'edited' => [
+            'title' => 'Edit your journey',
+            'ing' => 'saving on server',
+            'done1' => 'Your edits were successfully saved!',
+            'gojourney' => 'read your journey',
+        ],
+        'published_stages' => [
+            'pending' => 'pending',
+            'pending_description' => 'waiting for public on web',
+            'published' => 'published',
+            'published_description' => 'public on web',
+            'private' => 'private',
+            'private_description' => 'turn private',
+        ]
     ],
     'label' => [
         'journey' => [

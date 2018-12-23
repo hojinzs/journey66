@@ -27,9 +27,6 @@
 
     <div class="container">
 
-        @component('components.GpxUpload')
-        @endcomponent
-
         @component('components.FormJourney',[
             'journey_labels' => $journey_labels,
         ])
@@ -41,5 +38,13 @@
         @endcomponent
 
     </div>
+
+    @component('modals.uploadPath')
+    @endcomponent
+
+    @component('modals.journeyPosted',[
+        'mode' => 'new',
+    ])
+    @endcomponent
 
 @endsection

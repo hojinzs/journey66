@@ -83,20 +83,20 @@ class journeyController extends Controller
         try {
             Mail::to($new_journey->author_email)
             ->send(new JourneyPosted($new_journey));
-
-            $mail_status = 'sent';
+            $mail_send = $new_journey->author_email;
         } catch (\Throwable $th) {
             //throw $th;
-            // $mail_status = 'fail';
-            return response($th,400);
+            $mail_send = 'fail';
         }
 
-        return response()->json([
+        // response
+        return response()
+            ->json([
             'UJID' => $new_journey->UJID,
             'UWID' => $UWID,
             'IMGS' => $images,
+            'mail' => $mail_send,
             'stauts' => 'success',
-            'mailsend' => $mail_status
         ]);
     }
 
@@ -136,21 +136,18 @@ class journeyController extends Controller
      * 
      * @param  \Illuminate\Http\Request  $request
      * @param int $id
-     * @param string $key
      * @return \Illuminate\Http\Response
      */
     public function getEditAuth(Request $request, $id){
 
         if ($request->has('key')) {
-            # code...
-            $request->session()->forget('journeyKey');
+            # flash sesstion journey key
             $requestKey = $request->query('key');
-
             $request->session()->flash('journeyKey',$requestKey);
             return redirect('journey/'.$id.'/editor');
         } else {
-            # code...
-            return redirect(404);
+            # invaild connection
+            return redirect('404');
         }
         
     }
@@ -169,7 +166,7 @@ class journeyController extends Controller
             $journey = journey::where('UJID',$id)->firstOrFail();
         } catch (\Throwable $th) {
             //throw $th;
-            return redirect(404);
+            return redirect('404');
         }
 
         // check Auth
@@ -177,11 +174,11 @@ class journeyController extends Controller
             # check sessionkey
             $sessionKey = $request->session()->get('journeyKey');
             if($journey->key != $sessionKey){
-                return redirect(404);
+                return redirect('404');
             };
         } else {
             # redirect
-            return redirect(404);
+            return redirect('404');
         }
 
         // set waypoint data
@@ -218,6 +215,7 @@ class journeyController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         // find target journey data
         $get_journey = journey::where('UJID',$id)->first();
         if(!$get_journey){
@@ -226,14 +224,15 @@ class journeyController extends Controller
 
         // check key
         if($get_journey->key != $request->input('key')){
-            return response('invail journey key',400);
+            return response('invaild journey key',400);
         }
 
         try {
             // update Journey Data
-            $saved_journeyid = journeyController::UpdateJourney($request,$get_journey->id);
+            $saved_journey = journeyController::UpdateJourney($request,$get_journey->id);
 
             // update Waypoint Data
+            $UWID = [];
             foreach ($request->input('waypoints') as $key => $waypoint) {
 
                 $sequnce = $key + 1;
@@ -241,13 +240,15 @@ class journeyController extends Controller
                 if (isset($waypoint['uwid'])) {
                     # currnet Waypoint. update it
                     $updated_waypoint = journeyController::UpdateWaypoint($waypoint,$waypoint['uwid'],$sequnce);
+                    $UWID[] = $updated_waypoint['UWID'];
 
                     # control images
                     journeyController::ImgClasification($waypoint['imgs'],$updated_waypoint['id']);
 
                 } else {
                     # new Waypoint. make it
-                    $new_waypoint = journeyController::setWaypoint($waypoint,$saved_journeyid,$sequnce);
+                    $new_waypoint = journeyController::setWaypoint($waypoint,$saved_journey['id'],$sequnce);
+                    $UWID[] = $new_waypoint['UWID'];
 
                     # control images
                     journeyController::ImgClasification($waypoint['imgs'],$new_waypoint['id']);
@@ -259,15 +260,14 @@ class journeyController extends Controller
             //throw $th;
             return $th;
         }
-    
 
-        // return response()->json([
-        //     'UJID' => $new_journey['UJID'],
-        //     'UWID' => $UWID,
-        //     'IMGS' => $images,
-        //     'stauts' => 'success'
-        // ]);
-        return "success";
+        return response()
+            ->json([
+            'UJID' => $saved_journey['UJID'],
+            'UWID' => $UWID,
+            // 'IMGS' => $images,
+            'stauts' => 'success',
+        ]);
     }
 
     /**
@@ -389,7 +389,7 @@ class journeyController extends Controller
         //update
         $journey->save();
 
-        return $journey->id;
+        return $journey;
     }
 
     private function UpdateWaypoint($request,$uwid,$sequnce = NULL){
