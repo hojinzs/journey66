@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\GpxController;
 use Illuminate\Http\Request;
-use App\Mail\JourneyPosted;
-use Illuminate\Support\Facades\Mail;
+use phpGPX\phpGPX;
 
 class TestController extends Controller
 {
     //
 
     public function api(Request $request){
+        //
 
+    }
+
+    public function web(Request $request){
         //
 
     }

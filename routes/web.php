@@ -23,6 +23,4 @@ Route::get('/journey/{id}/edit','journeyController@getEditAuth');
 
 Route::get('/journey/{id}/editor','journeyController@edit');
 
-Route::get('/test', function () {
-    return view('test');
-});
+Route::get('/test','TestController@web');
