@@ -181,7 +181,8 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
         height : "250",
         zoom : this.zoom,
         lat : latlng.lat(),
-        lng : latlng.lng()
+        lng : latlng.lng(),
+        encpath : this.$form.data('summary-polyline'),
     });
 
     marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng);
@@ -355,7 +356,17 @@ JournalLogger.prototype.SubmitNew = function(){
 
         })
 
+        // set track files
+        FormArray.polyline = this.$form.data('polyline');
         FormArray.gpx = this.$form.data('gpx');
+
+        // set Static img
+        summary_map = $("#journeyPosted .summary-map");
+        FormArray.staticmap = Journal.setStaticMap(summary_map,{
+            width : "500",
+            height : "500",
+            encpath : this.$form.data('summary-polyline')
+        })
     
         // ready to json
         var jsonData = JSON.stringify(FormArray);
@@ -412,7 +423,8 @@ JournalLogger.prototype.setWaypoint = function(waypoint){
     height : "300",
     zoom : map.getZoom(),
     lat : latitude,
-    lng : longitude
+    lng : longitude,
+    encpath : this.$form.data('summary-polyline'),
     });
 
     //set Marker
@@ -568,22 +580,36 @@ function swap(array, i1, i2) {
 
 var Journal = {};
 
-Journal.setStaticMap = function(target,param){
-  var staticmap = "https://maps.googleapis.com/maps/api/staticmap?"
-    +"size="+param.width+"x"+param.height
-    +"&markers=color:red|"+param.lat+","+param.lng
-    +"&zoom=" + param.zoom
-    +"&scale=2"
-    +"&key=" + gMapKey;
+Journal.setStaticMap = function(target = null,param = {}){
+    
+    var staticmap = "https://maps.googleapis.com/maps/api/staticmap?"
+        +"&size="+param.width+"x"+param.height
+        +"&scale=2";
 
-    $(target).attr('src',staticmap);
+    if(param.zoom){   
+        staticmap = staticmap 
+        +"&zoom=" + (param.zoom + 1);
+    }
 
-    // track line in static map..
-    // var colour = this.trackcolour;
-    // var width = this.trackwidth;
-    // var path = Logger.path;
-    // var encpath = google.maps.geometry.encoding.encodePath(path);
-    // staticmap = staticmap + "&path=weight:" + width + "%7Ccolor:"+ colour + "%7Cenc:"+ encpath;
+    if(param.lat && param.lng){
+    staticmap = staticmap
+        +"&center="+param.lat+","+param.lng
+        +"&markers=color:red|"+param.lat+","+param.lng;
+    };
+
+    if(param.encpath){
+        var color = "0xff0000ff";
+        var width = 3;
+        staticmap = staticmap + "&path=weight:" + width + "%7Ccolor:"+ color + "%7Cenc:"+ param.encpath;
+    }
+;
+    staticmap = staticmap +"&key=" + gMapKey;
+
+    if(target){
+        $(target).attr('src',staticmap);
+    }
+
+    return staticmap;
 }
 
 Journal.setGallary = function(target){

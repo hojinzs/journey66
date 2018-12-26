@@ -18,8 +18,8 @@ function initMap(){
         zoom: 1,
         center: {lat: 1.0, lng: 1.0}
     });
-
-  gMapKey = $('#map').data('gmapkey');
+    
+    gMapKey = $('#map').data('gmapkey');
 };
 
 function loadGPXFileIntoGoogleMap(map, filename) {
@@ -48,6 +48,8 @@ function loadGPXFileIntoGoogleMap(map, filename) {
   getData().then(function(parser,filename){
     var track = parser.track.getPath();
     var xml = parser.xmlDoc;
+
+    console.log(track);
 
     JLogger = new JournalLogger(map);
     JLogger.TrackMarker(track);
@@ -88,7 +90,9 @@ function gpxupload(e) {
         $('#uploadPath .modal-body').append('<p>Uploading file...</p>');
     },
     success: function(data){
-      $(form).attr('data-gpx',data);
+      $(form).attr('data-polyline',data.polyline_path);
+      $(form).attr('data-gpx',data.gpx_path);
+      $(form).attr('data-summary-polyline',data.encoded_polyline_summary);
 
       loadGPXFileIntoGoogleMap(map,result);
     },
@@ -104,4 +108,17 @@ function gpxupload_test(e) {
 
   loadGPXFileIntoGoogleMap(map,samplegpx);
 
+};
+
+function setTrack(pointarray){
+  var track = new google.maps.Polyline({
+    path: pointarray,
+    strokeColor: "#ff00ff",
+    strokeWeight: 5,
+    map: map,
+    visible: true,
+    zIndex: 1
+  });
+
+  return track;
 };

@@ -18,5 +18,6 @@ class TestController extends Controller
     public function web(Request $request){
         //
 
+        return view('test');
     }
 }

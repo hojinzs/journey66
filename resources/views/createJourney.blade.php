@@ -23,7 +23,7 @@
     @endcomponent
 
     <div id="map" data-gmapkey="{{$gmapkey}}"></div>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&libraries=geometry&callback=initMap"></script>
 
     <div class="container">
 

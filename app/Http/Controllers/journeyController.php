@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\gpx;
 use App\label;
 use App\journey;
 use App\waypoint;
 use App\waypoint_image;
+use App\journey_meta;
 use App\Mail\JourneyPosted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -74,9 +74,21 @@ class journeyController extends Controller
                 };
             }
 
+
         } catch (\Throwable $th) {
             //throw $th;
             return response($th,400);
+        }
+
+        // Set Meta Data
+        try{
+            if($request->has('staticmap')){
+                $summary_path = journeyController::setSummaryMap($request->input('staticmap'),$new_journey['UJID']);
+                $meta[] = journey_meta::setMetaData('mapimg',$summary_path,$new_journey['id']);
+                $meta[] = journey_meta::setMetaData('thumbnail',$summary_path,$new_journey['id']);
+            };
+        } catch (\Throwable $th) {
+            $meta = 'fail';
         }
 
         // Send Mail
@@ -96,6 +108,7 @@ class journeyController extends Controller
             'UWID' => $UWID,
             'IMGS' => $images,
             'mail' => $mail_send,
+            'meta' => $meta,
             'stauts' => 'success',
         ]);
     }
@@ -306,13 +319,15 @@ class journeyController extends Controller
         $author = $request->input('author');
         $key = Hash::make($email.$author);
 
-        $gpx_path = journeyController::StoreGpxFile($request->input('gpx'));
+        $gpx_path = journeyController::StoreTmpFile($request->input('gpx'),'gpxs');
+        $polyline_path = journeyController::StoreTmpFile($request->input('polyline'),'poly');
 
         $journey->UJID = 'tmp'.time();
         $journey->name = $request->input('title');
         $journey->description = $request->input('description');
         $journey->type = $request->input('type');
         $journey->file_path = $gpx_path;
+        $journey->polyline_path = $polyline_path;
         $journey->key = $key;
         $journey->author_email = $email;
         $journey->author_name = $author;
@@ -370,12 +385,12 @@ class journeyController extends Controller
         return $img;
     }
 
-    private function StoreGpxFile($temp_path){
+    private function StoreTmpFile($temp_path,$type){
 
         //move tmp gpx file to gpx folder
         $disk = Storage::disk('gcs');
-        $moved_path = 'gpxs/'.basename($temp_path);
-        $disk->move($temp_path,$moved_path);
+        $moved_path = $type.'/'.basename($temp_path);
+        $disk->copy($temp_path,$moved_path);
 
         return $moved_path;
     }
@@ -384,7 +399,7 @@ class journeyController extends Controller
         $disk = Storage::disk('gcs');
         $moved_path = 'imgs/'.basename($temp_path);
         
-        $disk->move($temp_path,$moved_path);
+        $disk->copy($temp_path,$moved_path);
         $moved_url = $disk->url($moved_path);
 
         return $moved_url;
@@ -481,11 +496,24 @@ class journeyController extends Controller
         return $img;
     }
 
-    private function UpdateImg($img_id,$key){
+    private function UpdateImg($img_id,$key)
+    {
         $img = waypoint_image::where('id',$img_id)->first();
         $img->number = $key;
         $img->save();
         return $img;
+    }
+
+    private function setSummaryMap($StaticMapURL,$UJID)
+    {
+        $img = file_get_contents($StaticMapURL);
+        $path = 'imgs/'.$UJID.'_staticimags.png';
+        $disk = Storage::disk('gcs');
+        $disk->put($path,$img);
+        $disk->setVisibility($path,'public');
+        $url = $disk->url($path);
+
+        return $url;
     }
 
 }

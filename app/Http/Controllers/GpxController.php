@@ -45,16 +45,24 @@ class GpxController extends Controller
                 //Polyline Parsing & Encoding
                 $xml = $request->gpx;
                 $points = GpxController::getPointArraytoXml($xml);
-                $output = GpxController::getEncodedPolyline($points);
+                $encoded_polyline = GpxController::getEncodedPolyline($points);
+                $encoded_polyline_summary = GpxController::getCompressedPolyline($encoded_polyline,2000);
 
                 //Save polyline data to tmp folder
                 $disk = Storage::disk('gcs');
-                $polypath = $disk->put('tmp',$filename.'.poly',$output);
+                $disk->put('tmp/'.$filename.'.poly',$encoded_polyline);
+                $polypath = 'tmp/'.$filename.'.poly';
 
                 //Keep Gpx file to tmp folder
                 $gpxpath = $request->gpx->storeAs('tmp',$filename,'gcs');
 
-                return response($gpxpath);
+                return response()->json([
+                    'gpx_path' => $gpxpath,
+                    'polyline_path' => $polypath,
+                    'encoded_polyline' => $encoded_polyline,
+                    'encoded_polyline_summary' => $encoded_polyline_summary,
+                    'points' => $points,
+                ]);
             } catch (\Throwable $th) {
                 //throw $th;
                 return $th;
@@ -137,17 +145,27 @@ class GpxController extends Controller
         return $points;
     }
 
-    public static function getEncodedPolyline($points = [],$compresslenth = null){
+    public static function getEncodedPolyline($points = []){
 
         $encode1 = new GooglePolyline;
         $output1 = $encode1->encodePoints($points);
 
-        if($compresslenth == null){
-            return $output1;
-        }
+        return $output1;
 
-        //compress Polyline
-        $i = strlen($output1);
+    }
+
+    public static function getCompressedPolyline($encodedPolyline,$compresslenth)
+    {
+        $i = strlen($encodedPolyline);
+        if($compresslenth >= $i){
+            return $encodedPolyline;
+        };
+
+        //Decode and Get points
+        $googlePolyline1 = new GooglePolyline;
+        $points = $googlePolyline1->decodeString($encodedPolyline);
+
+        //compress Polyline Start
         $g = $compresslenth;
         $s = $i/($g-1000);
         $f = floor($s);
@@ -164,14 +182,19 @@ class GpxController extends Controller
 
         };
 
+        //encode
         $googleObject2 = new GooglePolyline;
         $output2 = $googleObject2->encodePoints($comp_point);
 
-        return $output1;
+        return $output2;
 
     }
 }
 
+
+/**
+ * Reference :: https://github.com/emcconville/polyline-encoder
+ */
 class GooglePolyline
 {
   use \emcconville\Polyline\GoogleTrait;
