@@ -632,7 +632,7 @@ Journal.setMarker = function(map,target,Idx,latlng){
     //set MarkerEvent
     google.maps.event.addListener(marker,'click',function(event){
         $('html, body').stop().animate({
-            scrollTop: $target.offset().top 
+            scrollTop: $target.position().top 
             }, 500,function(){
                 $target.focus();
             });
