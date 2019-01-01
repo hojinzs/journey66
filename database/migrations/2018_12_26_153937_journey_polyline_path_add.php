@@ -37,7 +37,7 @@ class JourneyPolylinePathAdd extends Migration
         DB::statement('ALTER TABLE journeys CHANGE COLUMN publish_stage publish_stage VARCHAR(255) NOT NULL;');
 
         Schema::table('journeys',function(Blueprint $table){
-            $table->dropColumn('file_path');
+            $table->dropColumn('polyline_path');
         });
 
         DB::statement('ALTER TABLE journeys CHANGE COLUMN publish_stage publish_stage ENUM("Pending","Published","Private") NOT NULL DEFAULT "Pending";');

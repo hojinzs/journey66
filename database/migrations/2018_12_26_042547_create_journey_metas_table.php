@@ -36,9 +36,6 @@ class CreateJourneyMetasTable extends Migration
      */
     public function down()
     {
-        Schema::table('journey_metas',function(Bluepront $table){
-            $table->dropForeign('journey_metas_journey_id_foreign');
-        });
         Schema::dropIfExists('journey_metas');
     }
 }
