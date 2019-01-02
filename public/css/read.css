@@ -1,6 +1,25 @@
 @charset "utf-8";
 
 
+html body {
+    height: 100%;
+}
+
+.journey-container{
+    height: 100%;
+}
+
+.journey-container row{
+    height: 100%;
+}
+
+.journey-container .journey-map{
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    height: 90vh;
+}
+
 #map {
     height: 100%;
     width: 100%;
@@ -27,8 +46,9 @@
 
 @media (max-width: 767px){
 
-    .journey-map{
+    .journey-container .journey-map{
         position: static;
+        position: -webkit-static;
         height: 400px;
         width: 100%;
     }

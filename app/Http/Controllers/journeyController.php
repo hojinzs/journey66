@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\GpxController;
 
 class journeyController extends Controller
 {
@@ -135,11 +136,17 @@ class journeyController extends Controller
                     }
                     array_push($waypoints,$waypoint);
                 };
+
+                //get Polyline & encode
+                $disk = Storage::disk('gcs');
+                $poly = $disk->get($journey->polyline_path);
+                $cpoly = GpxController::getCompressedPolyline($poly,2000);
     
                 return view('showJourney',[
                     'journey' => $journey,
                     'waypoints' => $waypoints,
-                    'gpx' => basename($journey->file_path)
+                    'gpx' => basename($journey->file_path),
+                    'summary_polyline' => $cpoly,
                     ]);
             };
             return redirect('404');

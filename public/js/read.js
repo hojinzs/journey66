@@ -48,9 +48,10 @@ function initMap(){
       Journal.setStaticMap(smap,{
         width : "300",
         height : "300",
-        zoom : map.getZoom(),
+        zoom : map.getZoom() + 1,
         lat : latitude,
-        lng : longitude
+        lng : longitude,
+        encpath : $('#map').data('summary-polyline'),
       });
       
       //set Marker
