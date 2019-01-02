@@ -60,10 +60,10 @@
                     <p>write new journey</p>
                 </div>
                 <div class="a-target p-2">
-                    <a class="a-wrapper" href="/"></a>
+                    <a class="a-wrapper" href="/journey_shuffle"></a>
                     <i class="fas fa-random fa-5x"></i>
-                    <h3>read journey</h3>
-                    <p>read journey</p>	
+                    <h3>shuffle</h3>
+                    <p>read journey randomly</p>
                 </div>
             </div>
         </div>

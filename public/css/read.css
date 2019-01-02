@@ -25,6 +25,37 @@ html body {
     width: 100%;
 }
 
+.journey-contents h2{
+    margin-top: 0.5em;
+}
+
+.journey-contents .author{
+    color: #808080;
+    font-weight: bolder;
+}
+
+.journey-contents .waypoint{
+    margin-top: 0.5em;
+    padding-left: 0.5em;
+}
+
+.journey-contents .waypoint h3{
+    color: #1a1a1a;
+}
+
+.journey-contents .waypoint .waypoint_description p{
+    color: #808080;
+    font-weight: 200;
+}
+
+.journey-contents .waypoint-medias{
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
 .waypoint-galarry {
     overflow: hidden;
     overflow-x: scroll;
@@ -42,6 +73,17 @@ html body {
 .waypoint-galarry .galarry-images .img-container img {
     width: auto;
     height: 100%;
+}
+
+.waypoint-medias .galarry-control{
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
+.journey-contents .journey-meta{
+    color: #808080;
+    font-weight: 200;
 }
 
 @media (max-width: 767px){

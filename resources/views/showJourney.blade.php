@@ -27,6 +27,7 @@
     @component('components.TopMenu')
     @endcomponent
 
+    <article>
     <div class="container-fluid journey-container">
         <div class="row">
         <div class="col-md-5 journey-map">
@@ -34,15 +35,27 @@
             <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&callback=initMap"></script>
             </div>
         <div class="journey-contents col-md-7">
-            <h1>{{$journey['name']}}</h1>
-            <p>{{$journey['description']}}</p>
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>{{$journey['name']}}</h2>
+                    <p class="author">{{__('journey.form.author')}} :: {{$journey['author_name']}}<p>
+                    <hr>
+                    <p>{{$journey['description']}}</p>
+                </div>
+            </div>
 
             @foreach ($waypoints as $waypoint)
-            <div class="waypoint" data-latitude="{{$waypoint['latitude']}}" data-longitude="{{$waypoint['longitude']}}">
-                <div class="row">
-                    <div class="col-md-12 waypoint_name">
-                        <span class="badge badge-secondary">{{$waypoint['type']}}</span>
-                    </div>
+            <section>
+            <div class="row waypoint" data-latitude="{{$waypoint['latitude']}}" data-longitude="{{$waypoint['longitude']}}">
+                <div class="col-md-12 waypoint_type">
+                    <span class="badge badge-secondary">{{__('journey.label.waypoint.'.$waypoint['type'])}}</span>
+                </div>
+                @isset($waypoint['name'])
+                <div class="col-md-12 waypoint_name">
+                    <h3>{{$waypoint['name']}}</h3>
+                </div>
+                @endisset
+                <div class="waypoint-medias">
                     <div class="col-md-12 waypoint-galarry">
                         <div class="galarry-images">
                             <div class="img-container">
@@ -55,25 +68,32 @@
                             @endforeach
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    @isset($waypoint['images'])
+                    <div class="galarry-control">
                         <button type="button" class="btn btn-light">< Prev</button> 
                         <button type="button" class="btn btn-light">Next ></button> 
                     </div>
-                    @isset($waypoint['name'])
-                    <div class="col-md-12 waypoint_name">
-                        <h2>{{$waypoint['name']}}</h2>
-                    </div>
-                    @endisset
-                    @isset($waypoint['description'])
-                    <div class="col-md-12 waypoint_description">
-                        <p>{{$waypoint['description']}}</p>
-                    </div>
                     @endisset
                 </div>
+                @isset($waypoint['description'])
+                <div class="col-md-12 waypoint_description">
+                    <p>{{$waypoint['description']}}</p>
+                </div>
+                @endisset
             </div>
+            <section>
             @endforeach
+
+            <hr>
+
+            <div class="row journey-metas">
+                <div class="journey-meta col-md-6">
+                    <p>{{__('journey.form.created_at')}}:: {{date('d/m/Y',strtotime($waypoint['created_at']))}}</p>
+                </div>
+            </div>
         </div>
         </div>
     </div>
+    </article>
 
 @endsection
