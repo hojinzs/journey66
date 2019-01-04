@@ -18,14 +18,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 /**
- * Posting New Journey
+ * journey write/edit API
  */
-Route::post('/newjourney','journeyController@store');
-
-/**
- * edit Journey
- */
-Route::post('/editjourney/{id}','journeyController@update');
+Route::post('/newjourney','journeyController@store'); // Posting New journey
+Route::post('/editjourney/{id}','journeyController@update'); // Update journey
+Route::delete('/deletejourney/{id}','journeyController@destroy'); // Delete journey temponary
 
 /**
  * Upload Tmp Image File

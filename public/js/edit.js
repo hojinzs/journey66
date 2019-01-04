@@ -50,5 +50,6 @@ function initMap(){
           Journey.setWaypoint(waypoint);
         });
         Journey.UpdateJourney();
+        Journey.DeleteJourney($('#delete'));
     });
   };

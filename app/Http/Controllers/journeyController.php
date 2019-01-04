@@ -315,6 +315,17 @@ class journeyController extends Controller
     public function destroy($id)
     {
         //
+        try {
+            //code...
+            $journey = journey::where('UJID',$id)->first();
+            $journey->delete();
+
+            return response(200,'journey delete success');
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $th;
+        }
+        
     }
 
     private function setJourney($request){

@@ -56,6 +56,23 @@ JournalLogger.prototype.UpdateJourney = function(){
 
 }
 
+JournalLogger.prototype.DeleteJourney = function($target){
+    var Logger = this;
+
+    $target.on("click", function(event) {
+        event.preventDefault();
+
+        var loading = $('.img-loading').length;
+        if(loading > 0) {
+            alert(loading+'images upload is unfinished');
+            return;
+        };
+
+        Logger.SubmitDelete();
+    });
+
+}
+
 JournalLogger.prototype.TrackMarker = function(track){
     var colour = this.trackcolour;
     var width = this.trackwidth;
@@ -571,6 +588,23 @@ JournalLogger.prototype.SubmitUpdate = function(){
     });
 }
 
+
+JournalLogger.prototype.SubmitDelete = function(){
+    var UJID = this.$form.data('ujid');
+
+    $.ajax({
+        url:"/api/deletejourney/"+UJID,
+        method: "DELETE",
+        contentType: "application/json",
+        dataType: "text",
+        success: function(data){
+            alert(data);
+        },
+        error: function(xhr,status,error){
+            alert(error);
+        }
+    });
+}
 
 function swap(array, i1, i2) {
     var temp = array[i2];

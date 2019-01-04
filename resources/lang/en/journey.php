@@ -33,6 +33,7 @@ return [
         'author_ph' => 'let us to know who writen this wonderful journey',
         'email' => 'email',
         'email_check' => 'accept subscriptions email information for edit or delete the journey, not use for advertising or mailing',
+        'delete' => 'delete journey',
         'inform' => [
             'setmarker' => 'Click on the memorable point. And tell me about your journey.'
         ],
