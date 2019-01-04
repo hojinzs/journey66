@@ -39,6 +39,13 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="waypoint-name" class="col-md-2 col-form-label">{{__('journey.form.waypoint.name')}}</label>
+                        <div class="col-md-10">
+                            <input id="waypoint-name" name="waypoint-name" class="form-control" type="text"
+                            @isset($waypoint['name'])value="{{$waypoint['name']}}"@endisset>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="image" class="col-md-2 col-form-label">{{__('journey.form.waypoint.photo')}}</label>
                         <div id="waypoint-images" class="col-md-10">
                             <div class="image" style="overflow: hidden;">
@@ -49,13 +56,6 @@
                                 @endisset
                             </div>
                             <input type="file" id="input_img" />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="waypoint-name" class="col-md-2 col-form-label">{{__('journey.form.waypoint.name')}}</label>
-                        <div class="col-md-10">
-                            <input id="waypoint-name" name="waypoint-name" class="form-control" type="text"
-                            @isset($waypoint['name'])value="{{$waypoint['name']}}"@endisset>
                         </div>
                     </div>
                     <div class="form-group row">

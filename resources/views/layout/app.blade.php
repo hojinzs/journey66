@@ -33,14 +33,13 @@
         <!-- Load Font By Language -->
         @switch($lang)
             @case('ko')
-                <link href="https://fonts.googleapis.com/css?family=Nanum+Myeongjo:700&amp;subset=korean" rel="stylesheet">
-                <style>body{font-family: 'Nanum Myeongjo', serif; !important} </style>
+                <link href="https://fonts.googleapis.com/css?family=Noto+Serif+KR" rel="stylesheet">
+                <style>body{font-family: 'Noto Serif KR', serif; !important} </style>
                 @break
             @case('en')
                 
                 @break
             @default
-            
         @endswitch
 
     </head>

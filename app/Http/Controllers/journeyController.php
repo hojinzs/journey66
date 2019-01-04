@@ -154,6 +154,22 @@ class journeyController extends Controller
         return redirect('404');
     }
 
+        /**
+     * Display the specified resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showRandom()
+    {
+
+        $journey = journey::select('UJID')
+            ->where('publish_stage','=','Published')
+            ->inRandomOrder()
+            ->first();
+        return redirect('journey/'.$journey->UJID);
+
+    }
+
     /**
      * Check key and confirm edit
      * 
