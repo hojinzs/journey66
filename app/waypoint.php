@@ -8,4 +8,12 @@ class waypoint extends Model
 {
     //
     public $timestamps = false;
+
+    /**
+     * get all of the waypoint's metas
+     */
+    public function metas()
+    {
+        return $this->morphMany('App\Meta','metable');
+    }
 }

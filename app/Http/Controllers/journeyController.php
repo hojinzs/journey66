@@ -87,6 +87,18 @@ class journeyController extends Controller
                 $summary_path = journeyController::setSummaryMap($request->input('staticmap'),$new_journey['UJID']);
                 $meta[] = journey_meta::setMetaData('mapimg',$summary_path,$new_journey['id']);
                 $meta[] = journey_meta::setMetaData('thumbnail',$summary_path,$new_journey['id']);
+
+                $new_journey->metas()->createMany([
+                    [
+                    'name' => 'mapimg',
+                    'value' => $summary_path
+                    ],
+                    [
+                    'name' => 'thumbnail',
+                    'value' => $summary_path
+                    ],
+                ]);
+                
             };
         } catch (\Throwable $th) {
             $meta = 'fail';

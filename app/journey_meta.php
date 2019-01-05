@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class journey_meta extends Model
 {
-    //
     public $timestamps = false;
 
     public static function setMetaData($meta,$value,$journey_id)
