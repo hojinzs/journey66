@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Config;
 use phpGPX\phpGPX;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -45,6 +46,7 @@ class GpxController extends Controller
                 //Polyline Parsing & Encoding
                 $xml = $request->gpx;
                 $points = GpxController::getPointArraytoXml($xml);
+                $sequence = GpxController::getSequenceArrayFromXml($xml);
                 $encoded_polyline = GpxController::getEncodedPolyline($points);
                 $encoded_polyline_summary = GpxController::getCompressedPolyline($encoded_polyline,2000);
 
@@ -59,6 +61,7 @@ class GpxController extends Controller
                 return response()->json([
                     'gpx_path' => $gpxpath,
                     'polyline_path' => $polypath,
+                    'sequence' => $sequence,
                     'encoded_polyline' => $encoded_polyline,
                     'encoded_polyline_summary' => $encoded_polyline_summary,
                     'points' => $points,
@@ -145,6 +148,33 @@ class GpxController extends Controller
         return $points;
     }
 
+    public static function getSequenceArrayFromXml($xml){
+        $gpx = new phpGPX();
+        $file = $gpx->load($xml);
+    
+        $points = [];
+        foreach ($file->tracks as $track)
+        {
+            $track_points = $track->getPoints();
+            foreach ($track_points as $sequence => $point) {
+                
+                $time = \Carbon\Carbon::instance($point->time)->timezone(Config::get('app.timezone'))->toDateTimeString();
+                $distance = round($point->distance * 0.001,2)."km";
+
+                $points[] = [
+                    'sequence' => $sequence,
+                    'latitude' => $point->latitude,
+                    'longitude' => $point->longitude,
+                    'distance' => $distance,
+                    'elevation' => $point->elevation,
+                    'time' => $time,
+                ];
+            }
+        }
+
+        return $points;
+    }
+
     public static function getEncodedPolyline($points = []){
 
         $encode1 = new GooglePolyline;
@@ -190,7 +220,6 @@ class GpxController extends Controller
 
     }
 }
-
 
 /**
  * Reference :: https://github.com/emcconville/polyline-encoder

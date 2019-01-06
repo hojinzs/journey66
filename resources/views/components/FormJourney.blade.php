@@ -131,11 +131,13 @@
                                 <input type="submit" value="Submit" type="button" class="btn btn-primary btn-lg btn-block">
                             </div>
                         </div>
+                        @isset($journey)
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <button type="button" id="delete" class="btn btn-outline-danger">{{__('journey.form.delete')}}</button>
                             </div>
                         </div>
+                        @endisset
                     </div>
                 </div>
             </div>

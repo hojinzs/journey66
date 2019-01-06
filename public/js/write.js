@@ -22,7 +22,7 @@ function initMap(){
     gMapKey = $('#map').data('gmapkey');
 };
 
-function loadGPXFileIntoGoogleMap(map, filename) {
+function loadGPXFileIntoGoogleMap(map, filename, gpx_data) {
 
   function getData(callback){
       return new Promise(function(resolve,reject){
@@ -39,7 +39,7 @@ function loadGPXFileIntoGoogleMap(map, filename) {
                   // parser.addRoutepointsToMap();         // Add the routepoints
                   // parser.addWaypointsToMap();           // Add the waypoints
 
-                  resolve(parser,filename);
+                  resolve(parser,filename,data);
               }
           });
       });
@@ -49,9 +49,10 @@ function loadGPXFileIntoGoogleMap(map, filename) {
     var track = parser.track.getPath();
     var xml = parser.xmlDoc;
 
-    console.log(track);
+    // gpx = JSON.parse(gpx_data);
 
     JLogger = new JournalLogger(map);
+    JLogger.setSequence(gpx_data.sequence);
     JLogger.TrackMarker(track);
     JLogger.setForm(form);
     JLogger.CreateJourney();
@@ -94,7 +95,7 @@ function gpxupload(e) {
       $(form).attr('data-gpx',data.gpx_path);
       $(form).attr('data-summary-polyline',data.encoded_polyline_summary);
 
-      loadGPXFileIntoGoogleMap(map,result);
+      loadGPXFileIntoGoogleMap(map,result,data);
     },
     complete: function(){
       // $('#uploadPath .modal-body').empty();

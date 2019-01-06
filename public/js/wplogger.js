@@ -5,6 +5,7 @@ var JournalLogger = function(map){
     this.waypoints = [];
     this.path = [];
     this.zoom = this.map.getZoom();
+    this.sequence = [];
 
     //track setting
     this.trackcolour = "#ff00ff"; // red
@@ -21,6 +22,10 @@ JournalLogger.prototype.setForm = function(form_id){
     this.$dummywp = $('#DUMMY');
     this.$postingModal = $('#journeyPosted');
 };
+
+JournalLogger.prototype.setSequence = function($sequence = {}){
+    this.sequence = $sequence;
+}
 
 JournalLogger.prototype.CreateJourney = function(){
     var Logger = this;
@@ -123,6 +128,7 @@ JournalLogger.prototype.TrackMarker = function(track){
 
     // event :: New Waypoint
     google.maps.event.addListener(polyline,'click',function(event){
+        console.log(event);
         var plat = event.latLng.lat();
         var plng = event.latLng.lng();
         var point = new google.maps.LatLng(plat,plng);
@@ -137,6 +143,11 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
     var Logger = this;
     var $form = this.$waypointlist;
     var $dummywp = this.$dummywp;
+
+    //get Near Node
+    node = Journal.findSequenceNode(latlng,this.sequence);
+    console.log(node);
+
 
     //get last waypoint node
     var Idx = this.waypoints.length + 1
@@ -709,5 +720,23 @@ Journal.setCurrentImageArr = function(Arr = {}){
     });
 
     return imgs;
+
+}
+
+Journal.findSequenceNode = function(LatLng={},Arr=[]){
+
+    var vs = null;
+    var gatcha;
+    Arr.forEach(point => {
+        var vslt = point.latitude - LatLng.lat();
+        var vsln = point.longitude - LatLng.lng();
+        abs = Math.abs(vslt + vsln);
+        if(vs == null || vs > abs){
+            vs = abs;
+            gatcha = point;
+        };
+    });
+
+    return gatcha;
 
 }
