@@ -1,5 +1,4 @@
 var map;
-var form = '#journey';
 var JLogger;
 var gMapKey;
 
@@ -49,18 +48,26 @@ function loadGPXFileIntoGoogleMap(map, filename, gpx_data) {
     var track = parser.track.getPath();
     var xml = parser.xmlDoc;
 
-    // gpx = JSON.parse(gpx_data);
-
     JLogger = new JournalLogger(map);
+    JLogger.setForm({
+      form: '#journey',
+      waypoint_list: '#waypoint-list',
+      dummy_waypoint: '#DUMMY',
+      journey_posted_modal: '#journeyPosted',
+    });
+    JLogger.gpx = xml;
+    JLogger.$form.attr('data-polyline',gpx_data.polyline_path);
+    JLogger.$form.attr('data-gpx',gpx_data.gpx_path);
+    JLogger.$form.attr('data-summary-polyline',gpx_data.encoded_polyline_summary);
+
     JLogger.setSequence(gpx_data.sequence);
     JLogger.TrackMarker(track);
-    JLogger.setForm(form);
     JLogger.CreateJourney();
-    JLogger.gpx = xml;
+    JLogger.setStartEndWaypoint();
 
     $('#uploadPath').modal('hide');
     
-    $('#gpx-upload-file').prependTo(form).hide();
+    $('#gpx-upload-file').prependTo('#journey').hide();
     $('#GPX-upload').detach();
   });
 
@@ -91,9 +98,9 @@ function gpxupload(e) {
         $('#uploadPath .modal-body').append('<p>Uploading file...</p>');
     },
     success: function(data){
-      $(form).attr('data-polyline',data.polyline_path);
-      $(form).attr('data-gpx',data.gpx_path);
-      $(form).attr('data-summary-polyline',data.encoded_polyline_summary);
+      // JLogger.$form.attr('data-polyline',data.polyline_path);
+      // JLogger.$form.attr('data-gpx',data.gpx_path);
+      // JLogger.$form.attr('data-summary-polyline',data.encoded_polyline_summary);
 
       loadGPXFileIntoGoogleMap(map,result,data);
     },

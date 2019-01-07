@@ -14,13 +14,18 @@ var JournalLogger = function(map){
 
 };
 
-JournalLogger.prototype.setForm = function(form_id){
-    this.$form=$(form_id);
+JournalLogger.prototype.setForm = function(Elements = {
+    form: null,
+    waypoint_list: null,
+    dummy_waypoint: null,
+    journey_posted_modal: null,
+}){
+    this.$form=$(Elements.form);
+    this.$waypointlist = $(Elements.waypoint_list);
+    this.$dummywp = $(Elements.dummy_waypoint);
+    this.$postingModal = $(Elements.journey_posted_modal);
 
     this.$form.show();
-    this.$waypointlist = this.$form.find('#waypoint-list');
-    this.$dummywp = $('#DUMMY');
-    this.$postingModal = $('#journeyPosted');
 };
 
 JournalLogger.prototype.setSequence = function($sequence = {}){
@@ -126,28 +131,49 @@ JournalLogger.prototype.TrackMarker = function(track){
 
     });
 
+
     // event :: New Waypoint
     google.maps.event.addListener(polyline,'click',function(event){
-        console.log(event);
+
         var plat = event.latLng.lat();
         var plng = event.latLng.lng();
         var point = new google.maps.LatLng(plat,plng);
 
-        Logger.NewWaypoint(point);
+        node = Logger.findSequenceNode(point,Logger.sequence);
+
+        Logger.NewWaypoint(node,{
+            offset: true
+        });
         
     });
 
 }
 
-JournalLogger.prototype.NewWaypoint = function(latlng){
+// set Starting point & Destination Waypoint
+JournalLogger.prototype.setStartEndWaypoint = function(){
+
+    var starting = this.sequence[0];
+    this.NewWaypoint(starting,{
+        type: 'starting'
+    });
+
+    var destination = this.sequence[this.sequence.length - 1];
+    this.NewWaypoint(destination,{
+        type: 'destination'
+    });
+};
+
+JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
+    type: null,
+    offset: false,
+}){
     var Logger = this;
     var $form = this.$waypointlist;
     var $dummywp = this.$dummywp;
 
-    //get Near Node
-    node = Journal.findSequenceNode(latlng,this.sequence);
-    console.log(node);
-
+    var plat = SequencePoint.latitude;
+    var plng = SequencePoint.longitude;
+    var latlng = new google.maps.LatLng(plat,plng);
 
     //get last waypoint node
     var Idx = this.waypoints.length + 1
@@ -158,51 +184,88 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
     $newWaypoint.attr("id",Idx);
     $newWaypoint.attr("name",Idx);
     $newWaypoint.data("index",Idx);
+    $newWaypoint.data("sequence",SequencePoint.Sequence);
     $newWaypoint.data("mode",'new');
-    $newWaypoint.find('#wp-name').text('Waypoint #'+Idx);
     $newWaypoint.find('#Lat').val(latlng.lat());
     $newWaypoint.find('#Lng').val(latlng.lng());
+
+    //when setting type
+    switch (prop.type) {
+        case 'starting':
+            $newWaypoint.find('#waypoint-type').val('starting');
+            $newWaypoint.find('#wp-name').text('Starting');
+            $newWaypoint.find('#waypoint-type').prop('disabled', true);
+            $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng,{
+                title: "startingPoint",
+                label: "S"
+            });
+            break;
+
+        case 'destination':
+            $newWaypoint.find('#waypoint-type').val('destination');
+            $newWaypoint.find('#wp-name').text('Finish');
+            $newWaypoint.find('#waypoint-type').prop('disabled', true);
+            $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng,{
+                title: "destinationPoint",
+                label: "F"
+            });
+            break;
+    
+        default:
+            $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng);
+            $newWaypoint.find('#wp-name').text('Waypoint #'+Idx);
+
+            // deletable
+            $newWaypoint.find('#waypoint-delete').show();
+            $newWaypoint.find('#waypoint-delete').on('click',function(e){
+                $newWaypoint.detach();
+                $newWaypoint.marker.setMap(null);
+        
+                var index = Logger.waypoints.indexOf($newWaypoint);
+                Logger.waypoints.splice(index,1);
+                Logger.setWaypointReindex();
+            });
+            break;
+    }
+
     $newWaypoint.show();
 
     //set NewWaypointEvent
-    $newWaypoint.find('#waypoint-delete').on('click',function(e){
-        $newWaypoint.detach();
-        $newWaypoint.marker.setMap(null);
+    // (2019.1.8 unuse up-down waypoint feature. remove this code later)
+    // $newWaypoint.find('#waypoint-up').on('click',function(e){
+    //     var oi = Logger.waypoints.indexOf($newWaypoint);
+    //     if (oi == 0){return;}
 
-        var index = Logger.waypoints.indexOf($newWaypoint);
-        Logger.waypoints.splice(index,1);
-        Logger.setWaypointReindex();
-    });
-    $newWaypoint.find('#waypoint-up').on('click',function(e){
-        var oi = Logger.waypoints.indexOf($newWaypoint);
-        if (oi == 0){return;}
-
-        var ti = oi - 1;
-        swap(Logger.waypoints,oi,ti);
-        Logger.setWaypointReindex();
+    //     var ti = oi - 1;
+    //     swap(Logger.waypoints,oi,ti);
+    //     Logger.setWaypointReindex();
         
-        $newWaypoint.after($newWaypoint.prev());        
-        $('html, body').stop().animate({
-            scrollTop: $newWaypoint.offset().top 
-            }, 500);
-    });
-    $newWaypoint.find('#waypoint-down').on('click',function(e){
-        var oi = Logger.waypoints.indexOf($newWaypoint);
-        if (oi == Logger.waypoints.length-1){return;}
+    //     $newWaypoint.after($newWaypoint.prev());        
+    //     $('html, body').stop().animate({
+    //         scrollTop: $newWaypoint.offset().top 
+    //         }, 500);
+    // });
+    // $newWaypoint.find('#waypoint-down').on('click',function(e){
+    //     var oi = Logger.waypoints.indexOf($newWaypoint);
+    //     if (oi == Logger.waypoints.length-1){return;}
 
-        var ti = oi + 1;
-        swap(Logger.waypoints,oi,ti);
-        Logger.setWaypointReindex();
+    //     var ti = oi + 1;
+    //     swap(Logger.waypoints,oi,ti);
+    //     Logger.setWaypointReindex();
 
-        $newWaypoint.before($newWaypoint.next());
-        $('html, body').stop().animate({
-            scrollTop: $newWaypoint.offset().top 
-            }, 500);
-    });
+    //     $newWaypoint.before($newWaypoint.next());
+    //     $('html, body').stop().animate({
+    //         scrollTop: $newWaypoint.offset().top 
+    //         }, 500);
+    // });
+
+    //set image Gallary
+    $newWaypoint.imgs = [];
     $newWaypoint.find('#input_img').on('change',function(e){
         Logger.handleImgsFilesSelect(e,$newWaypoint);
     });
 
+    // set Static Map
     $StaticMap = $newWaypoint.find('#static-map');
     Journal.setStaticMap($StaticMap,{
         width : "250",
@@ -213,24 +276,21 @@ JournalLogger.prototype.NewWaypoint = function(latlng){
         encpath : this.$form.data('summary-polyline'),
     });
 
-    marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng);
-
-    $newWaypoint.marker = marker;
-    $newWaypoint.imgs = [];
-
+    // add Waypoint
     Logger.waypoints.push($newWaypoint);
-
-    //add Waypoint
     $form.append($newWaypoint);
 
-    var timer = setTimeout(function(){
-        $('html, body').stop().animate({
-            scrollTop: $newWaypoint.offset().top 
-            }, 500,function(){
-                $newWaypoint.focus();
-                clearTimeout(timer);
-        });
-    },700);
+    // offset 
+    if(prop.offset){
+        var timer = setTimeout(function(){
+            $('html, body').stop().animate({
+                scrollTop: $newWaypoint.offset().top 
+                }, 500,function(){
+                    $newWaypoint.focus();
+                    clearTimeout(timer);
+            });
+        },700);
+    }
 };
 
 JournalLogger.prototype.setWaypointReindex = function(){
@@ -617,6 +677,24 @@ JournalLogger.prototype.SubmitDelete = function(){
     });
 }
 
+JournalLogger.prototype.findSequenceNode = function(LatLng={},Arr=[]){
+
+    var vs = null;
+    var gatcha = {};
+    Arr.forEach(point => {
+        var vslt = point.latitude - LatLng.lat();
+        var vsln = point.longitude - LatLng.lng();
+        abs = Math.abs(vslt + vsln);
+        if(vs == null || vs > abs){
+            vs = abs;
+            gatcha = point;
+        };
+    });
+
+    return gatcha;
+
+}
+
 function swap(array, i1, i2) {
     var temp = array[i2];
     array[i2] = array[i1];
@@ -663,18 +741,20 @@ Journal.setGallary = function(target){
   })
 };
 
-Journal.setMarker = function(map,target,Idx,latlng){
+Journal.setMarker = function(map,target,Idx,latlng,prop = {
+    title: 'Marker #'+Idx,
+    label: 'W'+ Idx,
+}){
     var $target = target
-
     //get marker node
     marker = new google.maps.Marker({
         position: latlng,
         map: map,
-        title: 'Marker #'+Idx,
-        label: 'W'+ Idx
+        title: prop.title,
+        label: prop.label
     });
     
-    //set MarkerEvent
+    //set Marker Offset Event
     google.maps.event.addListener(marker,'click',function(event){
         $('html, body').stop().animate({
             scrollTop: $target.position().top 
@@ -720,23 +800,5 @@ Journal.setCurrentImageArr = function(Arr = {}){
     });
 
     return imgs;
-
-}
-
-Journal.findSequenceNode = function(LatLng={},Arr=[]){
-
-    var vs = null;
-    var gatcha;
-    Arr.forEach(point => {
-        var vslt = point.latitude - LatLng.lat();
-        var vsln = point.longitude - LatLng.lng();
-        abs = Math.abs(vslt + vsln);
-        if(vs == null || vs > abs){
-            vs = abs;
-            gatcha = point;
-        };
-    });
-
-    return gatcha;
 
 }

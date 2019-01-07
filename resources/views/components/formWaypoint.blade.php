@@ -67,9 +67,9 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button id="waypoint-up" type="button" class="btn btn-light">{{__('journey.form.waypoint.btn_up')}}</button>
-                    <button id="waypoint-down" type="button" class="btn btn-light">{{__('journey.form.waypoint.btn_down')}}</button>
-                    <button id="waypoint-delete" type="button" class="btn btn-danger">{{__('journey.form.waypoint.btn_delete')}}</button>
+                    <button id="waypoint-up" type="button" class="btn btn-light" style="display:none">{{__('journey.form.waypoint.btn_up')}}</button>
+                    <button id="waypoint-down" type="button" class="btn btn-light" style="display:none">{{__('journey.form.waypoint.btn_down')}}</button>
+                    <button id="waypoint-delete" type="button" class="btn btn-danger" style="display:none">{{__('journey.form.waypoint.btn_delete')}}</button>
                     <button id="waypoint-undelete" type="button" class="btn btn-outline-primary" style="display:none">{{__('journey.form.waypoint.btn_undelete')}}</button>
                 </div>
             </div>
