@@ -64,7 +64,7 @@ class journeyController extends Controller
             $images = [];
             $wpArr = $request->input('waypoints');
             foreach ($wpArr as $key => $waypoint) {
-                $new_waypoint = journeyController::setWaypoint($waypoint,$new_journey['id'],$key+1);
+                $new_waypoint = journeyController::setWaypoint($waypoint,$new_journey['id']);
                 $UWID[] = $new_waypoint['UWID'];
 
                 //set Waypoint images
@@ -138,7 +138,7 @@ class journeyController extends Controller
         $journey = journey::where('UJID',$id)->first();
         if($journey){
             if($journey['publish_stage']=='Published'){
-                $arr = waypoint::where('journey_id',$journey->id)->get();
+                $arr = waypoint::where('journey_id',$journey->id)->orderBy('sequence','asc')->get();
                 $waypoints = array();
     
                 foreach($arr as $k => $waypoint){
@@ -233,7 +233,7 @@ class journeyController extends Controller
         }
 
         // set waypoint data
-        $arr = waypoint::where('journey_id',$journey->id)->get();
+        $arr = waypoint::where('journey_id',$journey->id)->orderBy('sequence','asc')->get();
         $waypoints = array();
 
         foreach($arr as $k => $waypoint){
@@ -311,7 +311,7 @@ class journeyController extends Controller
                 } else {
                     # new Waypoint. make it
                     $waypoints_index = $waypoints_index +1;
-                    $new_waypoint = journeyController::setWaypoint($waypoint,$saved_journey['id'],$waypoints_index);
+                    $new_waypoint = journeyController::setWaypoint($waypoint,$saved_journey['id']);
                     $UWID[] = $new_waypoint['UWID'];
 
                     # control images
@@ -393,17 +393,17 @@ class journeyController extends Controller
     /**
      * 
      */
-    private function setWaypoint($request,$journey_id,$sequnce){
+    private function setWaypoint($request,$journey_id){
 
         // make resource
-        $UWID = 'WP'.hash('crc32b',$journey_id.'.'.$sequnce.'.'.microtime());
+        $UWID = 'WP'.hash('crc32b',$journey_id.'.'.$request['sequence'].'.'.microtime());
 
         // set
         $waypoint = new waypoint;
 
         $waypoint->UWID = $UWID;
         $waypoint->journey_id = $journey_id;
-        $waypoint->sequence = $sequnce;
+        $waypoint->sequence = $request['sequence'];
         $waypoint->name = $request['name'];
         $waypoint->description = $request['description'];
         $waypoint->type = $request['type'];

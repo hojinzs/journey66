@@ -59,7 +59,6 @@ function loadGPXFileIntoGoogleMap(map, filename, gpx_data) {
     JLogger.$form.attr('data-polyline',gpx_data.polyline_path);
     JLogger.$form.attr('data-gpx',gpx_data.gpx_path);
     JLogger.$form.attr('data-summary-polyline',gpx_data.encoded_polyline_summary);
-
     JLogger.setSequence(gpx_data.sequence);
     JLogger.TrackMarker(track);
     JLogger.CreateJourney();
@@ -98,10 +97,6 @@ function gpxupload(e) {
         $('#uploadPath .modal-body').append('<p>Uploading file...</p>');
     },
     success: function(data){
-      // JLogger.$form.attr('data-polyline',data.polyline_path);
-      // JLogger.$form.attr('data-gpx',data.gpx_path);
-      // JLogger.$form.attr('data-summary-polyline',data.encoded_polyline_summary);
-
       loadGPXFileIntoGoogleMap(map,result,data);
     },
     complete: function(){

@@ -42,14 +42,25 @@ function initMap(){
         var track = parser.track.getPath();
 
         Journey = new JournalLogger(map);
-        Journey.setForm(form);
+        Journey.setForm({
+          form: '#journey',
+          waypoint_list: '#waypoint-list',
+          dummy_waypoint: '#DUMMY',
+          journey_posted_modal: '#journeyPosted',
+        });
+        JLogger.gpx = xml;
+        JLogger.$form.attr('data-polyline',gpx_data.polyline_path);
+        JLogger.$form.attr('data-gpx',gpx_data.gpx_path);
+        JLogger.$form.attr('data-summary-polyline',gpx_data.encoded_polyline_summary);
         Journey.TrackMarker(track);
+        JLogger.setSequence(gpx_data.sequence);
+        Journey.UpdateJourney();
+        Journey.DeleteJourney($('#delete'));
 
+        // updates
         waypoints = $('.waypoint').not('#DUMMY');
         $.each(waypoints,function(k,waypoint){
           Journey.setWaypoint(waypoint);
         });
-        Journey.UpdateJourney();
-        Journey.DeleteJourney($('#delete'));
     });
   };
