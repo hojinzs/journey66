@@ -166,6 +166,44 @@ class journeyController extends Controller
         return redirect('404');
     }
 
+    /**
+     * 
+     */
+    public function get(Request $request, $id)
+    {
+        $sessionKey = $request->session()->get('journeyKey');
+        $journey = journey::where('UJID',$id)->first();
+        if($journey){
+            if($journey['publish_stage']=='Published' || $journey['key'] == $sessionKey ){
+                $arr = waypoint::where('journey_id',$journey->id)->orderBy('sequence','asc')->get();
+                $waypoints = array();
+    
+                foreach($arr as $k => $waypoint){
+                    $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
+                    if($images){
+                        $waypoint['images'] = $images;
+                    }
+                    array_push($waypoints,$waypoint);
+                };
+
+                //get Polyline & encode
+                $disk = Storage::disk('gcs');
+                $poly = $disk->get($journey->polyline_path);
+                $cpoly = GpxController::getCompressedPolyline($poly,2000);
+
+                return response()->json([
+                    'journey' => $journey,
+                    'waypoints' => $waypoints,
+                    'polyline' => $poly,
+                    'summary_polyline' => $cpoly,
+
+                ]);
+            };
+            return redirect('404');
+        };
+        return redirect('404');
+    }
+
         /**
      * Display the specified resource.
      *
@@ -194,7 +232,7 @@ class journeyController extends Controller
         if ($request->has('key')) {
             # flash sesstion journey key
             $requestKey = $request->query('key');
-            $request->session()->flash('journeyKey',$requestKey);
+            $request->session()->put('journeyKey',$requestKey);
             return redirect('journey/'.$id.'/editor');
         } else {
             # invaild connection
