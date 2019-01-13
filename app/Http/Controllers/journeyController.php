@@ -171,10 +171,10 @@ class journeyController extends Controller
      */
     public function get(Request $request, $id)
     {
-        $sessionKey = $request->session()->get('journeyKey');
+        $journeyKey = $request->query('key');
         $journey = journey::where('UJID',$id)->first();
         if($journey){
-            if($journey['publish_stage']=='Published' || $journey['key'] == $sessionKey ){
+            if($journey['publish_stage']=='Published'||$journey['key'] == $journeyKey ){
                 $arr = waypoint::where('journey_id',$journey->id)->orderBy('sequence','asc')->get();
                 $waypoints = array();
     
@@ -199,9 +199,9 @@ class journeyController extends Controller
 
                 ]);
             };
-            return redirect('404');
+            return abort(403,'Unauthorized action - key undefined');
         };
-        return redirect('404');
+        return abort(400,'Cannot find Journey');
     }
 
         /**
@@ -216,7 +216,10 @@ class journeyController extends Controller
             ->where('publish_stage','=','Published')
             ->inRandomOrder()
             ->first();
-        return redirect('journey/'.$journey->UJID);
+        return redirect()
+            ->action('journeyController@show',[
+                'id' => $journey->UJID
+            ]);
 
     }
 
@@ -232,11 +235,12 @@ class journeyController extends Controller
         if ($request->has('key')) {
             # flash sesstion journey key
             $requestKey = $request->query('key');
-            $request->session()->put('journeyKey',$requestKey);
-            return redirect('journey/'.$id.'/editor');
+            return redirect()
+                ->action('journeyController@edit',['id'=>$id])
+                ->with('journeyKey',$requestKey);
         } else {
             # invaild connection
-            return redirect('404');
+            return abort(403,'Unauthorized action - key undefined');
         }
         
     }
@@ -255,7 +259,7 @@ class journeyController extends Controller
             $journey = journey::where('UJID',$id)->firstOrFail();
         } catch (\Throwable $th) {
             //throw $th;
-            return redirect('404');
+            return abort(400,'Cannot find Journey');
         }
 
         // check Auth
@@ -263,12 +267,14 @@ class journeyController extends Controller
             # check sessionkey
             $sessionKey = $request->session()->get('journeyKey');
             if($journey->key != $sessionKey){
-                return redirect('404');
+                return abort(403,'Unauthorized action - key unmatched');
             };
         } else {
             # redirect
-            return redirect('404');
+            return abort(403,'Unauthorized action - key invailed');
         }
+
+        $request->session()->keep(['journeyKey']);
 
         // set waypoint data
         $arr = waypoint::where('journey_id',$journey->id)->orderBy('sequence','asc')->get();

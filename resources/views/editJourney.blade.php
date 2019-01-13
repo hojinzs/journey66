@@ -17,6 +17,10 @@
     <link rel="stylesheet" type="text/css" href="{{url('/')}}/css/style.css">    
 @endpush
 
+@push('meta')
+    <meta name="journey-key" content="{{$journey->key}}">
+@endpush
+
 @section('contents')
 
     @component('components.TopMenu')

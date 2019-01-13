@@ -6,6 +6,7 @@
     @empty($journey)
         data-mode="create" action="/api/newjourney" style="display:none"
     @endif>
+    @csrf
 
     <fieldset name="title" id="title">
         <div class="row">

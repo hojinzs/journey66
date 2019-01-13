@@ -12,6 +12,7 @@ function initMap(){
       zoom: 1,
       center: {lat: 1.0, lng: 1.0}
     });
+    journey_key = $('meta[name="journey-key"]').attr('content');
   
     gMapKey = $('#map').data('gmapkey');
     var gpxurl = "/api/gpx/"+$('#journey').data('gpx');
@@ -32,7 +33,7 @@ function initMap(){
     var getJourneyData = new Promise(function(resolve, reject){
       $.ajax({
         type: "GET",
-        url: '/api/journey/'+ujid,
+        url: '/api/journey/'+ujid+'?key='+journey_key,
         dataType: "xml",
         success: function(data){
           console.log('complete Journey Data');
@@ -41,7 +42,7 @@ function initMap(){
       });
     });
 
-    Promise.all([getGpxFile(),getJourneyData()]).then(function(values){
+    Promise.all([getJourneyData,getGpxFile]).then(function(values){
       console.log(values);
     })
 

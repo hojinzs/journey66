@@ -17,12 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['middleware'=>['web']],function(){
-
-    Route::get('/journey/{id}','journeyController@get');
-
-    
-});
+Route::get('/journey/{id}','journeyController@get');
 
 /**
  * journey write/edit API
