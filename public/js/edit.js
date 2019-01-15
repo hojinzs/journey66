@@ -24,7 +24,6 @@ function initMap(){
         url: gpxurl,
         dataType: "xml",
         success: function(data){
-          console.log('complete GPX data');
           resolve(data);
         }
       });
@@ -34,61 +33,40 @@ function initMap(){
       $.ajax({
         type: "GET",
         url: '/api/journey/'+ujid+'?key='+journey_key,
-        dataType: "xml",
+        dataType: "json",
         success: function(data){
-          console.log('complete Journey Data');
           resolve(data);
         }
       });
     });
 
-    Promise.all([getJourneyData,getGpxFile]).then(function(values){
-      console.log(values);
+    Promise.all([getGpxFile,getJourneyData]).then(function(values){
+      var parser = new GPXParser(values[0],map);
+      parser.setTrackColour("#ff0000");
+      parser.setTrackWidth(3);
+      parser.setMinTrackPointDelta(0.001);
+      parser.centerAndZoom(values[0]);
+      parser.addTrackpointsToMap();
+
+      var track = parser.track.getPath();
+      var Journey = new JournalLogger(map);
+      Journey.setForm({
+        form: '#journey',
+        waypoint_list: '#waypoint-list',
+        dummy_waypoint: '#DUMMY',
+        journey_posted_modal: '#journeyPosted',
+      });
+      Journey.$form.attr('data-polyline',values[1].polyline_path);
+      Journey.$form.attr('data-summary-polyline',values[1].encoded_polyline_summary);
+      Journey.TrackMarker(track);
+      Journey.setSequence(values[1].sequence);
+      Journey.UpdateJourney();
+      Journey.DeleteJourney($('#delete'));
+
+      // set Waypoints
+      waypoints = $('.waypoint').not('#DUMMY');
+      $.each(waypoints,function(k,waypoint){
+        Journey.setWaypoint(waypoint);
+      });
     })
-
-    // function getData(callback){
-    //   return new Promise(function(resolve,reject){
-    //       $.ajax({
-    //         type: "POST",
-    //         url: gpxurl,
-    //         dataType: "xml",
-    //         success: function(data) {
-    //           var parser = new GPXParser(data, map);
-    //           parser.setTrackColour("#ff0000");     // Set the track line colour
-    //           parser.setTrackWidth(3);          // Set the track line width
-    //           parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
-    //           parser.centerAndZoom(data);
-    //           parser.addTrackpointsToMap();         // Add the trackpoints
-    //           // parser.addRoutepointsToMap();         // Add the routepoints
-    //           // parser.addWaypointsToMap();           // Add the waypoints
-  
-    //           resolve(parser);
-    //         }
-    //       });
-    //   });
-    // }
-  
-    // getData().then(function(parser){
-    //     var track = parser.track.getPath();
-
-    //     Journey = new JournalLogger(map);
-    //     Journey.setForm({
-    //       form: '#journey',
-    //       waypoint_list: '#waypoint-list',
-    //       dummy_waypoint: '#DUMMY',
-    //       journey_posted_modal: '#journeyPosted',
-    //     });
-    //     Journey.$form.attr('data-polyline',gpx_data.polyline_path);
-    //     Journey.$form.attr('data-summary-polyline',gpx_data.encoded_polyline_summary);
-    //     Journey.TrackMarker(track);
-    //     JLogger.setSequence(gpx_data.sequence);
-    //     Journey.UpdateJourney();
-    //     Journey.DeleteJourney($('#delete'));
-
-    //     // updates
-    //     waypoints = $('.waypoint').not('#DUMMY');
-    //     $.each(waypoints,function(k,waypoint){
-    //       Journey.setWaypoint(waypoint);
-    //     });
-    // });
   };
