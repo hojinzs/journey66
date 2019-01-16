@@ -310,13 +310,14 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     // set Position
     $waypointlist.append($newWaypoint); //jQuery
     // $waypointlist.appendChild($newWaypoint);
+    var saved = false;
     Logger.waypoints.forEach(function(w,i){
-        if(w.sequence > $newWaypoint.sequence){
+        if(w.sequence > $newWaypoint.sequence && !saved){
             $(w[0]).before($newWaypoint);
+            saved = true;
         }
     });
     Logger.waypoints.push($newWaypoint);
-    console.log("push",Logger.waypoints);
     Logger.ReindexWaypoints();
 
     // offset

@@ -51,7 +51,7 @@ function loadGPXFileIntoGoogleMap(map, filename, gpx_data) {
     JLogger = new JournalLogger(map);
     JLogger.setForm({
       form: '#journey',
-      waypoint_list: '#waypoint-list',
+      waypoint_list: 'waypoint-list',
       dummy_waypoint: '#DUMMY',
       journey_posted_modal: '#journeyPosted',
     });
