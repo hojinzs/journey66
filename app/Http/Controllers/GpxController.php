@@ -40,8 +40,6 @@ class GpxController extends Controller
         //
         if($request->hasFile('gpx')){
             try {
-                //code...
-                $filename = md5(microtime())."-".$request->gpx->getClientOriginalName();
 
                 //Polyline Parsing & Encoding
                 $xml = $request->gpx;
@@ -52,6 +50,7 @@ class GpxController extends Controller
 
                 //Save polyline data to tmp folder
                 $disk = Storage::disk('gcs');
+                $filename = md5(microtime())."-".$request->gpx->getClientOriginalName();
                 $disk->put('tmp/'.$filename.'.poly',$encoded_polyline);
                 $polypath = 'tmp/'.$filename.'.poly';
 
@@ -85,9 +84,8 @@ class GpxController extends Controller
     {
         //
         try {
-            //code...
             $get = Storage::disk('gcs')->get('gpxs/'.$id);
-        return response($get,200);
+            return response($get,200);
         } catch (\Throwable $th) {
             //throw $th;
             return $th;
@@ -128,9 +126,35 @@ class GpxController extends Controller
         //
     }
 
-    public static function getSequenceArrayFromXml($xml){
+    public static function getPointArraytoXml($xml){
         $gpx = new phpGPX();
         $file = $gpx->load($xml);
+    
+        $points = [];
+        foreach ($file->tracks as $track)
+        {
+            // Statistics for whole track
+            $track_points = $track->getPoints();
+            foreach ($track_points as $point) {
+                # code...
+                // $points[] = $point;
+                $points[] = [$point->latitude,$point->longitude];
+            }
+        }
+        return $points;
+    }
+
+
+    public static function getSequenceArrayFromXml($xml){
+        $gpx = new phpGPX();
+
+        try {
+            //code...
+            $file = $gpx->load($xml);
+        } catch (\Throwable $th) {
+            //throw $th;
+            $file = $gpx->parse($xml);
+        }
     
         $points = [];
         foreach ($file->tracks as $track)

@@ -1,7 +1,7 @@
 <!-- Dummy Waypoint form-->
 <fieldset class="waypoint"
 @isset($waypoint)
-    id="{{$id}}" data-UWID="{{$waypoint['UWID']}}"
+id="{{$id}}" data-UWID="{{$waypoint['UWID']}}" data-seq="{{$waypoint['sequence']}}"
 @endisset
 @empty($waypoint)
     id="DUMMY" style="display:none"

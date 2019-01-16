@@ -20,7 +20,8 @@ JournalLogger.prototype.setForm = function(Elements = {
     journey_posted_modal: null,
 }){
     this.$form=$(Elements.form);
-    this.$waypointlist = $(Elements.waypoint_list);
+    // this.$waypointlist = $(Elements.waypoint_list);
+    this.$waypointlist = $(document.getElementById(Elements.waypoint_list));
     this.$dummywp = $(Elements.dummy_waypoint);
     this.$postingModal = $(Elements.journey_posted_modal);
 
@@ -163,11 +164,29 @@ JournalLogger.prototype.setStartEndWaypoint = function(){
     });
 };
 
+JournalLogger.prototype.setCurrentWaypoint = function($waypoints = [])
+{   
+    Logger = this;
+
+    $.each($waypoints,function(k,waypoint){
+        seq = Logger.sequence[waypoint.dataset.seq];
+
+        console.log(waypoint);
+        console.log(seq);
+        Logger.NewWaypoint(seq,{
+            waypoint_form: waypoint,
+            offset: false,
+        });
+    })
+
+}
+
 JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
-    new: false,
+    waypoint_form: null,
     type: null,
     offset: false,
-}){
+})
+{
     var Logger = this;
     var $waypointlist = this.$waypointlist;
     var $dummywp = this.$dummywp;
@@ -179,18 +198,30 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     //get last waypoint node
     var Idx = this.waypoints.length - 1
 
-    //set NewWaypoint
-    var $newWaypoint = $dummywp.clone(true);
-    $newWaypoint.addClass('waypoint');
-    $newWaypoint.attr("id",Idx);
-    $newWaypoint.attr("name",Idx);
-    $newWaypoint.data("index",Idx);
-    $newWaypoint.sequence = SequencePoint.sequence;
-    $newWaypoint.data("sequence",SequencePoint.sequence);
-    $newWaypoint.data("mode",'new');
-    $newWaypoint.find('#Lat').val(latlng.lat());
-    $newWaypoint.find('#Lng').val(latlng.lng());
-    $newWaypoint.show();
+    if(prop.waypoint_form){
+        // current Waypoint
+        $newWaypoint = $(prop.waypoint_form);
+        $newWaypoint.data("index",Idx);
+        $newWaypoint.data("sequence",SequencePoint.sequence);
+        $newWaypoint.data("mode",'edit');
+        prop.type = $newWaypoint.find('#waypoint-type').val();
+
+        $newWaypoint.sequence = SequencePoint.sequence;
+    } else {
+        //set NewWaypointForm
+        var $newWaypoint = $dummywp.clone(true);
+        $newWaypoint.data("index",Idx);
+        $newWaypoint.data("sequence",SequencePoint.sequence);
+        $newWaypoint.data("mode",'new');
+        $newWaypoint.addClass('waypoint');
+        $newWaypoint.attr("id",Idx);
+        $newWaypoint.attr("name",Idx);
+        $newWaypoint.find('#Lat').val(latlng.lat());
+        $newWaypoint.find('#Lng').val(latlng.lng());
+        $newWaypoint.show();
+
+        $newWaypoint.sequence = SequencePoint.sequence;
+    }
 
     //when setting type
     switch (prop.type) {
@@ -218,21 +249,49 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
             $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng);
             $newWaypoint.find('#wp-name').text('Waypoint #'+Idx + ' seq::' +SequencePoint.sequence);
 
-            // deletable
-            $newWaypoint.find('#waypoint-delete').show();
-            $newWaypoint.find('#waypoint-delete').on('click',function(e){
-                $newWaypoint.detach();
-                $newWaypoint.marker.setMap(null);
-        
-                var index = Logger.waypoints.indexOf($newWaypoint);
-                Logger.waypoints.splice(index,1);
-                Logger.ReindexWaypoints();
-            });
+            if(prop.waypoint_form){
+                // deletable (current)
+                $newWaypoint.find('#waypoint-delete').on('click',function(e){
+                    $newWaypoint.data('mode','del');
+                    $newWaypoint.marker.setOptions({'opacity': 0.5});
+                    $newWaypoint.addClass('delete');
+                    $newWaypoint.find('#waypoint-undelete').show();
+                    $newWaypoint.find('#waypoint-delete').hide();
+            
+                    Logger.ReindexWaypoints();
+                });
+                $newWaypoint.find('#waypoint-undelete').on('click',function(e){
+                    $newWaypoint.data('mode','edit');
+                    $newWaypoint.marker.setOptions({'opacity': 1});
+                    $newWaypoint.removeClass('delete');
+                    $newWaypoint.find('#waypoint-undelete').hide();
+                    $newWaypoint.find('#waypoint-delete').show();
+            
+                    Logger.ReindexWaypoints();
+                });
+            } else {
+                // deletable (new)
+                $newWaypoint.find('#waypoint-delete').show();
+                $newWaypoint.find('#waypoint-delete').on('click',function(e){
+                    $newWaypoint.detach();
+                    $newWaypoint.marker.setMap(null);
+            
+                    var index = Logger.waypoints.indexOf($newWaypoint);
+                    Logger.waypoints.splice(index,1);
+                    Logger.ReindexWaypoints();
+                });
+            }
+
             break;
     }
     
     //set image Gallary
     $newWaypoint.imgs = [];
+    if(prop.waypoint_form){
+        //setCurrntImgs
+        $imgArr = $newWaypoint.find('.image').children('img');
+        $newWaypoint.imgs = Journal.setCurrentImageArr($imgArr);
+    }
     $newWaypoint.find('#input_img').on('change',function(e){
         Logger.handleImgsFilesSelect(e,$newWaypoint);
     });
@@ -249,13 +308,15 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     });
 
     // set Position
-    $waypointlist.append($newWaypoint);
+    $waypointlist.append($newWaypoint); //jQuery
+    // $waypointlist.appendChild($newWaypoint);
     Logger.waypoints.forEach(function(w,i){
         if(w.sequence > $newWaypoint.sequence){
             $(w[0]).before($newWaypoint);
         }
     });
     Logger.waypoints.push($newWaypoint);
+    console.log("push",Logger.waypoints);
     Logger.ReindexWaypoints();
 
     // offset
@@ -472,88 +533,65 @@ JournalLogger.prototype.SubmitNew = function(){
         });
 } 
 
-JournalLogger.prototype.setWaypoint = function(waypoint){
-    var Logger = this;
-    var $target = $(waypoint);
-    var Idx = $target.attr("id");
+// JournalLogger.prototype.setWaypoint = function(waypoint){
+//     var Logger = this;
+//     var $target = $(waypoint);
+//     var Idx = $target.attr("id");
 
-    $target.data('mode','edit');
+//     $target.data('mode','edit');
 
-    latitude = $target.find("[name=Lat]").val();
-    longitude = $target.find("[name=Lng]").val();
-    LatLng = new google.maps.LatLng(latitude,longitude);
+//     latitude = $target.find("[name=Lat]").val();
+//     longitude = $target.find("[name=Lng]").val();
+//     LatLng = new google.maps.LatLng(latitude,longitude);
 
-    //set Static Map
-    smap = $target.find('#static-map');
-    Journal.setStaticMap(smap,{
-    width : "300",
-    height : "300",
-    zoom : map.getZoom(),
-    lat : latitude,
-    lng : longitude,
-    encpath : this.$form.data('summary-polyline'),
-    });
+//     //set Static Map
+//     smap = $target.find('#static-map');
+//     Journal.setStaticMap(smap,{
+//     width : "300",
+//     height : "300",
+//     zoom : map.getZoom(),
+//     lat : latitude,
+//     lng : longitude,
+//     encpath : this.$form.data('summary-polyline'),
+//     });
 
-    //set Marker
-    marker = new Journal.setMarker(map,$target,Idx,LatLng);
-    $target.marker = marker;
+//     //set Marker
+//     marker = new Journal.setMarker(map,$target,Idx,LatLng);
+//     $target.marker = marker;
 
-    //set NewWaypointEvent
-    $target.find('#waypoint-delete').on('click',function(e){
-        $target.data('mode','del');
-        $target.marker.setOptions({'opacity': 0.5});
-        $target.addClass('delete');
-        $target.find('#waypoint-undelete').show();
-        $target.find('#waypoint-delete').hide();
+//     //set NewWaypointEvent
+//     $target.find('#waypoint-delete').on('click',function(e){
+//         $target.data('mode','del');
+//         $target.marker.setOptions({'opacity': 0.5});
+//         $target.addClass('delete');
+//         $target.find('#waypoint-undelete').show();
+//         $target.find('#waypoint-delete').hide();
 
-        Logger.setWaypointReindex();
-    });
-    $target.find('#waypoint-undelete').on('click',function(e){
-        $target.data('mode','edit');
-        $target.marker.setOptions({'opacity': 1});
-        $target.removeClass('delete');
-        $target.find('#waypoint-undelete').hide();
-        $target.find('#waypoint-delete').show();
+//         Logger.setWaypointReindex();
+//     });
+//     $target.find('#waypoint-undelete').on('click',function(e){
+//         $target.data('mode','edit');
+//         $target.marker.setOptions({'opacity': 1});
+//         $target.removeClass('delete');
+//         $target.find('#waypoint-undelete').hide();
+//         $target.find('#waypoint-delete').show();
 
-        Logger.setWaypointReindex();
-    });
-    $target.find('#waypoint-up').on('click',function(e){
-        var oi = Logger.waypoints.indexOf($target);
-        if (oi == 0){return;}
+//         Logger.setWaypointReindex();
+//     });
 
-        var ti = oi - 1;
-        swap(Logger.waypoints,oi,ti);
-        Logger.setWaypointReindex();
-        
-        $target.after($target.prev());        
-        $('html, body').stop().animate({
-            scrollTop: $target.offset().top 
-            }, 500);
-    });
-    $target.find('#waypoint-down').on('click',function(e){
-        var oi = Logger.waypoints.indexOf($target);
-        if (oi == Logger.waypoints.length-1){return;}
+//     //set imageUploader
+//     $target.find('#input_img').on('change',function(e){
+//         Logger.handleImgsFilesSelect(e,$target);
+//     });
 
-        var ti = oi + 1;
-        swap(Logger.waypoints,oi,ti);
-        Logger.setWaypointReindex();
+//     //set Waypoint images
+//     $imgArr = $target.find('.image').children('img');
+//     $target.imgs = Journal.setCurrentImageArr($imgArr);
 
-        $target.before($target.next());
-        $('html, body').stop().animate({
-            scrollTop: $target.offset().top 
-            }, 500);
-    });
-    $target.find('#input_img').on('change',function(e){
-        Logger.handleImgsFilesSelect(e,$target);
-    });
-
-    //set Waypoint images
-    $imgArr = $target.find('.image').children('img');
-    $target.imgs = Journal.setCurrentImageArr($imgArr);
-
-    //push Waypoint Array
-    Logger.waypoints.push($target);
-}
+//     //push Waypoint Array
+//     Logger.waypoints.push($target);
+//     Logger.ReindexWaypoints();
+// }
 
 JournalLogger.prototype.SubmitUpdate = function(){
     // form data

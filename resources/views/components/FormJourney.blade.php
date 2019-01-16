@@ -58,7 +58,7 @@
                 @component('components.FormWaypoint',[
                     'waypoint' => $waypoint,
                     'waypoint_labels' => $waypoint_labels,
-                    'id' => $loop->iteration,
+                    'id' => $loop->index,
                 ])
                 @endcomponent
             @endforeach

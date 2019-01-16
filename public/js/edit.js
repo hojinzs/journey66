@@ -48,25 +48,26 @@ function initMap(){
       parser.centerAndZoom(values[0]);
       parser.addTrackpointsToMap();
 
+      console.log(values[1]);
+
       var track = parser.track.getPath();
       var Journey = new JournalLogger(map);
       Journey.setForm({
         form: '#journey',
-        waypoint_list: '#waypoint-list',
+        waypoint_list: 'waypoint-list',
         dummy_waypoint: '#DUMMY',
         journey_posted_modal: '#journeyPosted',
       });
-      Journey.$form.attr('data-polyline',values[1].polyline_path);
-      Journey.$form.attr('data-summary-polyline',values[1].encoded_polyline_summary);
+      Journey.$form.attr('data-polyline',values[1].polyline);
+      Journey.$form.attr('data-summary-polyline',values[1].summary_polyline);
       Journey.TrackMarker(track);
       Journey.setSequence(values[1].sequence);
       Journey.UpdateJourney();
       Journey.DeleteJourney($('#delete'));
 
       // set Waypoints
-      waypoints = $('.waypoint').not('#DUMMY');
-      $.each(waypoints,function(k,waypoint){
-        Journey.setWaypoint(waypoint);
-      });
+      // waypoints = Journey.$waypointlist.getElementsByClassName('waypoint'); //javascript
+      waypoints = Journey.$waypointlist.find('.waypoint') // jQuery
+      Journey.setCurrentWaypoint(waypoints);
     })
   };
