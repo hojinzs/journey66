@@ -128,26 +128,6 @@ class GpxController extends Controller
         //
     }
 
-    public static function getPointArraytoXml($xml){
-        $gpx = new phpGPX();
-        $file = $gpx->load($xml);
-    
-        $points = [];
-        foreach ($file->tracks as $track)
-        {
-            // Statistics for whole track
-            $track_points = $track->getPoints();
-
-            foreach ($track_points as $point) {
-                # code...
-                // $points[] = $point;
-                $points[] = [$point->latitude,$point->longitude];
-            }
-        }
-
-        return $points;
-    }
-
     public static function getSequenceArrayFromXml($xml){
         $gpx = new phpGPX();
         $file = $gpx->load($xml);
