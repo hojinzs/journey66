@@ -35,54 +35,58 @@
             <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&callback=initMap"></script>
             </div>
         <div class="journey-contents col-md-7">
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>{{$journey['name']}}</h2>
-                    <p class="author">{{__('journey.form.author')}} :: {{$journey['author_name']}}<p>
-                    <hr>
-                    <p>{{$journey['description']}}</p>
-                </div>
-            </div>
-
-            @foreach ($waypoints as $waypoint)
             <section>
-                <div class="row waypoint" data-latitude="{{$waypoint['latitude']}}" data-longitude="{{$waypoint['longitude']}}">
-                    <div class="col-md-12 waypoint_type">
-                        <span class="badge badge-secondary">{{__('journey.label.waypoint.'.$waypoint['type'])}}</span>
+                <div class="row journey-head">
+                    <div class="col-md-12">
+                        <h2>{{$journey['name']}}</h2>
+                        <p class="author">{{__('journey.form.author')}} :: {{$journey['author_name']}}<p>
+                        <hr>
+                        <p>{{$journey['description']}}</p>
                     </div>
-                    @isset($waypoint['name'])
-                    <div class="col-md-12 waypoint_name">
-                        <h3>{{$waypoint['name']}}</h3>
-                    </div>
-                    @endisset
-                    <div class="waypoint-medias">
-                        <div class="col-md-12 waypoint-galarry">
-                            <div class="galarry-images">
-                                <div class="img-container">
-                                    <img src="" class="gmap-static-img">
-                                </div>
-                                @foreach ($waypoint['images'] as $img)
-                                <div class="img-container">
-                                    <img src="{{$img['path']}}" class="waypoint-img">
-                                </div>
-                                @endforeach
-                            </div>
+                </div>
+            </section>
+
+            <section id="waypoint-list">
+                @foreach ($waypoints as $waypoint)
+                <section id="{{$waypoint['UWID']}}" waypoint-id="{{$waypoint['UWID']}}">
+                    <div class="row waypoint" data-sequence="{{$waypoint['sequence']}}" data-latitude="{{$waypoint['latitude']}}" data-longitude="{{$waypoint['longitude']}}">
+                        <div class="col-md-12 waypoint_type">
+                            <span class="badge badge-secondary">{{__('journey.label.waypoint.'.$waypoint['type'])}}</span>
                         </div>
-                        @isset($waypoint['images'])
-                        <div class="galarry-control">
-                            <button type="button" class="btn btn-light">< Prev</button> 
-                            <button type="button" class="btn btn-light">Next ></button> 
+                        @isset($waypoint['name'])
+                        <div class="col-md-12 waypoint_name">
+                            <h3>{{$waypoint['name']}}</h3>
+                        </div>
+                        @endisset
+                        <div class="waypoint-medias">
+                            <div class="col-md-12 waypoint-galarry">
+                                <div class="galarry-images">
+                                    <div class="img-container">
+                                        <img src="" class="gmap-static-img">
+                                    </div>
+                                    @foreach ($waypoint['images'] as $img)
+                                    <div class="img-container">
+                                        <img src="{{$img['path']}}" class="waypoint-img">
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @isset($waypoint['images'])
+                            <div class="galarry-control">
+                                <button type="button" class="btn btn-light">< Prev</button> 
+                                <button type="button" class="btn btn-light">Next ></button> 
+                            </div>
+                            @endisset
+                        </div>
+                        @isset($waypoint['description'])
+                        <div class="col-md-12 waypoint_description">
+                            <p>{{$waypoint['description']}}</p>
                         </div>
                         @endisset
                     </div>
-                    @isset($waypoint['description'])
-                    <div class="col-md-12 waypoint_description">
-                        <p>{{$waypoint['description']}}</p>
-                    </div>
-                    @endisset
-                </div>
+                </section>
+                @endforeach
             </section>
-            @endforeach
 
             <hr>
 

@@ -1,10 +1,12 @@
 var map;
+var gMapKey;
 var form = '#journey';
 
 function initMap(){
-  var gMapKey = $('#map').data('gmapkey');
+  gMapKey = $('#map').data('gmapkey');
   var gpxurl = "/api/gpx/"+$('#map').data('gpx');
   var ujid = $('#journey').data('ujid');
+  var encpath = $('#map').data('summary-polyline');
 
 
   var GetGpxFile = new Promise(function(resolve, reject)
@@ -44,28 +46,51 @@ function initMap(){
     parser.setMinTrackPointDelta(0.001);      // Set the minimum distance between track points
     parser.centerAndZoom(values[0]);
     parser.addTrackpointsToMap();         // Add the trackpoints
-    // parser.addRoutepointsToMap();         // Add the routepoints
-    // parser.addWaypointsToMap();           // Add the waypoints
 
     var Reader = new JournalLogger(map);
+    Reader.setSequence(values[1].sequence);
 
-    // //set Static Map
-    // smap = target.find('.gmap-static-img');
-    // Journal.setStaticMap(smap,{
-    //   width : "300",
-    //   height : "300",
-    //   zoom : map.getZoom() + 1,
-    //   lat : latitude,
-    //   lng : longitude,
-    //   encpath : $('#map').data('summary-polyline'),
-    // });
+    values[1].waypoints.forEach(function(waypoint,k){
+      //find waypoint section
+      var wps = document.getElementById(waypoint.UWID);
 
-    // //set Marker
-    // Journal.setMarker(map,target,k+1,LatLng);
+      //set Static Map
+      smap = wps.getElementsByClassName('gmap-static-img');
+      Journal.setStaticMap(smap,{
+        width : "250",
+        height : "250",
+        zoom : map.getZoom() + 1,
+        lat : waypoint.latitude,
+        lng : waypoint.longitude,
+        encpath : encpath,
+      });
 
-    // // //set Img Gallary
-    // // galimgs = $('.waypoint-galarry').children();
-    // // Journal.setGallary(galimgs);    
+      //set Marker label
+      switch (waypoint.type) {
+        case 'starting':
+          var label = 'S'
+          break;
+
+        case 'destination':
+          var label = 'F'
+          break;
+
+        default:
+          var label = 'W'+k
+          break;
+      }
+
+      //set Marker
+      var LatLng = new google.maps.LatLng(waypoint.latitude,waypoint.longitude);
+      Journal.setMarker(map,$(wps),k,LatLng,{
+        title: waypoint.name,
+        label: label
+      });
+
+      //set Img Gallary
+      galimgs = $('.waypoint-galarry').children();
+      Journal.setGallary(galimgs);
+    });
   });
 };
 
