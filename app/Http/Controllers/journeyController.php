@@ -344,8 +344,7 @@ class journeyController extends Controller
                             break;
                         case 'edit':
                             # update it
-                            $waypoints_index = $waypoints_index +1;
-                            $updated_waypoint = journeyController::UpdateWaypoint($waypoint,$waypoint['uwid'],$waypoints_index);
+                            $updated_waypoint = journeyController::UpdateWaypoint($waypoint,$waypoint['uwid']);
                             $UWID[] = $updated_waypoint['UWID'];
         
                             # control images
@@ -518,18 +517,16 @@ class journeyController extends Controller
         return $journey;
     }
 
-    private function UpdateWaypoint($request,$uwid,$sequnce = NULL){
+    private function UpdateWaypoint($request,$uwid){
 
         // find
         $waypoint = waypoint::where('UWID',$uwid)->first();
 
         // set data
-        if($sequnce){
-            $waypoint->sequence = $sequnce;
-        };
         $waypoint->name = $request['name'];
         $waypoint->description = $request['description'];
         $waypoint->type = $request['type'];
+        $waypoint->sequence = $request['sequence'];
         $waypoint->latitude = $request['Lat'];
         $waypoint->longitude = $request['Lng'];
 

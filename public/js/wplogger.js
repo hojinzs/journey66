@@ -206,6 +206,8 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
         $newWaypoint.data("mode",'edit');
         prop.type = $newWaypoint.find('#waypoint-type').val();
 
+        console.log($newWaypoint.data("sequence"));
+
         $newWaypoint.sequence = SequencePoint.sequence;
     } else {
         //set NewWaypointForm
@@ -617,7 +619,7 @@ JournalLogger.prototype.SubmitUpdate = function(){
         
         wp.uwid = w.data('uwid');
         wp.mode = w.data('mode');
-        wp.id = w.data('sequence');
+        wp.sequence = w.data('sequence');
         // wp.id = w.find("[name=waypoint-name]").val();
         wp.name = w.find("[name=waypoint-name]").val();
         wp.description = w.find("[name=description]").val();
