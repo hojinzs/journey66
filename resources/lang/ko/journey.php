@@ -33,6 +33,8 @@ return [
         'author_ph' => '누가 이 멋진 여행기를 작성했는지 알려주세요',
         'email' => '이메일 주소',
         'email_check' => '작성한 여행기의 수정/삭제를 위한 이메일 수집에 동의합니다. 광고나 메일링에 사용되지 않습니다.',
+        'delete' => '여행기 삭제',
+        'created_at' => '작성일',
         'inform' => [
             'setmarker' => '경로상에서 기억에 남는 장소를 선택해주세요. 그리고 그곳에 대해 알려주세요.'
         ],
@@ -79,13 +81,15 @@ return [
             'hiking' => '하이킹'
         ],
         'waypoint' => [
+            'starting' => '시작',
             'marker' => '기억에 남는 지점',
-            'landmark' => '랜드마크 혹은 볼거리',
+            'landmark' => '볼거리',
             'restaurant' => '음식집',
             'supplypoint' => '보급장소',
             'rest' => '휴식장소',
             'event' => '특별한 이벤트',
             'accident' => '사건사고',
+            'destination' => '종료',
         ],
     ]
 

@@ -95,5 +95,22 @@ function initMap(){
 };
 
 $(document).ready(function(){
+  $(window).scroll(function(event){
+  var scroll = $(this).scrollTop();
+  var mapHeight = $('.journey-map').height();
+  $('#scrollevent').text(scroll+"/"+mapHeight);
 
+  if(scroll > mapHeight){
+
+  } else {
+
+  }
+
+  });
+
+  $('.gmap-static-img').click(function(event){
+    $('html, body').stop().animate({
+      scrollTop: 0
+      }, 500);
+  })
 });

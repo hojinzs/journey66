@@ -34,6 +34,7 @@ return [
         'email' => 'email',
         'email_check' => 'accept subscriptions email information for edit or delete the journey, not use for advertising or mailing',
         'delete' => 'delete journey',
+        'created_at' => 'writen_at',
         'inform' => [
             'setmarker' => 'Click on the memorable point. And tell me about your journey.'
         ],
@@ -80,6 +81,7 @@ return [
             'hiking' => 'hiking'
         ],
         'waypoint' => [
+            'starting' => 'start',
             'marker' => 'marking this point',
             'landmark' => 'landmark',
             'restaurant' => 'restaurant',
@@ -87,6 +89,7 @@ return [
             'rest' => 'restpoint',
             'event' => 'event',
             'accident' => 'accident',
+            'destination' => 'finish',
         ],
     ]
 
