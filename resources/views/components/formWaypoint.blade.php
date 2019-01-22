@@ -33,7 +33,9 @@ id="{{$id}}" data-UWID="{{$waypoint['UWID']}}" data-seq="{{$waypoint['sequence']
                                     <option value="{{$label->name}}"
                                         @isset($waypoint['type'])
                                             @if ($label->name == $waypoint['type']) selected @endif
-                                        @endisset>{{__('journey.label.waypoint.'.$label->name)}}</option>
+                                        @endisset
+                                        @if($label->name == 'starting' || $label->name == 'destination') disabled @endif
+                                        >{{__('journey.label.waypoint.'.$label->name)}}</option>
                                 @endforeach
                             </select>
                         </div>
