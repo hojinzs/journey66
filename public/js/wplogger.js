@@ -688,15 +688,6 @@ Journal.setStaticMap = function(target = null,param = {}){
     return staticmap;
 }
 
-
-//reference:: http://kenwheeler.github.io/slick/
-Journal.setGallary = function(target){
-  $.each(target,function(k,v){
-
-
-  })
-};
-
 Journal.setMarker = function(map,target,Idx,latlng,prop = {
     title: 'Marker #'+Idx,
     label: 'W'+ Idx,

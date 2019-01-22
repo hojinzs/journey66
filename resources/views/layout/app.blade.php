@@ -34,7 +34,7 @@
         @switch($lang)
             @case('ko')
                 <link href="https://fonts.googleapis.com/css?family=Noto+Serif+KR" rel="stylesheet">
-                <style>body{font-family: 'Noto Serif KR', serif; !important} </style>
+                <style>body{font-family: 'Daehan', serif; !important} </style>
                 @break
             @case('en')
                 

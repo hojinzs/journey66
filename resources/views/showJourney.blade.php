@@ -16,10 +16,13 @@
     <script type="text/javascript" src="{{url('/')}}/js/loadgpx.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/wplogger.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/read.js"></script>
+    <script type="text/javascript" src="{{url('/')}}/slick/slick.min.js"></script>
 @endpush
 
 @push('css')
     <link rel="stylesheet" type="text/css" href="../css/read.css">
+    <link rel="stylesheet" type="text/css" href="../slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="../slick/slick-theme.css"/>
 @endpush
 
 @section('contents')
@@ -43,7 +46,6 @@
                             <p class="author">{{__('journey.form.created_at')}} :: {{date('d/m/Y',strtotime($journey['created_at']))}}</p>
                             <hr>
                             <p>{{$journey['description']}}</p>
-                            <p id="scrollevent"> </p>
                         </div>
                     </div>
                 </section>
@@ -61,24 +63,17 @@
                             </div>
                             @endisset
                             <div class="waypoint-medias">
-                                <div class="col-md-12 waypoint-galarry">
-                                    <div class="galarry-images">
-                                        <div class="img-container">
-                                            <img src="" class="gmap-static-img">
-                                        </div>
-                                        @foreach ($waypoint['images'] as $img)
-                                        <div class="img-container">
-                                            <img src="{{$img['path']}}" class="waypoint-img">
-                                        </div>
-                                        @endforeach
+                                <!-- use Slick jQuery Slider (http://kenwheeler.github.io/slick/) -->
+                                <div class="galarry-images">
+                                    <div class="img-container">
+                                        <img src="" class="gmap-static-img rounded">
                                     </div>
+                                    @foreach ($waypoint['images'] as $img)
+                                    <div class="img-container">
+                                        <img src="{{$img['path']}}" class="waypoint-img rounded">
+                                    </div>
+                                    @endforeach
                                 </div>
-                                @isset($waypoint['images'])
-                                <div class="galarry-control">
-                                    <button type="button" class="btn btn-light">< Prev</button> 
-                                    <button type="button" class="btn btn-light">Next ></button> 
-                                </div>
-                                @endisset
                             </div>
                             @isset($waypoint['description'])
                             <div class="col-md-12 waypoint_description">

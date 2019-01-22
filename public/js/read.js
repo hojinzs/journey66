@@ -88,8 +88,9 @@ function initMap(){
       });
 
       //set Img Gallary
-      galimgs = $('.waypoint-galarry').children();
-      Journal.setGallary(galimgs);
+      // galimgs = $('.waypoint-galarry').children();
+      // Journal.setGallary(galimgs);
+
     });
   });
 };
@@ -98,7 +99,7 @@ $(document).ready(function(){
   $(window).scroll(function(event){
   var scroll = $(this).scrollTop();
   var mapHeight = $('.journey-map').height();
-  $('#scrollevent').text(scroll+"/"+mapHeight);
+  // $('#scrollevent').text(scroll+"/"+mapHeight);
 
   if(scroll > mapHeight){
 
@@ -112,5 +113,13 @@ $(document).ready(function(){
     $('html, body').stop().animate({
       scrollTop: 0
       }, 500);
-  })
+  });
+
+  $('.galarry-images').slick({
+    dots: true,
+    infinite: false,
+    // speed: 300,
+    slidesToShow: 1,
+    variableWidth: true
+  });
 });
