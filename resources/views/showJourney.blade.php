@@ -55,14 +55,14 @@
                     <section id="{{$waypoint['UWID']}}" waypoint-id="{{$waypoint['UWID']}}">
                         <div class="row waypoint" data-sequence="{{$waypoint['sequence']}}" data-latitude="{{$waypoint['latitude']}}" data-longitude="{{$waypoint['longitude']}}">
                             <div class="col-md-12 waypoint_type">
-                                <span class="badge badge-secondary">{{__('journey.label.waypoint.'.$waypoint['type'])}}</span>
+                                <span class="badge badge-secondary"><i class="fas fa-{{__($waypoint['icon'])}}"></i>  {{__('journey.label.waypoint.'.$waypoint['type'])}}</span>
                             </div>
                             @isset($waypoint['name'])
                             <div class="col-md-12 waypoint_name">
                                 <h3>{{$waypoint['name']}}</h3>
                             </div>
                             @endisset
-                            <div class="waypoint-medias">
+                            <div class="col-md-12 waypoint-medias">
                                 <!-- use Slick jQuery Slider (http://kenwheeler.github.io/slick/) -->
                                 <div class="galarry-images">
                                     <div class="img-container">

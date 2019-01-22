@@ -138,7 +138,11 @@ class journeyController extends Controller
         $journey = journey::where('UJID',$id)->first();
         if($journey){
             if($journey['publish_stage']=='Published'){
-                $arr = waypoint::where('journey_id',$journey->id)->orderBy('sequence','asc')->get();
+                $arr = waypoint::where('journey_id',$journey->id)
+                    ->join('labels', 'waypoints.type', '=', 'labels.name')
+                    ->select('waypoints.*', 'labels.icon')
+                    ->orderBy('sequence','asc')
+                    ->get();
                 $waypoints = array();
     
                 foreach($arr as $k => $waypoint){
