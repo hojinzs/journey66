@@ -139,7 +139,7 @@ JournalLogger.prototype.TrackMarker = function(track){
         // var plng = event.latLng.lng();
         var point = new google.maps.LatLng(event.latLng.lat(),event.latLng.lng());
 
-        var node = Logger.findSequenceNode(point,Logger.sequence);
+        var node = Logger.findSequenceNode(point);
 
         Logger.NewWaypoint(node,{
             new: true,
@@ -584,19 +584,19 @@ JournalLogger.prototype.SubmitDelete = function(){
     });
 }
 
-JournalLogger.prototype.findSequenceNode = function(LatLng={},Arr=[]){
-    var vs = null;
+JournalLogger.prototype.findSequenceNode = function(LatLng={}){
+    var sequence = this.sequence;
+    var vs;
     var gatcha = {};
-    Arr.forEach(point => {
-        var vslt = point.latitude - LatLng.lat();
-        var vsln = point.longitude - LatLng.lng();
-        abs = Math.abs(vslt + vsln);
+    sequence.forEach(point => {
+        var vslt = Math.pow(point.latitude,2) - Math.pow(LatLng.lat(),2);
+        var vsln = Math.pow(point.longitude,2) - Math.pow(LatLng.lng(),2);
+        abs = Math.abs(vslt) + Math.abs(vsln);
         if(vs == null || vs > abs){
             vs = abs;
             gatcha = point;
         };
     });
-
     return gatcha;
 }
 
