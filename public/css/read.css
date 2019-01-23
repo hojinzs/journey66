@@ -15,6 +15,7 @@ html body {
 }
 
 .journey-container{
+    background-color:white;
     height: 100%;
 }
 
@@ -116,15 +117,13 @@ html body {
 
 @media (max-width: 767px){
 
-    .journey-container .journey-map{
-        position: static;
-        position: -webkit-static;
-        height: 400px;
+    .journey-map{
+        min-height: 400px;
         width: 100%;
     }
     
     .journey-contents{
-        position: static;
+        background-color:white;
         height: 100%;
         width: 100%;
         padding-left:1em;
