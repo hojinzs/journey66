@@ -53,8 +53,6 @@ class journeyController extends Controller
      */
     public function store(Request $request)
     {
-        //
-
         try {
             // set new Journeys
             $new_journey = journeyController::setJourney($request);
@@ -318,7 +316,6 @@ class journeyController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         // find target journey data
         $get_journey = journey::where('UJID',$id)->first();
         if(!$get_journey){

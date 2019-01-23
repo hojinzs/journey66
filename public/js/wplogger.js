@@ -222,7 +222,8 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     switch (prop.type) {
         case 'starting':
             $newWaypoint.find('#waypoint-type').val('starting');
-            $newWaypoint.find('#wp-name').text('Starting' + ' seq::' +SequencePoint.sequence);
+            $newWaypoint.find('#waypoint-type').children('[value=starting]').prop('disabled',false);
+            $newWaypoint.find('#wp-name').text('Starting');
             $newWaypoint.find('#waypoint-type').prop('disabled', true);
             $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng,{
                 title: "startingPoint",
@@ -232,7 +233,8 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
 
         case 'destination':
             $newWaypoint.find('#waypoint-type').val('destination');
-            $newWaypoint.find('#wp-name').text('Finish'+' seq::' +SequencePoint.sequence);
+            $newWaypoint.find('#waypoint-type').children('[value=destination]').prop('disabled',false);
+            $newWaypoint.find('#wp-name').text('Finish');
             $newWaypoint.find('#waypoint-type').prop('disabled', true);
             $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng,{
                 title: "destinationPoint",
@@ -242,7 +244,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     
         default:
             $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng);
-            $newWaypoint.find('#wp-name').text('Waypoint #'+Idx + ' seq::' +SequencePoint.sequence);
+            $newWaypoint.find('#wp-name').text('Waypoint #'+Idx);
 
             if(prop.waypoint_form){
                 // deletable (current)
@@ -403,6 +405,7 @@ JournalLogger.prototype.SubmitNew = function(){
         FormArray.type = this.$form.find("[name=journey-type]").val();
         FormArray.author = this.$form.find("[name=author]").val();
         FormArray.email = this.$form.find("[name=email]").val();
+        FormArray._token = this.$form.find("[name=_token]").val();
 
         FormArray.waypoints = [];
 

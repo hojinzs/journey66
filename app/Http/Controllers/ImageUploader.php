@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -36,6 +37,15 @@ class ImageUploader extends Controller
      */
     public function store(Request $request)
     {
+        // Validation
+        $validateData = Validator::make($request->all(),[
+            'image' => 'required|image',
+            'size' => 'max:15,360'
+        ]);
+        if($validateData->fails()){
+            return response("Validation failed",400);
+        }
+
         //
         if($request->hasFile('image')){
             $path = $request->image->store('tmp','gcs');
