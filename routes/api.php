@@ -27,6 +27,11 @@ Route::post('/editjourney/{id}','journeyController@update'); // Update journey
 Route::delete('/deletejourney/{id}','journeyController@destroy'); // Delete journey temponary
 
 /**
+ * waypoint CRUD API
+ */
+Route::delete('/waypoint/{id}/delete','WaypointController@destroy'); // Delete journey temponary
+
+/**
  * Upload Tmp Image File
  */
 Route::post('/imageuploader','ImageUploader@store');

@@ -243,41 +243,70 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
             break;
     
         default:
+            // set Marker & title
             $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng);
             $newWaypoint.find('#wp-name').text('Waypoint #'+Idx);
 
-            if(prop.waypoint_form){
-                // deletable (current)
-                $newWaypoint.find('#waypoint-delete').on('click',function(e){
-                    $newWaypoint.data('mode','del');
-                    $newWaypoint.marker.setOptions({'opacity': 0.5});
-                    $newWaypoint.addClass('delete');
-                    $newWaypoint.find('#waypoint-undelete').show();
-                    $newWaypoint.find('#waypoint-delete').hide();
-            
-                    Logger.ReindexWaypoints();
-                });
-                $newWaypoint.find('#waypoint-undelete').on('click',function(e){
-                    $newWaypoint.data('mode','edit');
-                    $newWaypoint.marker.setOptions({'opacity': 1});
-                    $newWaypoint.removeClass('delete');
-                    $newWaypoint.find('#waypoint-undelete').hide();
-                    $newWaypoint.find('#waypoint-delete').show();
-            
-                    Logger.ReindexWaypoints();
-                });
-            } else {
-                // deletable (new)
-                $newWaypoint.find('#waypoint-delete').show();
-                $newWaypoint.find('#waypoint-delete').on('click',function(e){
-                    $newWaypoint.detach();
-                    $newWaypoint.marker.setMap(null);
-            
-                    var index = Logger.waypoints.indexOf($newWaypoint);
-                    Logger.waypoints.splice(index,1);
-                    Logger.ReindexWaypoints();
-                });
-            }
+            // starting&destination remove
+            $newWaypoint.find('#waypoint-type').children('[value=starting]').remove();
+            $newWaypoint.find('#waypoint-type').children('[value=destination]').remove();
+
+            // deletable
+            $newWaypoint.find('#waypoint-delete').show();
+            $newWaypoint.find('#waypoint-delete').on('click',function(e){
+                var WaypointData = {
+                    mode: $newWaypoint.data("mode"),
+                    uwid: $newWaypoint.data("uwid"),
+                };
+                var DelYes = confirm('Delete Waypoint');
+                if(DelYes){
+                    deleteWaypoint(deleteWaypoint)
+                        .then(removeDom)
+                        .catch(function(error){
+
+                        });
+                };
+
+                function deleteWaypoint(){
+                    return new Promise(function(resolve, reject){
+                        if(WaypointData.mode == 'edit'){
+                            console.log("삭제요");
+
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('DELETE','/api/waypoint/'+WaypointData.uwid+'/delete',true);
+                            xhr.onreadystatechange = function(){
+                                if (xhr.readyState == xhr.DONE) {
+                                    if (xhr.status == 200 || xhr.status == 201) {
+                                        console.log(xhr.responseText);
+                                        resolve('success_DELETE');
+                                    } else {
+                                        console.error(xhr.responseText);
+                                        reject(xhr.responseText);
+                                    }
+                                };
+                            };
+                            console.log('set');
+                            xhr.send(WaypointData);
+                        } else {
+                            console.log("안삭제요");
+                            resolve('nothing_to_DELETE');
+                        };
+                    });
+                };
+
+                function removeDom(){
+                    return new Promise(function(resolve, reject){
+                        $newWaypoint.detach();
+                        $newWaypoint.marker.setMap(null);
+                        var index = Logger.waypoints.indexOf($newWaypoint);
+                        Logger.waypoints.splice(index,1);
+                        Logger.ReindexWaypoints();
+
+                        console.log("제거요")
+                        resolve(true);
+                    });
+                };
+            });
 
             break;
     }
