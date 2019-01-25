@@ -12,8 +12,9 @@ function initMap(){
       zoom: 1,
       center: {lat: 1.0, lng: 1.0}
     });
+
+    //set Key
     journey_key = $('meta[name="journey-key"]').attr('content');
-  
     gMapKey = $('#map').data('gmapkey');
     var gpxurl = "/api/gpx/"+$('#journey').data('gpx');
     var ujid = $('#journey').data('ujid');

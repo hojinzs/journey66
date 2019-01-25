@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 
-class ImageUploader extends Controller
+class ImageController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -104,5 +104,7 @@ class ImageUploader extends Controller
     public function destroy($id)
     {
         //
+
+        return "Yahoo!!";
     }
 }

@@ -202,6 +202,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
         $newWaypoint.data("mode",'edit');
         prop.type = $newWaypoint.find('#waypoint-type').val();
         $newWaypoint.sequence = SequencePoint.sequence;
+        $newWaypoint.uwid = $(prop.waypoint_form).data('uwid');
     } else {
         //set NewWaypointForm
         var $newWaypoint = $dummywp.clone(true);
@@ -254,57 +255,9 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
             // deletable
             $newWaypoint.find('#waypoint-delete').show();
             $newWaypoint.find('#waypoint-delete').on('click',function(e){
-                var WaypointData = {
-                    mode: $newWaypoint.data("mode"),
-                    uwid: $newWaypoint.data("uwid"),
-                };
                 var DelYes = confirm('Delete Waypoint');
                 if(DelYes){
-                    deleteWaypoint(deleteWaypoint)
-                        .then(removeDom)
-                        .catch(function(error){
-
-                        });
-                };
-
-                function deleteWaypoint(){
-                    return new Promise(function(resolve, reject){
-                        if(WaypointData.mode == 'edit'){
-                            console.log("삭제요");
-
-                            var xhr = new XMLHttpRequest();
-                            xhr.open('DELETE','/api/waypoint/'+WaypointData.uwid+'/delete',true);
-                            xhr.onreadystatechange = function(){
-                                if (xhr.readyState == xhr.DONE) {
-                                    if (xhr.status == 200 || xhr.status == 201) {
-                                        console.log(xhr.responseText);
-                                        resolve('success_DELETE');
-                                    } else {
-                                        console.error(xhr.responseText);
-                                        reject(xhr.responseText);
-                                    }
-                                };
-                            };
-                            console.log('set');
-                            xhr.send(WaypointData);
-                        } else {
-                            console.log("안삭제요");
-                            resolve('nothing_to_DELETE');
-                        };
-                    });
-                };
-
-                function removeDom(){
-                    return new Promise(function(resolve, reject){
-                        $newWaypoint.detach();
-                        $newWaypoint.marker.setMap(null);
-                        var index = Logger.waypoints.indexOf($newWaypoint);
-                        Logger.waypoints.splice(index,1);
-                        Logger.ReindexWaypoints();
-
-                        console.log("제거요")
-                        resolve(true);
-                    });
+                    Logger.deleteWaypoint($newWaypoint);
                 };
             });
 
@@ -316,7 +269,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     if(prop.waypoint_form){
         //setCurrntImgs
         $imgArr = $newWaypoint.find('.image').children('img');
-        $newWaypoint.imgs = Journal.setCurrentImageArr($imgArr);
+        $newWaypoint.imgs = Journal.setCurrentImageArr($imgArr,$newWaypoint);
     }
     $newWaypoint.find('#input_img').on('change',function(e){
         Logger.handleImgsFilesSelect(e,$newWaypoint);
@@ -364,6 +317,8 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
         class: 'gallary rounded float-left',
     })
 
+    var Logger = this;
+
     var $target = $wp.find('.image');
     var files = e.target.files;
     var f = files[0];
@@ -374,11 +329,12 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
     }
 
     // Set formdata
-    var filedata = new FormData(); // FormData 인스턴스 생성
+    var filedata = new FormData(); // FormData
+    var img;
     filedata.append('image', f);
 
     $.ajax({
-        url: "/api/imageuploader",
+        url: "/api/image/upload",
         type: "POST",
         data: filedata,
         contentType: false,
@@ -389,28 +345,38 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
             $newImg.attr('src',"https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif");
         },
         success: function(data){
-            $newImg.attr('src',data.url);
-    
-            $newImg.mouseenter(function(){
-                $(this).addClass('shadow');
+            Logger.setImage({
+                $img : $newImg,
+                $target : $wp,
+                src : data.url,
+                mode : data.filename,
+                type : 'tmp'
             });
-            $newImg.mouseleave(function(){
-                $(this).removeClass('shadow');
-            })
-            $newImg.click(function(){
-                var index = $wp.imgs.indexOf(f);
-                $wp.imgs.splice(index,1);
-                $(this).remove();
-            })
-
-            var img = [];
             
-            img.$img = $newImg;
-            img.src = data.url;
-            img.path = data.filename;
-            img.type = 'tmp';
+            // $newImg.attr('src',data.url);
+    
+            // $newImg.mouseenter(function(){
+            //     $(this).addClass('shadow');
+            // });
+            // $newImg.mouseleave(function(){
+            //     $(this).removeClass('shadow');
+            // })
+            // $newImg.click(function(){
+            //     // var delconfirm = confirm('Delete image')
+            //     // if(delconfirm){
+            //     //     Journal.deleteImage(img);
+            //     // };
+            //    var index = $wp.imgs.indexOf(f);
+            //    $wp.imgs.splice(index,1);
+            //    $(this).remove();
+            // })
             
-            $wp.imgs.push(img);
+            // img.$img = $newImg;
+            // img.src = data.url;
+            // img.path = data.filename;
+            // img.type = 'tmp';
+            
+            // $wp.imgs.push(img);
         },
         error: function(xhr,status,error){
             $newImg.remove();
@@ -421,6 +387,108 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
         }
     });
 
+};
+
+JournalLogger.prototype.setImage = function(prop = {
+    $img : null,
+    $target : null,
+    id : null,
+    src : null,
+    path : null,
+    type : 'tmp'
+}){
+    var $img = prop.$img
+    var $target = prop.$target;
+
+    console.log($target);
+
+    var img = {};
+    img.$img = prop.$img;
+    img.id = prop.id;
+    img.src = prop.url;
+    img.path = prop.path;
+    img.type = prop.type;
+
+    $target.imgs.push(img);
+
+    console.log($img);
+
+    $img.attr('src',img.src);
+
+    // set Actions
+    $img.mouseenter(function(){
+        $(this).addClass('shadow');
+    });
+    $img.mouseleave(function(){
+        $(this).removeClass('shadow');
+    })
+    $img.click(function(){
+        // Delete image
+        var delconfirm = confirm('Delete Image')
+        if(delconfirm){
+            console.log('URL','/api/waypoint/'+$target.uwid+'/image/'+img.id+'/delete');
+
+            var senddata = {
+                UWID: $target.uwid,
+                imgid: img.id,
+            };
+            
+            removeData(senddata)
+                .then(eraseFile)
+                .then(removeDom)
+                .catch(function(error){
+                    console.log('something error');
+            });
+        
+            function removeData(data){
+                return new Promise(function(resolve, reject){
+                    if(img.type == 'cur' && img.id){
+                        console.log("디비:: 삭제요");
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('DELETE','/api/waypoint/'+data.UWID+'/image/'+data.imgid+'/delete',true);
+                        xhr.onreadystatechange = function(){
+                            if (xhr.readyState == xhr.DONE) {
+                                if (xhr.status == 200 || xhr.status == 201) {
+                                    console.log(xhr.responseText);
+                                    resolve('success_DELETE');
+                                } else {
+                                    console.error(xhr.responseText);
+                                    reject(xhr.responseText);
+                                }
+                            };
+                        };
+                        xhr.send(data);
+                    } else {
+                        console.log("디비:: 안삭제요");
+                        resolve('nothing_to_DELETE');
+                    };
+                });
+            };
+    
+            function eraseFile(){
+                return new Promise(function(resolve,reject){
+    
+                })
+            };
+        
+            function removeDom(){
+                var index = $target.imgs.indexOf(img);
+                $target.imgs.splice(index,1);
+                $(img).remove();
+
+
+                // return new Promise(function(resolve, reject){
+                //     console.log("돔:: 제거 시작");
+                //     var index = $target.imgs.indexOf(img);
+                //     $target.imgs.splice(index,1);
+                //     $(img).remove();
+        
+                //     console.log("돔:: 제거요");                       
+                //     resolve(true);
+                // });
+            };
+        };
+    });
 };
 
 JournalLogger.prototype.SubmitNew = function(){
@@ -483,7 +551,7 @@ JournalLogger.prototype.SubmitNew = function(){
     
         //send
         $.ajax({
-          url: "/api/newjourney",
+          url: "/api/journeynew",
           type: "POST",
           contentType: "application/json",
           data: jsonData,
@@ -567,7 +635,7 @@ JournalLogger.prototype.SubmitUpdate = function(){
 
     //send
     $.ajax({
-        url: "/api/editjourney/"+UJID,
+        url: "/api/journey/"+UJID+"/edit",
         type: "POST",
         contentType: "application/json",
         data: jsonData,
@@ -601,10 +669,13 @@ JournalLogger.prototype.SubmitUpdate = function(){
 
 JournalLogger.prototype.SubmitDelete = function(){
     var UJID = this.$form.data('ujid');
+    var Form = new FormData();
+    Form.append('key','asb');
 
     $.ajax({
-        url:"/api/deletejourney/"+UJID,
+        url:"/api/journey/"+UJID+"/delete",
         method: "DELETE",
+        data: JSON.stringify(Form),
         contentType: "application/json",
         dataType: "text",
         success: function(data){
@@ -614,6 +685,59 @@ JournalLogger.prototype.SubmitDelete = function(){
             alert(error);
         }
     });
+}
+
+JournalLogger.prototype.deleteWaypoint = function($Waypoint){
+    var WaypointData = {
+        mode: $Waypoint.data("mode"),
+        uwid: $Waypoint.data("uwid"),
+    };
+
+    removeData()
+        .then(removeDom)
+        .catch(function(error){
+
+    });
+
+    function removeData(){
+        return new Promise(function(resolve, reject){
+            if(WaypointData.mode == 'edit'){
+                console.log("데이터:: 삭제요");
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('DELETE','/api/waypoint/'+WaypointData.uwid+'/delete',true);
+                xhr.onreadystatechange = function(){
+                    if (xhr.readyState == xhr.DONE) {
+                        if (xhr.status == 200 || xhr.status == 201) {
+                            console.log(xhr.responseText);
+                            resolve('success_DELETE');
+                        } else {
+                            console.error(xhr.responseText);
+                            reject(xhr.responseText);
+                        }
+                    };
+                };
+                console.log('set');
+                xhr.send(WaypointData);
+            } else {
+                console.log("데이터:: 안삭제요");
+                resolve('nothing_to_DELETE');
+            };
+        });
+    };
+
+    function removeDom(){
+        return new Promise(function(resolve, reject){
+            $Waypoint.detach();
+            $Waypoint.marker.setMap(null);
+            var index = Logger.waypoints.indexOf($Waypoint);
+            Logger.waypoints.splice(index,1);
+            Logger.ReindexWaypoints();
+
+            console.log("돔:: 제거요")
+            resolve(true);
+        });
+    };
 }
 
 JournalLogger.prototype.findSequenceNode = function(LatLng={}){
@@ -745,39 +869,108 @@ Journal.setMarker = function(map,target,Idx,latlng,prop = {
     return marker;
 };
 
-Journal.setCurrentImageArr = function(Arr = {}){
+Journal.setCurrentImageArr = function(Arr = {},$waypoint){
     var imgs = [];
 
     $.each(Arr,function(key,val){
         $img = $(val);
-        var img = [];
 
-        $img.mouseenter(function(){
-            $(this).addClass('shadow');
+        Logger.setImage({
+            $img : $img,
+            $target : $waypoint,
+            id : $img.data('imgid'),
+            src : $img.attr('src'),
+            mode : $img.attr('src'),
+            type : 'cur'
         });
-        $img.mouseleave(function(){
-            $(this).removeClass('shadow');
-        })
-        $img.click(function(){
-            if(img.type == 'cur'){
-                img.type = 'del';
-                $(this).addClass('delete');
-            } else {
-                img.type = 'cur';
-                $(this).removeClass('delete');
-            };
-        })
-        
-        img.$img = $img;
-        img.id = $img.data('imgid');
-        img.src = $img.attr('src');
-        img.path = $img.attr('src');
-        img.type = 'cur';
 
-        imgs.push(img);
+        // var img = [];
+
+        // $img.mouseenter(function(){
+        //     $(this).addClass('shadow');
+        // });
+        // $img.mouseleave(function(){
+        //     $(this).removeClass('shadow');
+        // })
+        // $img.click(function(){
+        //     var delconfirm = confirm('Delete image')
+        //     if(delconfirm){
+        //         Journal.deleteImage(img);
+        //     }
+        //     // if(img.type == 'cur'){
+        //     //     img.type = 'del';
+        //     //     $(this).addClass('delete');
+        //     // } else {
+        //     //     img.type = 'cur';
+        //     //     $(this).removeClass('delete');
+        //     // };
+
+        // })
+        
+        // img.$img = $img;
+        // img.id = $img.data('imgid');
+        // img.src = $img.attr('src');
+        // img.path = $img.attr('src');
+        // img.type = 'cur';
+
+        // imgs.push(img);
 
     });
 
     return imgs;
 
 };
+
+Journal.deleteImage = function($img){
+    var WaypointData = {
+        mode: $Waypoint.data("mode"),
+        uwid: $Waypoint.data("uwid"),
+    };
+
+    
+    removeData()
+        .then(removeDom)
+        .catch(function(error){
+
+    });
+
+    function removeData(){
+        return new Promise(function(resolve, reject){
+            if(Data.mode == 'edit'){
+                console.log("데이터:: 삭제요");
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('DELETE','/api/waypoint/'+WaypointData.uwid+'/delete',true);
+                xhr.onreadystatechange = function(){
+                    if (xhr.readyState == xhr.DONE) {
+                        if (xhr.status == 200 || xhr.status == 201) {
+                            console.log(xhr.responseText);
+                            resolve('success_DELETE');
+                        } else {
+                            console.error(xhr.responseText);
+                            reject(xhr.responseText);
+                        }
+                    };
+                };
+                console.log('set');
+                xhr.send(WaypointData);
+            } else {
+                console.log("데이터:: 안삭제요");
+                resolve('nothing_to_DELETE');
+            };
+        });
+    };
+
+    function removeDom(){
+        return new Promise(function(resolve, reject){
+            $Waypoint.detach();
+            $Waypoint.marker.setMap(null);
+            var index = Logger.waypoints.indexOf($Waypoint);
+            Logger.waypoints.splice(index,1);
+            Logger.ReindexWaypoints();
+
+            console.log("돔:: 제거요")
+            resolve(true);
+        });
+    };
+}

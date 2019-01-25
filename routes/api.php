@@ -17,31 +17,32 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/journey/{id}','journeyController@get');
-
 /**
  * journey write/edit API
  */
-Route::post('/newjourney','journeyController@store'); // Posting New journey
-Route::post('/editjourney/{id}','journeyController@update'); // Update journey
-Route::delete('/deletejourney/{id}','journeyController@destroy'); // Delete journey temponary
+
+Route::post('/journeynew','journeyController@store'); // Posting New journey
+Route::get('/journey/{id}','journeyController@get'); // Get journey data ajax
+Route::post('/journey/{id}/edit','journeyController@update'); // Update journey
+Route::delete('/journey/{id}/edit','journeyController@destroy'); // Delete journey temponary
+
 
 /**
  * waypoint CRUD API
  */
-Route::delete('/waypoint/{id}/delete','WaypointController@destroy'); // Delete journey temponary
+Route::delete('/waypoint/{id}/delete','WaypointController@destroy'); // Delete waypoint temponary
+Route::delete('/waypoint/{id}/image/{num}/delete','WaypointController@destroy'); // Delete waypoint temponary
 
 /**
- * Upload Tmp Image File
+ * image file CRUD API
  */
-Route::post('/imageuploader','ImageUploader@store');
+Route::post('/image/upload','ImageController@store');
+
 
 /**
  * Gpx Controller Routing
  */
-
 Route::post('/gpx/{id}','GpxController@show');
-
 Route::post('/gpxupload','GpxController@store');
 
 
