@@ -36,7 +36,8 @@ return [
         'delete' => 'delete journey',
         'created_at' => 'writen_at',
         'inform' => [
-            'setmarker' => 'Click on the memorable point. And tell me about your journey.'
+            'setmarker' => 'Click on the memorable point',
+            'geotag_photo' => 'or.. use GeoTagged Photo',
         ],
         'waypoint' => [
             'waypoint' => 'Waypoint',

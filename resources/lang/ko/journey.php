@@ -36,7 +36,8 @@ return [
         'delete' => '여행기 삭제',
         'created_at' => '작성일',
         'inform' => [
-            'setmarker' => '경로상에서 기억에 남는 장소를 선택해주세요. 그리고 그곳에 대해 알려주세요.'
+            'setmarker' => '경로상에서 기억에 남는 장소를 선택해주세요',
+            'geotag_photo' => '아니면.. 위치정보가 포함된 사진을 업로드 해보세요',
         ],
         'waypoint' => [
             'waypoint' => '장소',

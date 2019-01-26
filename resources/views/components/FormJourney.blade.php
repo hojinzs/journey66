@@ -49,7 +49,8 @@
     </fieldset>
 
     <div class="alert alert-secondary" id="waypoint-guide">
-        {{__('journey.form.inform.setmarker')}}
+        <i class="fas fa-map-marked-alt"></i> {{__('journey.form.inform.setmarker')}}<br>
+        <i class="fas fa-image"></i> {{__('journey.form.inform.geotag_photo')}} <input class="btn btn-secondary btn-sm" type="button" value="Upload Photo" id="geotag_img">
     </div>
 
     <fieldset name="waypoint-list" id="waypoint-list">
