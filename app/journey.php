@@ -28,4 +28,9 @@ class journey extends Model
     {
         return $this->morphMany('App\Meta','metable');
     }
+
+    public function waypoints()
+    {
+        return $this->hasMany('App\waypoint','journey_id');
+    }
 }

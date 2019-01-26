@@ -24,7 +24,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/journeynew','journeyController@store'); // Posting New journey
 Route::get('/journey/{id}','journeyController@get'); // Get journey data ajax
 Route::post('/journey/{id}/edit','journeyController@update'); // Update journey
-Route::delete('/journey/{id}/edit','journeyController@destroy'); // Delete journey temponary
+Route::delete('/journey/{id}/delete','journeyController@destroy'); // Delete journey temponary
 
 
 /**

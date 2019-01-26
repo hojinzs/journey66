@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
+use App\Http\Requests\AuthByJourneyKey;
+
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GpxController;
 
@@ -310,22 +312,20 @@ class journeyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request\AuthByJourneyKey  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(AuthByJourneyKey $request, $id)
     {
+        // Validation
+        $validated = $request->validated();
+
         // find target journey data
         $get_journey = journey::where('UJID',$id)->first();
         if(!$get_journey){
             return response('can not find journey '.$id,400);
-        }
-
-        // check key
-        if($get_journey->key != $request->input('key')){
-            return response('invaild journey key',400);
-        }
+        };
 
         try {
             // update Journey Data
@@ -388,11 +388,13 @@ class journeyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(AuthByJourneyKey $request,$id)
     {
-        //
+        // Validation
+        $validated = $request->validated();
+
         try {
-            //code...
+            //destory journey data
             $journey = journey::where('UJID',$id)->first();
             $journey->delete();
 

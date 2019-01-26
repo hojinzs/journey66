@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\waypoint;
+use App\Http\Requests\AuthByWaypoint;
 use Illuminate\Http\Request;
 
 class WaypointController extends Controller
@@ -78,10 +79,13 @@ class WaypointController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(AuthByWaypoint $request,$id)
     {
-        //
+        //AuthValidation
+        $validated = $request->validated();
+
         try {
+            //delete waypoint
             $waypoint = waypoint::where('UWID',$id)->first();
             $waypoint->delete();
             return response('delete_success');

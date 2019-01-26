@@ -22,4 +22,9 @@ class waypoint extends Model
         return $this->hasMany('App\waypoint_image','waypoint_id');
     }
 
+    public function journey()
+    {
+        return $this->belongsTo('App\journey');
+    }
+
 }

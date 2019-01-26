@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Validator;
 use App\waypoint;
-// use App\waypoint_image;
+use App\Http\Requests\AuthByWaypoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -100,22 +100,25 @@ class ImageController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \Illuminate\Http\Request\AuthByWaypoint  $request
      * @param  int  $id
      * @param  int  $num
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id,$num)
+    public function destroy(AuthByWaypoint $request,$id,$num)
     {
-        //
+        //AuthValidation
+        $validated = $request->validated();
+
         try {
             $image = waypoint::where('UWID',$id)->first()
-            ->waypoint_images()->where('id',$num)->first();
+                ->waypoint_images()->where('id',$num)->first();
             $image->delete();
             return response('delete_success');
 
         } catch (\Throwable $th) {
             //throw $th;
-            return response('image delete error',400);
+            return response($th,400);
         }
     }
 }

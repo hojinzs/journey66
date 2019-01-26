@@ -14,7 +14,8 @@ function initMap(){
     });
 
     //set Key
-    journey_key = $('meta[name="journey-key"]').attr('content');
+    var journey_key = $('meta[name="journey-key"]').attr('content');
+    console.log(journey_key);
     gMapKey = $('#map').data('gmapkey');
     var gpxurl = "/api/gpx/"+$('#journey').data('gpx');
     var ujid = $('#journey').data('ujid');
@@ -49,7 +50,7 @@ function initMap(){
       parser.centerAndZoom(values[0]);
       parser.addTrackpointsToMap();
 
-      console.log(values[1]);
+      console.log(journey_key);
 
       var track = parser.track.getPath();
       var Journey = new JournalLogger(map);
@@ -58,6 +59,7 @@ function initMap(){
         waypoint_list: 'waypoint-list',
         dummy_waypoint: '#DUMMY',
         journey_posted_modal: '#journeyPosted',
+        journey_key: journey_key,
       });
       Journey.$form.attr('data-polyline',values[1].polyline);
       Journey.$form.attr('data-summary-polyline',values[1].summary_polyline);
