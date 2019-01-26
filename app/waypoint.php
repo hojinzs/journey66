@@ -16,4 +16,10 @@ class waypoint extends Model
     {
         return $this->morphMany('App\Meta','metable');
     }
+
+    public function waypoint_images()
+    {
+        return $this->hasMany('App\waypoint_image','waypoint_id');
+    }
+
 }

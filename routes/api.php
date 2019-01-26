@@ -31,7 +31,7 @@ Route::delete('/journey/{id}/edit','journeyController@destroy'); // Delete journ
  * waypoint CRUD API
  */
 Route::delete('/waypoint/{id}/delete','WaypointController@destroy'); // Delete waypoint temponary
-Route::delete('/waypoint/{id}/image/{num}/delete','WaypointController@destroy'); // Delete waypoint temponary
+Route::delete('/waypoint/{id}/image/{num}/delete','ImageController@destroy'); // Delete waypoint temponary
 
 /**
  * image file CRUD API

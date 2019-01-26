@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\waypoint;
 use Illuminate\Http\Request;
 
 class WaypointController extends Controller
@@ -80,6 +81,14 @@ class WaypointController extends Controller
     public function destroy($id)
     {
         //
-        return "checkYah~";
+        try {
+            $waypoint = waypoint::where('UWID',$id)->first();
+            $waypoint->delete();
+            return response('delete_success');
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response('waypoint delete error',400);
+        }
     }
 }

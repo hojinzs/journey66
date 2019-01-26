@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Validator;
+use App\waypoint;
+// use App\waypoint_image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -99,12 +101,21 @@ class ImageController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
+     * @param  int  $num
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id,$num)
     {
         //
+        try {
+            $image = waypoint::where('UWID',$id)->first()
+            ->waypoint_images()->where('id',$num)->first();
+            $image->delete();
+            return response('delete_success');
 
-        return "Yahoo!!";
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response('image delete error',400);
+        }
     }
 }
