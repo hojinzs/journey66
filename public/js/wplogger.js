@@ -267,9 +267,20 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     //set image Gallary
     $newWaypoint.imgs = [];
     if(prop.waypoint_form){
-        //setCurrntImgs
-        $imgArr = $newWaypoint.find('.image').children('img');
-        $newWaypoint.imgs = Journal.setCurrentImageArr($imgArr,$newWaypoint);
+
+        // loadCurrntImgs
+        $newWaypoint.find('.image').children('img')
+            .each(function(key,val){
+                $img = $(val);
+                Logger.setImage({
+                    $img : $img,
+                    $target : $newWaypoint,
+                    id : $img.data('imgid'),
+                    src : $img.attr('src'),
+                    path : $img.attr('src'),
+                    type : 'cur'
+                });
+            });
     }
     $newWaypoint.find('#input_img').on('change',function(e){
         Logger.handleImgsFilesSelect(e,$newWaypoint);
@@ -310,6 +321,11 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
             });
         },700);
     }
+
+    var setNewImage = function(){
+        alert(test);
+        return;
+    };
 };
 
 JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
@@ -330,7 +346,6 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
 
     // Set formdata
     var filedata = new FormData(); // FormData
-    var img;
     filedata.append('image', f);
 
     $.ajax({
@@ -349,34 +364,9 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
                 $img : $newImg,
                 $target : $wp,
                 src : data.url,
-                mode : data.filename,
+                path : data.filename,
                 type : 'tmp'
             });
-            
-            // $newImg.attr('src',data.url);
-    
-            // $newImg.mouseenter(function(){
-            //     $(this).addClass('shadow');
-            // });
-            // $newImg.mouseleave(function(){
-            //     $(this).removeClass('shadow');
-            // })
-            // $newImg.click(function(){
-            //     // var delconfirm = confirm('Delete image')
-            //     // if(delconfirm){
-            //     //     Journal.deleteImage(img);
-            //     // };
-            //    var index = $wp.imgs.indexOf(f);
-            //    $wp.imgs.splice(index,1);
-            //    $(this).remove();
-            // })
-            
-            // img.$img = $newImg;
-            // img.src = data.url;
-            // img.path = data.filename;
-            // img.type = 'tmp';
-            
-            // $wp.imgs.push(img);
         },
         error: function(xhr,status,error){
             $newImg.remove();
@@ -397,47 +387,41 @@ JournalLogger.prototype.setImage = function(prop = {
     path : null,
     type : 'tmp'
 }){
-    var $img = prop.$img
     var $target = prop.$target;
-
-    console.log($target);
 
     var img = {};
     img.$img = prop.$img;
     img.id = prop.id;
-    img.src = prop.url;
+    img.src = prop.src;
     img.path = prop.path;
     img.type = prop.type;
 
-    $target.imgs.push(img);
-
-    console.log($img);
-
-    $img.attr('src',img.src);
+    img.$img.attr('src',img.src);
 
     // set Actions
-    $img.mouseenter(function(){
+    img.$img.mouseenter(function(){
         $(this).addClass('shadow');
     });
-    $img.mouseleave(function(){
+    img.$img.mouseleave(function(){
         $(this).removeClass('shadow');
-    })
-    $img.click(function(){
+    });
+    img.$img.click(function(){
+        console.log('Before',$target.imgs);
         // Delete image
         var delconfirm = confirm('Delete Image')
         if(delconfirm){
-            console.log('URL','/api/waypoint/'+$target.uwid+'/image/'+img.id+'/delete');
 
             var senddata = {
+                target: $target,
                 UWID: $target.uwid,
                 imgid: img.id,
             };
             
             removeData(senddata)
-                .then(eraseFile)
-                .then(removeDom)
+                .then(eraseFile(senddata))
+                .then(removeDom(senddata))
                 .catch(function(error){
-                    console.log('something error');
+                    console.log('something error',error);
             });
         
             function removeData(data){
@@ -467,28 +451,23 @@ JournalLogger.prototype.setImage = function(prop = {
     
             function eraseFile(){
                 return new Promise(function(resolve,reject){
-    
+
+                    resolve('success');
                 })
             };
         
             function removeDom(){
                 var index = $target.imgs.indexOf(img);
                 $target.imgs.splice(index,1);
-                $(img).remove();
+                img.$img.remove();
 
-
-                // return new Promise(function(resolve, reject){
-                //     console.log("돔:: 제거 시작");
-                //     var index = $target.imgs.indexOf(img);
-                //     $target.imgs.splice(index,1);
-                //     $(img).remove();
-        
-                //     console.log("돔:: 제거요");                       
-                //     resolve(true);
-                // });
+                console.log('After',$target.imgs);
             };
         };
     });
+
+    $target.imgs.push(img);
+    return img;
 };
 
 JournalLogger.prototype.SubmitNew = function(){
@@ -804,12 +783,6 @@ JournalLogger.prototype.ReindexWaypoints = function(){
 
 }
 
-function swap(array, i1, i2) {
-    var temp = array[i2];
-    array[i2] = array[i1];
-    array[i1] = temp;
-}
-
 var Journal = {};
 
 Journal.setStaticMap = function(target = null,param = {}){
@@ -867,58 +840,6 @@ Journal.setMarker = function(map,target,Idx,latlng,prop = {
     });
 
     return marker;
-};
-
-Journal.setCurrentImageArr = function(Arr = {},$waypoint){
-    var imgs = [];
-
-    $.each(Arr,function(key,val){
-        $img = $(val);
-
-        Logger.setImage({
-            $img : $img,
-            $target : $waypoint,
-            id : $img.data('imgid'),
-            src : $img.attr('src'),
-            mode : $img.attr('src'),
-            type : 'cur'
-        });
-
-        // var img = [];
-
-        // $img.mouseenter(function(){
-        //     $(this).addClass('shadow');
-        // });
-        // $img.mouseleave(function(){
-        //     $(this).removeClass('shadow');
-        // })
-        // $img.click(function(){
-        //     var delconfirm = confirm('Delete image')
-        //     if(delconfirm){
-        //         Journal.deleteImage(img);
-        //     }
-        //     // if(img.type == 'cur'){
-        //     //     img.type = 'del';
-        //     //     $(this).addClass('delete');
-        //     // } else {
-        //     //     img.type = 'cur';
-        //     //     $(this).removeClass('delete');
-        //     // };
-
-        // })
-        
-        // img.$img = $img;
-        // img.id = $img.data('imgid');
-        // img.src = $img.attr('src');
-        // img.path = $img.attr('src');
-        // img.type = 'cur';
-
-        // imgs.push(img);
-
-    });
-
-    return imgs;
-
 };
 
 Journal.deleteImage = function($img){
