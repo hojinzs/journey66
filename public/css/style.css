@@ -47,3 +47,15 @@
 #journey .form-check-input{
     margin-left: 0em !important;
 }
+
+#confrimGeophotoSet modal-confirm-information{
+    align-content: center;
+}
+
+#confrimGeophotoSet modal-confirm-information img{
+    max-width: 100%;
+}
+
+#confrimGeophotoSet modal-confirm-information canvas{
+    max-width: 100%;
+}

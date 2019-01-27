@@ -8,6 +8,8 @@
 
 @push('scripts')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.20.1/load-image.all.min.js"></script>
+    <script type="text/javascript" src="/js/geopoint.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/loadgpx.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/wplogger.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/edit.js"></script>
@@ -50,6 +52,9 @@
         'mode' => 'edit',
         'journeyLink' => url('journey/'.$journey['UJID']),
     ])
+    @endcomponent
+
+    @component('modals.confirmGeophotoSet')
     @endcomponent
 
 @endsection

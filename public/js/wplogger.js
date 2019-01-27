@@ -1,7 +1,8 @@
 // Waypoint Marker
 
-var JournalLogger = function(map){
+var JournalLogger = function(map,key=null){
     this.map = map;
+    this.gMapKey = key;
     this.waypoints = [];
     this.path = [];
     this.zoom = this.map.getZoom();
@@ -110,7 +111,7 @@ JournalLogger.prototype.TrackMarker = function(track){
 
         polyline.setOptions({strokeOpacity: 0.3});
 
-        // 원 그리기
+        // draw circle
         var testCircle = new google.maps.Circle({
           strokeColor: '#0099ff',
           strokeOpacity: 1,
@@ -137,21 +138,146 @@ JournalLogger.prototype.TrackMarker = function(track){
 
     // event :: New Waypoint
     google.maps.event.addListener(polyline,'click',function(event){
-
-        // var plat = event.latLng.lat();
-        // var plng = event.latLng.lng();
-        var point = new google.maps.LatLng(event.latLng.lat(),event.latLng.lng());
-
+        var point = new google.maps.LatLng(
+            event.latLng.lat(),
+            event.latLng.lng()
+        );
         var node = Logger.findSequenceNode(point);
-
         Logger.NewWaypoint(node,{
             new: true,
             offset: true
         });
-        
     });
 
+};
+
+
+///////////////////////////
+// ** GeoPhotoUploader **
+// > Set PhotoUploader for place waypoint by photo exif geotaggind data
+// * dependency::  Javascript Load Image & Geopoint js (Reference:: /ref/imgeo_js)
+///////////////////////////
+JournalLogger.prototype.GeoPhotoUploader = function(Elements={
+    button_id: null,
+    input_id: null,
+    modal_id: null,
+}){
+    var Logger = this;
+    var button = document.getElementById(Elements.button_id);
+    var fileinput = document.getElementById(Elements.input_id);
+    var result = {
+        file : null,
+        img : null,
+        lat : null,
+        lon : null,
+    };
+
+    // Set confirm Modal
+    this.$confirmGeophotoModal = $(document.getElementById(Elements.modal_id));
+    this.$confirmGeophotoModal.on('hidden.bs.modal', function (e) {
+        // clear value & modal
+        fileinput.value = "";
+        Logger.$confirmGeophotoModal.find("#Geophoto_img").empty();
+        Logger.$confirmGeophotoModal.find("#Geophoto_img").empty();
+    });
+    this.$confirmGeophotoModal.find("#GeophotoSet").click(function(){
+        Logger.setWaypointByGeoPhoto(
+            result.file,
+            result.lat,
+            result.lon
+        ,function(data) {
+            Logger.$confirmGeophotoModal.modal("hide");
+            alert(data);
+        });
+    });
+
+    button.addEventListener("click",function(){
+        fileinput.dispatchEvent(new MouseEvent('click'));
+    });
+    
+    fileinput.addEventListener("change",function(event){
+        result.file = event.target.files[0];
+
+        var loadingImage = loadImage(
+            result.file,
+            function(img){
+                //get Exif Data
+                loadImage.parseMetaData(
+                    result.file,
+                    function (data) {
+                        if (!data.imageHead) {
+                            return;
+                        }
+                        var DMSlat = data.exif.get('GPSLatitude');
+                        var DMSlon = data.exif.get('GPSLongitude');
+
+                        var point = new GeoPoint(
+                            DMSlon[0]+"° "+DMSlon[1]+"'"+DMSlon[2]+'"',
+                            DMSlat[0]+"° "+DMSlat[1]+"'"+DMSlat[2]+'"',
+                        );
+                        result.lat = point.getLatDec().toFixed(8);
+                        result.lon = point.getLonDec().toFixed(8);
+                        result.img = img;
+
+                        return ShowConfirmModal();
+                    },
+                    {
+                        maxMetaDataSize: 262144,
+                        disableImageHead: false
+                    }
+                );
+            },
+            {
+                maxWidth: 600,
+                orientation: true,
+            }
+        );
+        if (!loadingImage) {
+            alert('error!');
+        };
+    });
+
+    // confirm modal show
+    function ShowConfirmModal(){
+        Logger.$confirmGeophotoModal.find("#Geophoto_img").append(result.img);
+        var StaticMapImg = new Image();
+        StaticMapImg.src = Journal.setStaticMapURL({
+            width: 600,
+            height: 400,
+            lat: result.lat,
+            lng: result.lon,
+            marker: true,
+            key: gMapKey,
+        });
+        Logger.$confirmGeophotoModal.find("#Geophoto_img").append(StaticMapImg);
+        Logger.$confirmGeophotoModal.modal('show');
+    };
 }
+
+///////////////////////////
+// ** setWaypointByGeoPhoto **
+// > Set Waypoint & Image from parsed exif data
+// * dependency::  Javascript Load Image & Geopoint js (Reference:: /ref/imgeo_js)
+///////////////////////////
+JournalLogger.prototype.setWaypointByGeoPhoto = function(imgfile,lat,lon,callbackFn){
+    var Logger = this;
+    console.log(imgfile,lat,lon);
+
+    // Event:: modal confirm
+
+        // Set Waypoint
+        var point = new google.maps.LatLng(lat,lon);
+        var node = Logger.findSequenceNode(point);
+        var $Waypoint = Logger.NewWaypoint(node,{
+            new: true,
+            offset: true
+        });
+
+        // Upload & Set Image
+
+
+        return callbackFn('success');
+};
 
 // set Starting point & Destination Waypoint
 JournalLogger.prototype.setStartEndWaypoint = function(){
@@ -324,6 +450,8 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
             });
         },700);
     }
+
+    return $newWaypoint;
 };
 
 JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
@@ -855,4 +983,53 @@ Journal.setMarker = function(map,target,Idx,latlng,prop = {
     });
 
     return marker;
+};
+
+Journal.setStaticMapURL = function(param={
+    width: 300,
+    height: 300,
+    zoom: 10,
+    lat: null,
+    lng: null,
+    marker: false,
+    encpath: null,
+    key: null,
+}){
+    var staticmap = "https://maps.googleapis.com/maps/api/staticmap?"
+    +"&size="+param.width+"x"+param.height
+    +"&scale=2";
+
+    //set Zoom Level
+    if(param.zoom)
+    {
+        staticmap = staticmap
+        +"&zoom=" +param.zoom;
+    } else {
+        staticmap = staticmap
+        +"&zoom="+10;
+    };
+
+    //set Marker
+    if(param.lat && param.lng && param.marker)
+    {
+        staticmap = staticmap
+        +"&markers=color:red|"+param.lat+","+param.lng;
+    } else {
+        staticmap = staticmap
+        +"&center="+param.lat+","+param.lng;
+    };
+
+    //set Path
+    if(param.encpath)
+    {
+        var color = "0xff0000ff";
+        var width = 3;
+        staticmap = staticmap + "&path=weight:" + width + "%7Ccolor:"+ color + "%7Cenc:"+ param.encpath;
+    };
+
+    //finally, add Key And Complete request URL
+    staticmap = staticmap
+    +"&key=" + param.key;
+
+    return staticmap;
 };
