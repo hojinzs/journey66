@@ -26,3 +26,9 @@ Route::get('/journey/{id}/edit','journeyController@getEditAuth');
 Route::get('/journey/{id}/editor','journeyController@edit');
 
 Route::get('/test','TestController@web');
+
+
+/**
+ * Referrence Pages
+ */
+Route::get('/ref/imgeo-js','TestController@imgeo');
