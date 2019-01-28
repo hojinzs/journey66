@@ -8,6 +8,8 @@
 
 @push('scripts')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.20.1/load-image.all.min.js"></script>
+    <script type="text/javascript" src="/js/geopoint.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/loadgpx.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/wplogger.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/write.js"></script>
@@ -24,6 +26,7 @@
 
     <div id="map" data-gmapkey="{{$gmapkey}}"></div>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&libraries=geometry&callback=initMap"></script>
+    
 
     <div class="container">
 
@@ -45,6 +48,9 @@
     @component('modals.journeyPosted',[
         'mode' => 'new',
     ])
+    @endcomponent
+
+    @component('modals.confirmGeophotoSet')
     @endcomponent
 
 @endsection

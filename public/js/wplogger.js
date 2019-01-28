@@ -518,8 +518,10 @@ JournalLogger.prototype.setImage = function(prop = {
     src : null,
     path : null,
     type : 'tmp'
-}){
+    },callbackFn)
+    {
     var $target = prop.$target;
+    var journey_key = this.journey_key;
 
     var img = {};
     img.$img = prop.$img;
@@ -528,84 +530,93 @@ JournalLogger.prototype.setImage = function(prop = {
     img.path = prop.path;
     img.type = prop.type;
 
-    img.$img.attr('src',img.src);
-
-    var journey_key = this.journey_key;
-
-    // set Actions
-    img.$img.mouseenter(function(){
-        $(this).addClass('shadow');
-    });
-    img.$img.mouseleave(function(){
-        $(this).removeClass('shadow');
-    });
-    img.$img.click(function(){
-        console.log('Before',$target.imgs);
-        // Delete image
-        var delconfirm = confirm('Delete Image')
-        if(delconfirm){
-
-            var senddata = {
-                target: $target,
-                imgid: img.id,
-                UWID: $target.uwid,
-                key: journey_key,
+    loadImage(
+        img.src,
+        function(image){
+            let $canvas = $(image);
+            setCanvasEvent($canvas);
+            img.$img.replaceWith($canvas);
+            img.$img = $canvas;
+            $target.imgs.push(img);
+            if(callbackFn == Function && callbackFn){
+                return callbackFn(img);
             };
-            
-            removeData(senddata)
+        },
+        {
+            orientation: true,
+            canvas: true,
+        }
+    );
+
+    function setCanvasEvent($canvas){
+        $canvas.addClass('gallary rounded');
+        // set Actions
+        $canvas.mouseenter(function(){
+            $(this).addClass('shadow');
+        });
+        $canvas.mouseleave(function(){
+            $(this).removeClass('shadow');
+        });
+        $canvas.click(function(){
+            // Delete image
+            var delconfirm = confirm('Delete Image')
+            if(delconfirm){
+
+                var senddata = {
+                    target: $target,
+                    imgid: img.id,
+                    UWID: $target.uwid,
+                    key: journey_key,
+                };
+
+                console.log(senddata);
+
+                removeData(senddata)
                 .then(eraseFile(senddata))
                 .then(removeDom(senddata))
                 .catch(function(error){
                     console.log('something error',error);
-            });
-        
-            function removeData(data){
-                return new Promise(function(resolve, reject){
-                    if(img.type == 'cur' && img.id){
-                        console.log("디비:: 삭제요");
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('DELETE','/api/waypoint/'+data.UWID+'/image/'+data.imgid+'/delete',true);
-                        xhr.onreadystatechange = function(){
-                            if (xhr.readyState == xhr.DONE) {
-                                if (xhr.status == 200 || xhr.status == 201) {
-                                    console.log(xhr.responseText);
-                                    resolve('success_DELETE');
-                                } else {
-                                    console.error(xhr.responseText);
-                                    reject(xhr.responseText);
-                                }
-                            };
-                        };
-                        xhr.setRequestHeader("Content-Type", "application/json");
-                        xhr.setRequestHeader("uwid", data.UWID);
-                        xhr.setRequestHeader("key", data.key);
-                        xhr.send();
-                    } else {
-                        console.log("디비:: 안삭제요");
-                        resolve('nothing_to_DELETE');
-                    };
                 });
-            };
-    
-            function eraseFile(){
-                return new Promise(function(resolve,reject){
 
-                    resolve('success');
-                })
+                function removeData(data){
+                    return new Promise(function(resolve, reject){
+                        if(img.type == 'cur' && img.id){
+                            let xhr = new XMLHttpRequest();
+                            xhr.open('DELETE','/api/waypoint/'+data.UWID+'/image/'+data.imgid+'/delete',true);
+                            xhr.onreadystatechange = function(){
+                                if (xhr.readyState == xhr.DONE) {
+                                    if (xhr.status == 200 || xhr.status == 201) {
+                                        resolve('success_DELETE');
+                                    } else {
+                                        reject(xhr.responseText);
+                                    }
+                                };
+                            };
+                            xhr.setRequestHeader("Content-Type", "application/json");
+                            xhr.setRequestHeader("uwid", data.UWID);
+                            xhr.setRequestHeader("key", data.key);
+                            xhr.send();
+                        } else {
+                            resolve('nothing_to_DELETE');
+                        };
+                    });
+                };
+            
+                function removeDom(){
+                    let index = $target.imgs.indexOf(img);
+                    $target.imgs.splice(index,1);
+                    img.$img.remove();
+                };
+            
+                function eraseFile(){
+                    return new Promise(function(resolve,reject){
+            
+                        resolve('success');
+                    })
+                };
             };
-        
-            function removeDom(){
-                var index = $target.imgs.indexOf(img);
-                $target.imgs.splice(index,1);
-                img.$img.remove();
-
-                console.log('After',$target.imgs);
-            };
-        };
-    });
-
-    $target.imgs.push(img);
-    return img;
+        });
+    };
 };
 
 JournalLogger.prototype.SubmitNew = function(){

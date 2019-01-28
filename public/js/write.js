@@ -63,6 +63,11 @@ function loadGPXFileIntoGoogleMap(map, filename, gpx_data) {
     JLogger.TrackMarker(track);
     JLogger.CreateJourney();
     JLogger.setStartEndWaypoint();
+    JLogger.GeoPhotoUploader({
+      button_id: 'geotag_img_load',
+      input_id: 'geotag_img',
+      modal_id: 'confrimGeophotoSet',
+    });
 
     $('#uploadPath').modal('hide');
     
