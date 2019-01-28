@@ -21,7 +21,7 @@
                 /////////////////////////////
                 // use Javascript Load Image
                 // for Parse Image Metadata
-                // Reference:: https://github.com/blueimp/JavaScript-Load-Image#image-loading
+                // Reference:: https://github.com/blueimp/JavaScript-Load-Image
                 // Demo:: https://blueimp.github.io/JavaScript-Load-Image/
                 // //
                 // use Geopoint js
@@ -80,9 +80,11 @@
             function getImageAfter(img,lat,lon,data){
 
                 //set image
+                $(document.getElementById("image")).empty();
                 document.getElementById("image").appendChild(img);
 
                 //set Static Map
+                $(document.getElementById("map")).empty();
                 var width = Math.round($("#map").width()); //use jQuery
                 var staticMap = new Image();
                 staticMap.src = setStaticMapURL({
@@ -222,6 +224,11 @@
 @section('contents')
 
 <h1>GEOTAGGED PHOTO TEST</h1>
+References
+<ul>
+    <li><b>Javascript Load Image::  </b><a href="https://github.com/blueimp/JavaScript-Load-Image" target="_blank">https://github.com/blueimp/JavaScript-Load-Image</a></li>
+    <li><b>Geopoint::  </b><a href="https://github.com/perfectline/geopoint" target="_blank">https://github.com/perfectline/geopoint</a></li>
+</ul>
 <hr>
     <button class="btn btn-secondary btn-sm" id="geotag_img_load">Upload Photo</button>
     <input class="btn btn-secondary btn-sm" type="file" value="Upload Photo" id="geotag_img" hidden>

@@ -1,6 +1,6 @@
 // Waypoint Marker
 
-var JournalLogger = function(map,key=null){
+const JournalLogger = function(map,key=null){
     this.map = map;
     this.gMapKey = key;
     this.waypoints = [];
@@ -187,7 +187,7 @@ JournalLogger.prototype.GeoPhotoUploader = function(Elements={
             result.lon
         ,function(data) {
             Logger.$confirmGeophotoModal.modal("hide");
-            alert(data);
+            return;
         });
     });
 
@@ -206,10 +206,16 @@ JournalLogger.prototype.GeoPhotoUploader = function(Elements={
                     result.file,
                     function (data) {
                         if (!data.imageHead) {
+                            alert("cannot find EXIF meta");
                             return;
-                        }
-                        var DMSlat = data.exif.get('GPSLatitude');
-                        var DMSlon = data.exif.get('GPSLongitude');
+                        };
+                        let DMSlat = data.exif.get('GPSLatitude');
+                        let DMSlon = data.exif.get('GPSLongitude');
+
+                        if(!DMSlon || !DMSlat){
+                            alert("cannot find GPS meta");
+                            return;
+                        };
 
                         var point = new GeoPoint(
                             DMSlon[0]+"° "+DMSlon[1]+"'"+DMSlon[2]+'"',
@@ -263,20 +269,18 @@ JournalLogger.prototype.setWaypointByGeoPhoto = function(imgfile,lat,lon,callbac
     var Logger = this;
     console.log(imgfile,lat,lon);
 
-    // Event:: modal confirm
+    // Set Waypoint
+    var point = new google.maps.LatLng(lat,lon);
+    var node = Logger.findSequenceNode(point);
+    var $Waypoint = Logger.NewWaypoint(node,{
+        new: true,
+        offset: true
+    });
 
-        // Set Waypoint
-        var point = new google.maps.LatLng(lat,lon);
-        var node = Logger.findSequenceNode(point);
-        var $Waypoint = Logger.NewWaypoint(node,{
-            new: true,
-            offset: true
-        });
+    // Upload & Set Image
+    var $img = Logger.setTempImage(imgfile,$Waypoint);
 
-        // Upload & Set Image
-
-
-        return callbackFn('success');
+    return callbackFn('success');
 };
 
 // set Starting point & Destination Waypoint
@@ -412,7 +416,8 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
             });
     }
     $newWaypoint.find('#input_img').on('change',function(e){
-        Logger.handleImgsFilesSelect(e,$newWaypoint);
+        var imgfile = e.target.files[0];
+        Logger.setTempImage(imgfile,$newWaypoint);
     });
 
     // set Static Map
@@ -454,25 +459,22 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     return $newWaypoint;
 };
 
-JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
+JournalLogger.prototype.setTempImage = function(imgfile,$Waypoint){
+    var Logger = this;
+
     var $newImg = $('<img/>',{
         class: 'gallary rounded float-left',
     })
+    var $target = $Waypoint.find('.image');
 
-    var Logger = this;
-
-    var $target = $wp.find('.image');
-    var files = e.target.files;
-    var f = files[0];
-
-    if(!f.type.match("image.*")){
+    if(!imgfile.type.match("image.*")){
         alert("Only upload Imagefiles");
         return;
     }
 
     // set formdata
     var filedata = new FormData();
-    filedata.append('image', f);
+    filedata.append('image', imgfile);
 
     $.ajax({
         url: "/api/image/upload",
@@ -488,15 +490,19 @@ JournalLogger.prototype.handleImgsFilesSelect = function(e,$wp){
         success: function(data){
             Logger.setImage({
                 $img : $newImg,
-                $target : $wp,
+                $target : $Waypoint,
                 src : data.url,
                 path : data.filename,
                 type : 'tmp'
             });
+
+            return $newImg;
         },
         error: function(xhr,status,error){
             $newImg.remove();
             alert(error);
+
+            return "fail";
         },
         complete: function(){
             $newImg.removeClass('img-loading');
@@ -926,7 +932,7 @@ JournalLogger.prototype.ReindexWaypoints = function(){
 
 }
 
-var Journal = {};
+const Journal = {};
 
 Journal.setStaticMap = function(target = null,param = {}){
     
