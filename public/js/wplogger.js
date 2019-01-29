@@ -534,8 +534,8 @@ JournalLogger.prototype.setImage = function(prop = {
         img.src,
         function(image){
             let $canvas = $(image);
-            setCanvasEvent($canvas);
-            img.$img.replaceWith($canvas);
+            $wrapped = setCanvasEvent($canvas);
+            img.$img.replaceWith($wrapped);
             img.$img = $canvas;
             $target.imgs.push(img);
             if(callbackFn == Function && callbackFn){
@@ -549,15 +549,36 @@ JournalLogger.prototype.setImage = function(prop = {
     );
 
     function setCanvasEvent($canvas){
+        let $Wrapper = $('<div/>',{
+            class: 'waypoint-image-wrapper',
+        });
+        $Wrapper.append($canvas);
+
+        $delMessage = $('<span />').text("DEL")
+        $delMessage.addClass('img-delete')
+        $delMessage.css({
+            'position' : 'absolute',
+            'top' : '5px',
+            'right' : '5px',
+            'padding-left' : '5px',
+            'padding-right' : '5px',
+            'color' : 'white',
+            'font-weight' : 'bold',
+            'background-color' : 'red',
+        });
+
         $canvas.addClass('gallary rounded');
         // set Actions
-        $canvas.mouseenter(function(){
+        $Wrapper.mouseenter(function(){
             $(this).addClass('shadow');
+            $(this).append($delMessage.clone());
+            // $(this).after($delMessage.clone());
         });
-        $canvas.mouseleave(function(){
+        $Wrapper.mouseleave(function(){
             $(this).removeClass('shadow');
+            $(this).children('.img-delete').remove();
         });
-        $canvas.click(function(){
+        $Wrapper.click(function(){
             // Delete image
             var delconfirm = confirm('Delete Image')
             if(delconfirm){
@@ -605,7 +626,8 @@ JournalLogger.prototype.setImage = function(prop = {
                 function removeDom(){
                     let index = $target.imgs.indexOf(img);
                     $target.imgs.splice(index,1);
-                    img.$img.remove();
+                    // img.$img.remove();
+                    $Wrapper.remove();
                 };
             
                 function eraseFile(){
@@ -616,6 +638,8 @@ JournalLogger.prototype.setImage = function(prop = {
                 };
             };
         });
+
+        return $Wrapper;
     };
 };
 
