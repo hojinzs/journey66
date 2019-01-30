@@ -50,3 +50,4 @@ Route::post('/gpxupload','GpxController@store');
  * Test Controller
  */
 Route::post('/test/{id}','TestController@api');
+Route::post('/ref/php-gpx-parser','TestController@phpGpxParser');

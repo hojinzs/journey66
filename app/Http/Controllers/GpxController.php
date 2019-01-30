@@ -126,6 +126,27 @@ class GpxController extends Controller
         //
     }
 
+    public static function getSummarizable($path){
+        $gpx = new phpGPX();
+        $file = $gpx->load($path);
+
+        foreach($file->tracks as $track)
+        {
+            $stats = $track->stats->toArray();
+            break;
+        };
+
+        $array = [
+            'distance' => $stats['distance'],
+            'duration' => $stats['duration'],
+            'elevation' => $stats['cumulativeElevationGain'],
+            'finishedAt' => $stats['finishedAt'],
+            'startedAt' => $stats['startedAt'],
+        ];
+
+        return $array;
+    }
+
     public static function getPointArraytoXml($xml){
         $gpx = new phpGPX();
         $file = $gpx->load($xml);

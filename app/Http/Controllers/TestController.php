@@ -20,13 +20,26 @@ class TestController extends Controller
         return view('test');
     }
 
-    public function imgeo(Request $request){
-        //
-        return view('ref.imgeo_js');
-    }
+    public function phpGpxParser(Request $request){
+        if($request->hasFile('gpx')){
+            //Polyline Parsing & Encoding
+            $xml = $request->gpx;
+            $points = GpxController::getPointArraytoXml($xml);
+            $sequence = GpxController::getSequenceArrayFromXml($xml);
+            $encoded_polyline = GpxController::getEncodedPolyline($points);
+            $encoded_polyline_summary = GpxController::getCompressedPolyline($encoded_polyline,2000);
+            $meta = GpxController::getSummarizable($xml);
+            
+        } else {
+            return response(400);
+        };
 
-    public function phpgpx(Request $request){
-        //
-        return view('test');
+
+        return response()
+            ->json([
+                'parse' => $meta,
+                'polyline' => $encoded_polyline_summary,
+                'sequence' => $sequence,
+            ]);
     }
 }

@@ -31,4 +31,9 @@ Route::get('/test','TestController@web');
 /**
  * Referrence Pages
  */
-Route::get('/ref/imgeo-js','TestController@imgeo');
+Route::get('/ref/imgeo-js',function(){
+    return view('ref.imgeo_js');
+});
+Route::get('/ref/php-gpx',function(){
+    return view('ref.php-gpx');
+});
