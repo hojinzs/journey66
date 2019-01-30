@@ -1,5 +1,7 @@
 @extends('layout.app')
 
+@section('title',"Reference:: php-GPX")
+
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.20.1/load-image.all.min.js"></script>
@@ -115,8 +117,10 @@
                     staticmap = staticmap
                     +"&zoom=" +param.zoom;
                 } else {
-                    staticmap = staticmap
-                    +"&zoom="+10;
+                    if(!param.encpath){
+                        staticmap = staticmap
+                        +"&zoom="+10;
+                    }
                 };
 
                 //set Marker
@@ -133,7 +137,6 @@
                 };
 
                 //set Path
-                console.log(param.encpath);
                 if(param.encpath)
                 {
                     let color = "0xff0000ff";

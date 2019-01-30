@@ -1,5 +1,7 @@
 @extends('layout.app')
 
+@section('title',"Reference:: imgeo")
+
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.20.1/load-image.all.min.js"></script>
@@ -149,16 +151,19 @@
                 {
                     staticmap = staticmap
                     +"&markers=color:red|"+param.lat+","+param.lng;
-                } else {
+                };
+                
+                //set Center
+                if(param.lat && param.lng){
                     staticmap = staticmap
-                    +"&center="+param.lat+","+param.lng;
+                    +"&center="+param.lat+","+param.lng;                    
                 };
 
                 //set Path
                 if(param.encpath)
                 {
-                    var color = "0xff0000ff";
-                    var width = 3;
+                    let color = "0xff0000ff";
+                    let width = 3;
                     staticmap = staticmap + "&path=weight:" + width + "%7Ccolor:"+ color + "%7Cenc:"+ param.encpath;
                 };
 
