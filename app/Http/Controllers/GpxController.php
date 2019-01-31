@@ -52,8 +52,8 @@ class GpxController extends Controller
                 //Save polyline data to tmp folder
                 $disk = Storage::disk('gcs');
                 $filename = md5(microtime())."-".$request->gpx->getClientOriginalName();
-                $disk->put('tmp/'.$filename.'.poly',$encoded_polyline);
-                $polypath = 'tmp/'.$filename.'.poly';
+                // $disk->put('tmp/'.$filename.'.poly',$encoded_polyline);
+                // $polypath = 'tmp/'.$filename.'.poly';
 
                 //Keep Gpx file to tmp folder
                 $gpxpath = $request->gpx->storeAs('tmp',$filename,'gcs');
@@ -61,7 +61,7 @@ class GpxController extends Controller
                 return response()->json([
                     'stats' => $stats,
                     'gpx_path' => $gpxpath,
-                    'polyline_path' => $polypath,
+                    // 'polyline_path' => $polypath,
                     'sequence' => $sequence,
                     'encoded_polyline' => $encoded_polyline,
                     'encoded_polyline_summary' => $encoded_polyline_summary,
@@ -145,12 +145,16 @@ class GpxController extends Controller
             break;
         };
 
+        $startedAt = \Carbon\Carbon::parse($stats['startedAt'])->toDateTimeString();
+        $finishedAt = \Carbon\Carbon::parse($stats['finishedAt'])->toDateTimeString();
+
         $array = [
             'distance' => $stats['distance'],
             'duration' => $stats['duration'],
             'elevation' => $stats['cumulativeElevationGain'],
-            'finishedAt' => $stats['finishedAt'],
-            'startedAt' => $stats['startedAt'],
+            'startedAt' => $startedAt,
+            'finishedAt' => $finishedAt,
+            'timezone' => ''
         ];
 
         return $array;
@@ -158,7 +162,13 @@ class GpxController extends Controller
 
     public static function getPointArraytoXml($xml){
         $gpx = new phpGPX();
-        $file = $gpx->load($xml);
+        try {
+            //code...
+            $file = $gpx->load($xml);
+        } catch (\Throwable $th) {
+            //throw $th;
+            $file = $gpx->parse($xml);
+        };
     
         $points = [];
         foreach ($file->tracks as $track)
@@ -192,14 +202,16 @@ class GpxController extends Controller
             $track_points = $track->getPoints();
             foreach ($track_points as $sequence => $point) {
                 
-                $time = \Carbon\Carbon::instance($point->time)->timezone(Config::get('app.timezone'))->toDateTimeString();
-                $distance = round($point->distance * 0.001,2)."km";
+                // $time = \Carbon\Carbon::instance($point->time)->timezone(Config::get('app.timezone'))->toDateTimeString();
+                // $distance = round($point->distance * 0.001,2)."km";
+
+                $time = \Carbon\Carbon::instance($point->time)->toDateTimeString();
 
                 $points[] = [
                     'sequence' => $sequence,
                     'latitude' => $point->latitude,
                     'longitude' => $point->longitude,
-                    'distance' => $distance,
+                    'distance' => $point->distance, // $distance,
                     'elevation' => $point->elevation,
                     'time' => $time,
                 ];

@@ -57,6 +57,11 @@ return [
             'btn_down' => 'down',
             'btn_delete' => 'delete',
             'btn_undelete' => 'cancel delete',
+            'stats' => [
+                'distance' => 'distance',
+                'elevation' => 'elevation',
+                'time' => 'time',
+            ],
         ],
         'posted' => [
             'title' => 'Posting your journey',

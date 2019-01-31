@@ -72,6 +72,7 @@
                     'waypoint' => $waypoint,
                     'waypoint_labels' => $waypoint_labels,
                     'id' => $loop->index,
+                    'waypoint_stats' => ['distance','elevation','time'],
                 ])
                 @endcomponent
             @endforeach

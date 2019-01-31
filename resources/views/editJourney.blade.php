@@ -38,11 +38,13 @@
             'waypoint_labels' => $waypoint_labels,
             'journey' => $journey,
             'waypoints' => $waypoints,
+            'stats' => ['distance','elevation','duration','startedAt','finishedAt'],
         ])
         @endcomponent
 
         @component('components.FormWaypoint',[
             'waypoint_labels' => $waypoint_labels,
+            'waypoint_stats' => ['distance','elevation','time'],
         ])
         @endcomponent
 

@@ -29,6 +29,8 @@ class TestController extends Controller
             $encoded_polyline = GpxController::getEncodedPolyline($points);
             $encoded_polyline_summary = GpxController::getCompressedPolyline($encoded_polyline,2000);
             $meta = GpxController::getSummarizable($xml);
+            $gpx = new phpGPX;
+            $parse = $gpx->load($xml);
             
         } else {
             return response(400);
@@ -40,6 +42,7 @@ class TestController extends Controller
                 'parse' => $meta,
                 'polyline' => $encoded_polyline_summary,
                 'sequence' => $sequence,
+                'parseAll' => $parse,
             ]);
     }
 }

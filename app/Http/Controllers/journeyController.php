@@ -59,12 +59,20 @@ class journeyController extends Controller
             // set new Journeys
             $new_journey = journeyController::setJourney($request);
 
+            //get Sequence Array
+            // $disk = Storage::disk('gcs');
+            // $xml = $disk->get($new_journey['file_path']);
+            // $sequence = GpxController::getSequenceArrayFromXml($xml);
+
+            $xml = $new_journey->getGPXxml();
+            $sequence = GpxController::getSequenceArrayFromXml($xml);
+
             // set new Waypoints
             $UWID = [];
             $images = [];
             $wpArr = $request->input('waypoints');
             foreach ($wpArr as $key => $waypoint) {
-                $new_waypoint = journeyController::setWaypoint($waypoint,$new_journey['id']);
+                $new_waypoint = journeyController::setWaypoint($waypoint,$new_journey['id'],$sequence);
                 $UWID[] = $new_waypoint['UWID'];
 
                 //set Waypoint images
@@ -154,8 +162,7 @@ class journeyController extends Controller
                 };
 
                 //get Polyline & encode
-                $disk = Storage::disk('gcs');
-                $poly = $disk->get($journey->polyline_path);
+                $poly = $journey->polyline_path;
                 $cpoly = GpxController::getCompressedPolyline($poly,2000);
     
                 return view('showJourney',[
@@ -191,11 +198,11 @@ class journeyController extends Controller
                 };
 
                 //get Polyline & encode
-                $disk = Storage::disk('gcs');
-                $poly = $disk->get($journey->polyline_path);
+                $poly = $journey->polyline_path;
                 $cpoly = GpxController::getCompressedPolyline($poly,2000);
 
                     //get sequence array
+                    $disk = Storage::disk('gcs');
                     $xml = $disk->get($journey->file_path);
                     $sequence = GpxController::getSequenceArrayFromXml($xml);
                     $stats = GpxController::getSummarizable($xml);
@@ -333,6 +340,14 @@ class journeyController extends Controller
             // update Journey Data
             $saved_journey = journeyController::UpdateJourney($request,$get_journey->id);
 
+            $xml = $saved_journey->getGPXxml();
+            $sequence = GpxController::getSequenceArrayFromXml($xml);
+
+            // //get Sequence Array
+            // $disk = Storage::disk('gcs');
+            // $xml = $disk->get($saved_journey['file_path']);
+            // $sequence = GpxController::getSequenceArrayFromXml($xml);
+
             // update Waypoint Data
             $UWID = [];
             $waypoints_index = 0;
@@ -361,7 +376,7 @@ class journeyController extends Controller
                 } else {
                     # new Waypoint. make it
                     $waypoints_index = $waypoints_index +1;
-                    $new_waypoint = journeyController::setWaypoint($waypoint,$saved_journey['id']);
+                    $new_waypoint = journeyController::setWaypoint($waypoint,$saved_journey['id'],$sequence);
                     $UWID[] = $new_waypoint['UWID'];
 
                     # control images
@@ -413,22 +428,35 @@ class journeyController extends Controller
         $journey = new journey;
 
         // make resource
-        $email = $request->input('email');
-        $author = $request->input('author');
-        $key = Hash::make($email.$author);
+        // $email = $request->input('email');
+        // $author = $request->input('author');
+        $key = base64_encode(Hash::make(
+            $request->input('email')
+            .$request->input('email')
+            .now()->timestamp
+        ));
 
         $gpx_path = journeyController::StoreTmpFile($request->input('gpx'),'gpxs');
-        $polyline_path = journeyController::StoreTmpFile($request->input('polyline'),'poly');
+        // $polyline_path = journeyController::StoreTmpFile($request->input('polyline'),'poly');
 
         $journey->UJID = 'tmp'.time();
         $journey->name = $request->input('title');
         $journey->description = $request->input('description');
         $journey->type = $request->input('type');
         $journey->file_path = $gpx_path;
-        $journey->polyline_path = $polyline_path;
+        $journey->polyline_path = $request->input('polyline');
         $journey->key = $key;
-        $journey->author_email = $email;
-        $journey->author_name = $author;
+        $journey->author_email = $request->input('email');
+        $journey->author_name = $request->input('author');
+
+        // set stats data
+        $xml = Storage::disk('gcs')->get($gpx_path);
+        $stats = GpxController::getSummarizable($xml);
+            $journey->distance = $stats['distance'];
+            $journey->elevation = $stats['elevation'];
+            $journey->duration = $stats['duration'];
+            $journey->startedAt = $stats['startedAt'];
+            $journey->finishedAt = $stats['finishedAt'];
 
         //insert
         $journey->save();
@@ -445,7 +473,7 @@ class journeyController extends Controller
     /**
      * 
      */
-    private function setWaypoint($request,$journey_id){
+    private function setWaypoint($request,$journey_id,$sequence){
 
         // make resource
         $UWID = 'WP'.hash('crc32b',$journey_id.'.'.$request['sequence'].'.'.microtime());
@@ -461,6 +489,15 @@ class journeyController extends Controller
         $waypoint->type = $request['type'];
         $waypoint->latitude = $request['Lat'];
         $waypoint->longitude = $request['Lng'];
+
+        // find stat data from sequnece
+        if($sequence){
+            $waypoint->distance = $sequence[$request['sequence']]['distance'];
+            $waypoint->elevation = $sequence[$request['sequence']]['elevation'];
+            $waypoint->time = $sequence[$request['sequence']]['time'];
+            $waypoint->latitude =  $sequence[$request['sequence']]['latitude'];
+            $waypoint->longitude = $sequence[$request['sequence']]['longitude'];
+        }
 
         // input
         $waypoint->save();

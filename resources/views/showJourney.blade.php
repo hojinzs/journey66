@@ -44,7 +44,8 @@
                         <div class="col-md-12">
                             <h2>{{$journey['name']}}</h2>
                             <p class="author">{{__('journey.form.author')}} :: {{$journey['author_name']}}<p>
-                            <p class="author">{{__('journey.form.created_at')}} :: {{date('d/m/Y',strtotime($journey['created_at']))}}</p>
+                            <p class="author">{{__('journey.form.created_at')}} :: {{$journey['created_at']}}</p>
+                            <p class="author">{{__('journey.form.stats.distance')}} :: {{$journey['distance']}}</p>
                             <hr>
                             <p>{{$journey['description']}}</p>
                         </div>
@@ -76,6 +77,11 @@
                                     @endforeach
                                 </div>
                             </div>
+                            @isset($waypoint['distance'])
+                            <div class="col-md-12 waypoint_description">
+                                <p class="author">{{__('journey.form.waypoint.stats.distance')}} :: {{$waypoint['distance']}}</p>
+                            </div>
+                            @endisset
                             @isset($waypoint['description'])
                             <div class="col-md-12 waypoint_description">
                                 <p>{{$waypoint['description']}}</p>

@@ -1,4 +1,5 @@
 // Waypoint Marker
+let GPX_FILE;
 
 const JournalLogger = function(map,key=null){
     this.map = map;
@@ -21,6 +22,7 @@ JournalLogger.prototype.setForm = function(Elements = {
     dummy_waypoint: null,
     journey_posted_modal: null,
     journey_key: null,
+    stats: null,
 }){
     this.$form=$(Elements.form);
     // this.$waypointlist = $(Elements.waypoint_list);
@@ -28,6 +30,20 @@ JournalLogger.prototype.setForm = function(Elements = {
     this.$dummywp = $(Elements.dummy_waypoint);
     this.$postingModal = $(Elements.journey_posted_modal);
     this.journey_key = Elements.journey_key;
+    this.stats = Elements.stats;
+
+    console.log(this.stats);
+
+    let started_at = moment.tz(this.stats.startedAt,"UTC").tz(moment.tz.guess());
+    let finisted_at = moment.tz(this.stats.finishedAt,"UTC").tz(moment.tz.guess());
+
+    // set stats
+    $('#journey-stat').find("span[name='distance']").text(Journal.calcDistance(this.stats.distance));
+    $('#journey-stat').find("span[name='elevation']").text(Journal.calcElevation(this.stats.elevation));
+    $('#journey').find("span[name='duration']").text(this.stats.duration);
+    // $('#journey-stat').find("span[name='startedAt']").text(this.stats.startedAt);
+    $('#journey-stat').find("span[name='startedAt']").text(started_at);
+    $('#journey-stat').find("span[name='finishedAt']").text(finisted_at);
 
     this.$form.show();
 };
@@ -324,6 +340,8 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     var plng = SequencePoint.longitude;
     var latlng = new google.maps.LatLng(plat,plng);
 
+    console.log(SequencePoint);
+
     //get last waypoint node
     var Idx = this.waypoints.length - 1
 
@@ -336,6 +354,11 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
         prop.type = $newWaypoint.find('#waypoint-type').val();
         $newWaypoint.sequence = SequencePoint.sequence;
         $newWaypoint.uwid = $(prop.waypoint_form).data('uwid');
+        $newWaypoint.find("#waypoint-stat").find('span[name="distance"]').text(Journal.calcDistance(SequencePoint.distance));
+        $newWaypoint.find("#waypoint-stat").find('span[name="elevation"]').text(Journal.calcElevation(SequencePoint.elevation));
+        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(
+            moment.tz(SequencePoint.time,"UTC").tz(moment.tz.guess())
+        );
     } else {
         //set NewWaypointForm
         var $newWaypoint = $dummywp.clone(true);
@@ -347,7 +370,14 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
         $newWaypoint.attr("name",Idx);
         $newWaypoint.find('#Lat').val(latlng.lat());
         $newWaypoint.find('#Lng').val(latlng.lng());
+        $newWaypoint.find("#waypoint-stat").find('span[name="distance"]').text(Journal.calcDistance(SequencePoint.distance));
+        $newWaypoint.find("#waypoint-stat").find('span[name="elevation"]').text(Journal.calcElevation(SequencePoint.elevation));
+        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(
+            moment.tz(SequencePoint.time,"UTC").tz(moment.tz.guess())
+        );
+        console.log(SequencePoint.time);
         $newWaypoint.show();
+
 
         $newWaypoint.sequence = SequencePoint.sequence;
     }
@@ -655,6 +685,7 @@ JournalLogger.prototype.SubmitNew = function(){
         FormArray.author = this.$form.find("[name=author]").val();
         FormArray.email = this.$form.find("[name=email]").val();
         FormArray._token = this.$form.find("[name=_token]").val();
+        FormArray.gpx_file = GPX_FILE;
 
         FormArray.waypoints = [];
 
@@ -687,7 +718,8 @@ JournalLogger.prototype.SubmitNew = function(){
         })
 
         // set track files
-        FormArray.polyline = this.$form.data('polyline');
+        // FormArray.polyline = this.$form.data('polyline');
+        FormArray.polyline = this.$form.data('encoded-polyline');
         FormArray.gpx = this.$form.data('gpx');
 
         // set Static img
@@ -998,8 +1030,6 @@ Journal.setStaticMap = function(target = null,param = {}){
         $(target).attr('src',staticmap);
     }
 
-    console.log(staticmap);
-
     return staticmap;
 }
 
@@ -1076,3 +1106,14 @@ Journal.setStaticMapURL = function(param={
 
     return staticmap;
 };
+
+
+Journal.calcDistance = function(distance){
+    let km = Number(distance * 0.001).toFixed(2)+"km";
+    return km;
+}
+
+Journal.calcElevation = function(elevation){
+    let m = Number(elevation)+"m";
+    return m;
+}

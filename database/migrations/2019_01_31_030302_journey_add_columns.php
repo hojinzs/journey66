@@ -18,6 +18,13 @@ class JourneyAddColumns extends Migration
         DB::statement('ALTER TABLE journeys CHANGE COLUMN publish_stage publish_stage VARCHAR(255) NOT NULL;');
 
         Schema::table('journeys',function(Blueprint $table){
+            $table->dropColumn('polyline_path');
+        });
+
+        Schema::table('journeys',function(Blueprint $table){
+            $table->mediumText('polyline_path')
+                ->nullable($value = true)
+                ->comment('encoded polyline string');
             $table->double('distance')
                 ->nullable()
                 ->description('Distance in meters (m)');
@@ -171,19 +178,27 @@ class JourneyAddColumns extends Migration
         DB::statement('ALTER TABLE journeys CHANGE COLUMN publish_stage publish_stage VARCHAR(255) NOT NULL;');
 
         Schema::table('journeys',function(Blueprint $table){
-            $table->dropColumn('distance');
-            $table->dropColumn('elevation');
-            $table->dropColumn('duration');
-            $table->dropColumn('startedAt');
-            $table->dropColumn('finishedAt');
+            $table->dropColumn('polyline_path');
+        });
+
+        Schema::table('journeys',function(Blueprint $table){
+            $table->dropColumn(['distance','elevation','duration','startedAt','finishedAt']);
+            $table->string('polyline_path')
+                ->nullable($value = true)
+                ->unique()
+                ->comment('encoded polyline string file stored uri');
         });
 
         DB::statement('ALTER TABLE journeys CHANGE COLUMN publish_stage publish_stage ENUM("Pending","Published","Private") NOT NULL DEFAULT "Pending";');
 
         Schema::table('waypoints',function(Blueprint $table){
-            $table->dropColumn('seq');
+            $table->dropColumn(['distance','elevation','time']);
         });
 
+
+        Schema::table('labels',function(Blueprint $table){
+            $table->dropColumn('seq');
+        });
 
     }
 }

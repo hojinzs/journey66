@@ -54,10 +54,12 @@ function loadGPXFileIntoGoogleMap(map, filename, gpx_data) {
       waypoint_list: 'waypoint-list',
       dummy_waypoint: '#DUMMY',
       journey_posted_modal: '#journeyPosted',
+      stats: gpx_data.stats,
     });
     JLogger.gpx = xml;
-    JLogger.$form.attr('data-polyline',gpx_data.polyline_path);
     JLogger.$form.attr('data-gpx',gpx_data.gpx_path);
+    // JLogger.$form.attr('data-polyline',gpx_data.polyline_path); //unuse
+    JLogger.$form.attr('data-encoded-polyline',gpx_data.encoded_polyline);
     JLogger.$form.attr('data-summary-polyline',gpx_data.encoded_polyline_summary);
     JLogger.setSequence(gpx_data.sequence);
     JLogger.TrackMarker(track);
@@ -81,6 +83,8 @@ function loadGPXFileIntoGoogleMap(map, filename, gpx_data) {
 function gpxupload(e) {
   var file = e.target.files[0];
   result = URL.createObjectURL(file);
+
+  GPX_FILE = file;
 
   // Upload GPX file and get temporary url
   var gpx = new FormData();

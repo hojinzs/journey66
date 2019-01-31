@@ -24,15 +24,6 @@ id="{{$id}}" data-UWID="{{$waypoint['UWID']}}" data-seq="{{$waypoint['sequence']
 
                             <input id="Lng" name="Lng" class="form-control disabled" type="number" required readonly
                             @isset($waypoint['longitude'])value="{{$waypoint['longitude']}}"@endisset>
-
-                            <input id="distance" name="distance" class="form-control disabled" type="number" required readonly
-                            @isset($waypoint['distance'])value="{{$waypoint['distance']}}"@endisset>
-
-                            <input id="elevation" name="elevation" class="form-control disabled" type="number" required readonly
-                            @isset($waypoint['elevation'])value="{{$waypoint['elevation']}}"@endisset>
-
-                            <input id="time" name="time" class="form-control disabled" type="number" required readonly
-                            @isset($waypoint['time'])value="{{$waypoint['time']}}"@endisset>
                         </div>
                     </div>
                     <div class="form-group row">
