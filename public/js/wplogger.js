@@ -998,6 +998,8 @@ Journal.setStaticMap = function(target = null,param = {}){
         $(target).attr('src',staticmap);
     }
 
+    console.log(staticmap);
+
     return staticmap;
 }
 

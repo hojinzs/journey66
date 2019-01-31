@@ -47,6 +47,7 @@ class GpxController extends Controller
                 $sequence = GpxController::getSequenceArrayFromXml($xml);
                 $encoded_polyline = GpxController::getEncodedPolyline($points);
                 $encoded_polyline_summary = GpxController::getCompressedPolyline($encoded_polyline,2000);
+                $stats = GpxController::getSummarizable($xml);
 
                 //Save polyline data to tmp folder
                 $disk = Storage::disk('gcs');
@@ -58,6 +59,7 @@ class GpxController extends Controller
                 $gpxpath = $request->gpx->storeAs('tmp',$filename,'gcs');
 
                 return response()->json([
+                    'stats' => $stats,
                     'gpx_path' => $gpxpath,
                     'polyline_path' => $polypath,
                     'sequence' => $sequence,
@@ -128,7 +130,14 @@ class GpxController extends Controller
 
     public static function getSummarizable($path){
         $gpx = new phpGPX();
-        $file = $gpx->load($path);
+        
+        try {
+            //code...
+            $file = $gpx->load($path);
+        } catch (\Throwable $th) {
+            //throw $th;
+            $file = $gpx->parse($path);
+        };
 
         foreach($file->tracks as $track)
         {

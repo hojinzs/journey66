@@ -13,6 +13,7 @@ class label extends Model
     {
         $labels = label::select('id','name','description')
         ->where('where','=',$key)
+        ->orderBy('seq','asc')
         ->get();
 
         return $labels;

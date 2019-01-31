@@ -198,6 +198,7 @@ class journeyController extends Controller
                     //get sequence array
                     $xml = $disk->get($journey->file_path);
                     $sequence = GpxController::getSequenceArrayFromXml($xml);
+                    $stats = GpxController::getSummarizable($xml);
 
                 return response()->json([
                     'journey' => $journey,
@@ -205,6 +206,7 @@ class journeyController extends Controller
                     'polyline' => $poly,
                     'summary_polyline' => $cpoly,
                     'sequence' => $sequence,
+                    'stats' => $stats,
                 ]);
             };
             return abort(403,'Unauthorized action - key undefined');

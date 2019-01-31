@@ -42,6 +42,16 @@
                                 >@isset($journey['description']){{$journey['description']}}@endisset</textarea>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="journey-meta" class="col-md-2 col-form-label">Stats </label>
+                            <ul id="journey-stat" class="">
+                                @foreach ($stats as $stat)
+                                <li><span class="journey-stat-name">{{$stat}} ::</span>
+                                    <span name="{{$stat}}"></span>
+                                </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

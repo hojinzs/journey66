@@ -32,11 +32,13 @@
 
         @component('components.FormJourney',[
             'journey_labels' => $journey_labels,
+            'stats' => ['distance','elevation','duration','startedAt','finishedAt'],
         ])
         @endcomponent
 
         @component('components.FormWaypoint',[
             'waypoint_labels' => $waypoint_labels,
+            'waypoint_stats' => ['distance','elevation','time'],
         ])
         @endcomponent
 

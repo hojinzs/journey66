@@ -39,6 +39,13 @@ return [
             'setmarker' => '경로상에서 기억에 남는 장소를 선택해주세요',
             'geotag_photo' => '아니면.. 위치정보가 포함된 사진을 업로드 해보세요',
         ],
+        'stats' => [
+            'distance' => '총 이동거리',
+            'elevation' => '총 상승고도',
+            'duration' => '소요시간',
+            'startedAt' => '시작일시',
+            'finishedAt' => '종료일시',
+        ],
         'waypoint' => [
             'waypoint' => '장소',
             'location' => '위치',
@@ -50,6 +57,11 @@ return [
             'btn_down' => '아래로',
             'btn_delete' => '삭제',
             'btn_undelete' => '삭제 취소',
+            'stats' => [
+                'distance' => '이동거리',
+                'elevation' => '고도',
+                'time' => '시각',
+            ],
         ],
         'posted' => [
             'title' => '여행기 업로드중',
@@ -83,14 +95,15 @@ return [
         ],
         'waypoint' => [
             'starting' => '시작',
-            'marker' => '기억에 남는 지점',
+            'marker' => '기억에 남는 지점', //unuse
             'landmark' => '볼거리',
             'restaurant' => '음식집',
             'supplypoint' => '보급장소',
             'rest' => '휴식장소',
-            'event' => '특별한 이벤트',
+            'event' => '이벤트',
             'accident' => '사건사고',
             'destination' => '종료',
+            'milestone' => '이정표',
         ],
     ]
 

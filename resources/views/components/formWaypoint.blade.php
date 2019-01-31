@@ -16,13 +16,23 @@ id="{{$id}}" data-UWID="{{$waypoint['UWID']}}" data-seq="{{$waypoint['sequence']
                     <legend id="wp-name">{{__('journey.form.waypoint.waypoint')}} #@isset($id){{$id}}@endisset</legend>
                 </div>
                 <div class="card-body">
-                    <div class="form-group row">
+                    <div class="form-group row" hidden>
                         <label for="Lat Lng" class="col-md-2 col-form-label">{{__('journey.form.waypoint.location')}}</label>
                         <div class="col-md-10">
                             <input id="Lat" name="Lat" class="form-control disabled" type="number" required readonly
                             @isset($waypoint['latitude'])value="{{$waypoint['latitude']}}"@endisset>
+
                             <input id="Lng" name="Lng" class="form-control disabled" type="number" required readonly
                             @isset($waypoint['longitude'])value="{{$waypoint['longitude']}}"@endisset>
+
+                            <input id="distance" name="distance" class="form-control disabled" type="number" required readonly
+                            @isset($waypoint['distance'])value="{{$waypoint['distance']}}"@endisset>
+
+                            <input id="elevation" name="elevation" class="form-control disabled" type="number" required readonly
+                            @isset($waypoint['elevation'])value="{{$waypoint['elevation']}}"@endisset>
+
+                            <input id="time" name="time" class="form-control disabled" type="number" required readonly
+                            @isset($waypoint['time'])value="{{$waypoint['time']}}"@endisset>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -64,6 +74,17 @@ id="{{$id}}" data-UWID="{{$waypoint['UWID']}}" data-seq="{{$waypoint['sequence']
                         <div class="col-md-10">
                             <textarea id="description" name="description" class="form-control" rows="5" placeholder="description about this waypoint"
                             >@isset($waypoint['description']){{$waypoint['description']}}@endisset</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-10">
+                            <ul id="waypoint-stat" class="">
+                                @foreach ($waypoint_stats as $stat)
+                                <li><span class="waypoint-stat-name">{{$stat}} ::</span>
+                                    <span name="{{$stat}}"></span>
+                                </li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
                 </div>

@@ -39,6 +39,13 @@ return [
             'setmarker' => 'Click on the memorable point',
             'geotag_photo' => 'or.. use GeoTagged Photo',
         ],
+        'stats' => [
+            'distance' => 'distance',
+            'elevation' => 'elevation',
+            'duration' => 'duration',
+            'startedAt' => 'started at',
+            'finishedAt' => 'finished at',
+        ],
         'waypoint' => [
             'waypoint' => 'Waypoint',
             'location' => 'Location',
@@ -83,7 +90,7 @@ return [
         ],
         'waypoint' => [
             'starting' => 'start',
-            'marker' => 'marking this point',
+            'marker' => 'marking this point', // unuse
             'landmark' => 'landmark',
             'restaurant' => 'restaurant',
             'supplypoint' => 'supplypoint',
@@ -91,6 +98,7 @@ return [
             'event' => 'event',
             'accident' => 'accident',
             'destination' => 'finish',
+            'milestone' => 'milestone',
         ],
     ]
 

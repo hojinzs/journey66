@@ -51,6 +51,8 @@ function initMap() {
     values[1].waypoints.forEach(function (waypoint, k) {
       //find waypoint section
       var wps = document.getElementById(waypoint.UWID);
+      console.log(k,waypoint.UWID);
+      console.log(wps);
 
       //set Static Map
       smap = wps.getElementsByClassName('gmap-static-img');
