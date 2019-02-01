@@ -1,19 +1,12 @@
-// Waypoint Marker
-let GPX_FILE;
+// Journal Logger
 
 const JournalLogger = function(map,key=null){
     this.map = map;
     this.gMapKey = key;
     this.waypoints = [];
     this.path = [];
-    this.zoom = this.map.getZoom();
     this.sequence = [];
     this.journey_key = null;
-
-    //track setting
-    this.trackcolour = "#ff00ff"; // red
-    this.trackwidth = 3;
-    this.mintrackpointdelta = 0.0001;
 };
 
 JournalLogger.prototype.setForm = function(Elements = {
@@ -48,8 +41,52 @@ JournalLogger.prototype.setForm = function(Elements = {
     this.$form.show();
 };
 
-JournalLogger.prototype.setSequence = function($sequence = {}){
-    this.sequence = $sequence;
+JournalLogger.prototype.setSequence = function(sequence = {}){
+
+    let track = [];
+    sequence.forEach(function(point,i){
+        let latlng = new google.maps.LatLng(point.latitude,point.longitude);
+        track.push(latlng);
+    })
+
+    this.sequence = sequence;
+    this.trackpoint = track;
+}
+
+JournalLogger.prototype.centerAndZoom = function(sequence = null) {
+    if(sequence == null) sequence = this.sequence;
+
+    // initalize data
+    var minlat = sequence[0].latitude;
+    var maxlat = sequence[0].latitude;
+    var minlon = sequence[0].longitude;
+    var maxlon = sequence[0].longitude;
+
+    // find min & max 
+    sequence.forEach(function(point,i){
+        if(point.longitude < minlon) minlon = point.longitude;
+        if(point.longitude > maxlon) maxlon = point.longitude;
+        if(point.latitude < minlat) minlat = point.latitude;
+        if(point.latitude > minlat) minlat = point.latitude;
+    });
+
+    console.log(minlat,maxlat,minlon,maxlon)
+
+    if((minlat == maxlat) && (minlat == 0)) {
+        this.map.setCenter(new google.maps.LatLng(49.327667, -122.942333), 14);
+        return;
+    }
+
+    // Center around the middle of the points
+    var centerlon = (maxlon + minlon) / 2;
+    var centerlat = (maxlat + minlat) / 2;
+
+    var bounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(minlat, minlon),
+            new google.maps.LatLng(maxlat, maxlon));
+    this.map.setCenter(new google.maps.LatLng(centerlat, centerlon));
+    this.map.fitBounds(bounds);
+    this.zoom = this.map.getZoom();
 }
 
 JournalLogger.prototype.CreateJourney = function(){
@@ -103,21 +140,34 @@ JournalLogger.prototype.DeleteJourney = function($target){
 
 }
 
-JournalLogger.prototype.TrackMarker = function(track){
-    var colour = this.trackcolour;
-    var width = this.trackwidth;
-    var Logger = this;
+JournalLogger.prototype.TrackMarker = function(track = null,prop = {
+    marker : true,
+    color : null,
+    width : null,
+}){
+    // set Default Properties
+    if(prop.color == null) prop.color = "#ff0000";
+    if(prop.width == null) prop.width = 3;
+    if(track == null) track = this.trackpoint;
 
-    this.path = track;
+    let Logger = this;
 
-    
-    var pointarray = track.j
+    var baseline = new google.maps.Polyline({
+        path: track,
+        strokeColor: prop.color,
+        strokeWeight: prop.width,
+        map: this.map,
+        visible: true,
+        zIndex: 1
+    });
+
+    if(!prop.marker) return;
 
     var polyline = new google.maps.Polyline({
-        path: pointarray,
-        strokeColor: colour,
+        path: track,
+        strokeColor: prop.color,
         strokeOpacity: 0,
-        strokeWeight: (width*5),
+        strokeWeight: (prop.width*5),
         map: this.map,
         visible: true,
         zIndex: 5
@@ -136,7 +186,7 @@ JournalLogger.prototype.TrackMarker = function(track){
           fillOpacity: 0.5,
           map: this.map,
           center: event.latLng,
-          radius: (width*5),
+          radius: (prop.width*5),
           zIndex: 2
         });
 
@@ -150,7 +200,6 @@ JournalLogger.prototype.TrackMarker = function(track){
         });
 
     });
-
 
     // event :: New Waypoint
     google.maps.event.addListener(polyline,'click',function(event){
@@ -269,7 +318,7 @@ JournalLogger.prototype.GeoPhotoUploader = function(Elements={
             lat: result.lat,
             lng: result.lon,
             marker: true,
-            key: gMapKey,
+            key: Logger.gMapKey,
         });
         Logger.$confirmGeophotoModal.find("#Geophoto_img").append(StaticMapImg);
         Logger.$confirmGeophotoModal.modal('show');
@@ -389,7 +438,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
             $newWaypoint.find('#waypoint-type').children('[value=starting]').prop('disabled',false);
             $newWaypoint.find('#wp-name').text('Starting');
             $newWaypoint.find('#waypoint-type').prop('disabled', true);
-            $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng,{
+            $newWaypoint.marker = new Journal.setMarker(this.map,$newWaypoint,Idx,latlng,{
                 title: "startingPoint",
                 label: "S"
             });
@@ -400,7 +449,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
             $newWaypoint.find('#waypoint-type').children('[value=destination]').prop('disabled',false);
             $newWaypoint.find('#wp-name').text('Finish');
             $newWaypoint.find('#waypoint-type').prop('disabled', true);
-            $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng,{
+            $newWaypoint.marker = new Journal.setMarker(this.map,$newWaypoint,Idx,latlng,{
                 title: "destinationPoint",
                 label: "F"
             });
@@ -408,7 +457,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     
         default:
             // set Marker & title
-            $newWaypoint.marker = new Journal.setMarker(map,$newWaypoint,Idx,latlng);
+            $newWaypoint.marker = new Journal.setMarker(this.map,$newWaypoint,Idx,latlng);
             $newWaypoint.find('#wp-name').text('Waypoint #'+Idx);
 
             // starting&destination remove
@@ -685,7 +734,6 @@ JournalLogger.prototype.SubmitNew = function(){
         FormArray.author = this.$form.find("[name=author]").val();
         FormArray.email = this.$form.find("[name=email]").val();
         FormArray._token = this.$form.find("[name=_token]").val();
-        FormArray.gpx_file = GPX_FILE;
 
         FormArray.waypoints = [];
 
@@ -1024,7 +1072,7 @@ Journal.setStaticMap = function(target = null,param = {}){
         staticmap = staticmap + "&path=weight:" + width + "%7Ccolor:"+ color + "%7Cenc:"+ param.encpath;
     }
 ;
-    staticmap = staticmap +"&key=" + gMapKey;
+    staticmap = staticmap +"&key=" + Journey66.Mapkey;
 
     if(target){
         $(target).attr('src',staticmap);

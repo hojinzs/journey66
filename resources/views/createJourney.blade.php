@@ -13,15 +13,21 @@
     <script type="text/javascript" src="{{url('/')}}/js/loadgpx.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/wplogger.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/write.js"></script>
+    <script type="text/javascript" src="{{url('/')}}/slick/slick.min.js"></script>
 @endpush
 
 @push('css')
-    <link rel="stylesheet" type="text/css" href="css/style.css">    
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="../slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="../slick/slick-theme.css"/>
 @endpush
 
 @section('contents')
 
     @component('components.TopMenu')
+    @endcomponent
+
+    @component('sections.getTrack')
     @endcomponent
 
     <div id="map" data-gmapkey="{{$gmapkey}}"></div>
@@ -44,8 +50,8 @@
 
     </div>
 
-    @component('modals.uploadPath')
-    @endcomponent
+    {{-- @component('modals.uploadPath')
+    @endcomponent --}}
 
     @component('modals.journeyPosted',[
         'mode' => 'new',

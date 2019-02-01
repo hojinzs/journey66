@@ -12,11 +12,13 @@ html body {
     top: 0;
     height: 50vh;
     min-height: 500px;
+    z-index: -3;
 }
 
 .journey-container{
     background-color:white;
     height: 100%;
+    z-index: 10;
 }
 
 .journey-container row{

@@ -1,84 +1,52 @@
-var map;
-var form = '#journey';
-var Journey;
-var gMapKey;
-
 $(document).ready(function(){
   $.ajaxSetup({headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
 });
 
 function initMap(){
-    map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 1,
-      center: {lat: 1.0, lng: 1.0}
+    Journey66.Map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 1,
+        center: {lat: 1.0, lng: 1.0}
     });
+    Journey66.Mapkey = $('#map').data('gmapkey');
+    Journey66.Key = $('meta[name="journey-key"]').attr('content');
+    let ujid = $('#journey').data('ujid');
 
-    //set Key
-    var journey_key = $('meta[name="journey-key"]').attr('content');
-    gMapKey = $('#map').data('gmapkey');
-    var gpxurl = "/api/gpx/"+$('#journey').data('gpx');
-    var ujid = $('#journey').data('ujid');
-
-    var getGpxFile = new Promise(function(resolve, reject){
-      $.ajax({
-        type: "POST",
-        url: gpxurl,
-        dataType: "xml",
-        success: function(data){
-          resolve(data);
-        }
-      });
-    });
-
-    var getJourneyData = new Promise(function(resolve, reject){
-      $.ajax({
+    $.ajax({
         type: "GET",
-        url: '/api/journey/'+ujid+'?key='+journey_key,
+        url: '/api/journey/'+ujid+'?key='+Journey66.Key,
         dataType: "json",
         success: function(data){
-          resolve(data);
+            Journey66.Edit(data);
         }
-      });
     });
+};
 
-    Promise.all([getGpxFile,getJourneyData]).then(function(values){
-
-      // Set GPX parser
-      var parser = new GPXParser(values[0],map);
-      parser.setTrackColour("#ff0000");
-      parser.setTrackWidth(3);
-      parser.setMinTrackPointDelta(0.001);
-      parser.centerAndZoom(values[0]);
-      parser.addTrackpointsToMap();
-
-
-      console.log(values[1]);
-      // Set JournalLogger
-      var track = parser.track.getPath();
-      var Journey = new JournalLogger(map);
-      Journey.setForm({
+Journey66.Edit = function(data){
+    console.log(Journey66.Mapkey);
+    // Set JournalLogger
+    let Journey = new JournalLogger(Journey66.Map,Journey66.Mapkey);
+    Journey.setForm({
         form: '#journey',
         waypoint_list: 'waypoint-list',
         dummy_waypoint: '#DUMMY',
         journey_posted_modal: '#journeyPosted',
-        journey_key: journey_key,
-        stats: values[1].stats,
+        journey_key: Journey66.Key,
+        stats: data.stats,
       });
-      Journey.$form.attr('data-polyline',values[1].polyline);
-      Journey.$form.attr('data-summary-polyline',values[1].summary_polyline);
-      Journey.TrackMarker(track);
-      Journey.setSequence(values[1].sequence);
-      Journey.UpdateJourney();
-      Journey.DeleteJourney($('#delete'));
-      Journey.GeoPhotoUploader({
+    Journey.$form.attr('data-polyline',data.polyline);
+    Journey.$form.attr('data-summary-polyline',data.summary_polyline);
+    Journey.setSequence(data.sequence);
+    Journey.centerAndZoom(data.sequence);
+    Journey.TrackMarker(Journey.trackpoint);
+    Journey.UpdateJourney();
+    Journey.DeleteJourney($('#delete'));
+    Journey.GeoPhotoUploader({
         button_id: 'geotag_img_load',
         input_id: 'geotag_img',
         modal_id: 'confrimGeophotoSet',
-      });
+    });
 
-      // set Waypoints
-      // waypoints = Journey.$waypointlist.getElementsByClassName('waypoint'); //javascript
-      waypoints = Journey.$waypointlist.find('.waypoint') // jQuery
-      Journey.setCurrentWaypoint(waypoints);
-    })
-  };
+    // set Waypoints
+    waypoints = Journey.$waypointlist.find('.waypoint') // jQuery
+    Journey.setCurrentWaypoint(waypoints);
+};

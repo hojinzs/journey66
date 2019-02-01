@@ -26,6 +26,7 @@
 
         <!-- Load Custom Scripts & Stylesheet-->
         <link rel="stylesheet" href="/css/common.css">
+        <script src="/js/journey66.js"></script>
         @stack('scripts')
         @stack('css')
         @stack('styles')

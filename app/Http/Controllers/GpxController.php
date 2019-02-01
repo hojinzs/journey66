@@ -62,10 +62,10 @@ class GpxController extends Controller
                     'stats' => $stats,
                     'gpx_path' => $gpxpath,
                     // 'polyline_path' => $polypath,
+                    'points' => $points,
                     'sequence' => $sequence,
                     'encoded_polyline' => $encoded_polyline,
                     'encoded_polyline_summary' => $encoded_polyline_summary,
-                    'points' => $points,
                 ]);
             } catch (\Throwable $th) {
                 //throw $th;
