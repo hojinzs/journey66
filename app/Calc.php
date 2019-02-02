@@ -23,4 +23,17 @@ class Calc
 
         return $response['timeZoneId'];
     }
+
+    public static function getDistance($int)
+    {
+        $km = round(($int * 0.001),2)+"km";
+        return $km;
+    }
+
+    public static function getElevation($int)
+    {
+
+        $m = round($int,1)+"m";
+        return $m;
+    }
 }

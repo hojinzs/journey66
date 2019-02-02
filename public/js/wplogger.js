@@ -1,4 +1,3 @@
-// Journal Logger
 
 const JournalLogger = function(map,key=null){
     this.map = map;
@@ -25,10 +24,8 @@ JournalLogger.prototype.setForm = function(Elements = {
     this.journey_key = Elements.journey_key;
     this.stats = Elements.stats;
 
-    console.log(this.stats);
-
-    let started_at = moment.tz(this.stats.startedAt,"UTC").tz(moment.tz.guess());
-    let finisted_at = moment.tz(this.stats.finishedAt,"UTC").tz(moment.tz.guess());
+    let started_at = moment.tz(this.stats.startedAt,"UTC").tz(this.stats.timezone);
+    let finisted_at = moment.tz(this.stats.finishedAt,"UTC").tz(this.stats.timezone);
 
     // set stats
     $('#journey-stat').find("span[name='distance']").text(Journey66.calc.Distance(this.stats.distance));
@@ -145,9 +142,6 @@ JournalLogger.prototype.TrackMarker = function(prop = {
     color : null,
     width : null,
 }){
-
-    console.log("prop",prop);
-
     // set Default Properties
     if(prop.color == null) prop.color = "#ff0000";
     if(prop.width == null) prop.width = 3;
@@ -155,11 +149,9 @@ JournalLogger.prototype.TrackMarker = function(prop = {
     if(prop.marker == null) prop.marker = true;
     if(prop.map == null) prop.map = this.map;
 
-    console.log("prop",prop);
-
     let Logger = this;
 
-    var baseline = new google.maps.Polyline({
+    let baseline = new google.maps.Polyline({
         path: prop.track,
         strokeColor: prop.color,
         strokeWeight: prop.width,
@@ -170,9 +162,7 @@ JournalLogger.prototype.TrackMarker = function(prop = {
 
     if(prop.marker == false) return;
 
-    console.log(prop.marker);
-
-    var polyline = new google.maps.Polyline({
+    let polyline = new google.maps.Polyline({
         path: prop.track,
         strokeColor: prop.color,
         strokeOpacity: 0,
@@ -341,7 +331,6 @@ JournalLogger.prototype.GeoPhotoUploader = function(Elements={
 ///////////////////////////
 JournalLogger.prototype.setWaypointByGeoPhoto = function(imgfile,lat,lon,callbackFn){
     var Logger = this;
-    console.log(imgfile,lat,lon);
 
     // Set Waypoint
     var point = new google.maps.LatLng(lat,lon);
@@ -390,9 +379,12 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     offset: false,
 })
 {
-    var Logger = this;
-    var $waypointlist = this.$waypointlist;
-    var $dummywp = this.$dummywp;
+    let Logger = this;
+    let $waypointlist = this.$waypointlist;
+    let $dummywp = this.$dummywp;
+    let timezone = this.stats.timezone;
+
+    let time = moment.tz(SequencePoint.time,"UTC").tz(timezone).format();
 
     var plat = SequencePoint.latitude;
     var plng = SequencePoint.longitude;
@@ -412,6 +404,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
         $newWaypoint.uwid = $(prop.waypoint_form).data('uwid');
         $newWaypoint.find("#waypoint-stat").find('span[name="distance"]').text(Journey66.calc.Distance(SequencePoint.distance));
         $newWaypoint.find("#waypoint-stat").find('span[name="elevation"]').text(Journey66.calc.Elevation(SequencePoint.elevation));
+        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(time);
 
     } else {
         //set NewWaypointForm
@@ -426,7 +419,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
         $newWaypoint.find('#Lng').val(latlng.lng());
         $newWaypoint.find("#waypoint-stat").find('span[name="distance"]').text(Journey66.calc.Distance(SequencePoint.distance));
         $newWaypoint.find("#waypoint-stat").find('span[name="elevation"]').text(Journey66.calc.Elevation(SequencePoint.elevation));
-        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(SequencePoint.time);
+        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(time);
         $newWaypoint.show();
 
         $newWaypoint.sequence = SequencePoint.sequence;
@@ -669,8 +662,6 @@ JournalLogger.prototype.setImage = function(prop = {
                     UWID: $target.uwid,
                     key: journey_key,
                 };
-
-                console.log(senddata);
 
                 removeData(senddata)
                 .then(eraseFile(senddata))

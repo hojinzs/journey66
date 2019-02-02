@@ -68,11 +68,12 @@ id="{{$id}}" data-UWID="{{$waypoint['UWID']}}" data-seq="{{$waypoint['sequence']
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="description" class="col-md-2 col-form-label">{{__('journey.form.waypoint.stat')}}</label>
                         <div class="col-md-10">
-                            <ul id="waypoint-stat" class="">
+                            <ul id="waypoint-stat" class="stats">
                                 @foreach ($waypoint_stats as $stat)
-                                <li><span class="waypoint-stat-name">{{$stat}} ::</span>
-                                    <span name="{{$stat}}"></span>
+                                <li><span class="stat-name waypoint-stat-name">{{__('journey.form.waypoint.stats.'.$stat)}}</span>
+                                    <span class="stat-value" name="{{$stat}}"></span>
                                 </li>
                                 @endforeach
                             </ul>

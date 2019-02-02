@@ -14,7 +14,6 @@
 @push('scripts')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.20.1/load-image.all.min.js"></script>
-    <script type="text/javascript" src="{{url('/')}}/js/loadgpx.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/wplogger.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/read.js"></script>
     <script type="text/javascript" src="{{url('/')}}/slick/slick.min.js"></script>
@@ -31,8 +30,8 @@
     @component('components.TopMenu')
     @endcomponent
 
-    @component('components.readerCover')
-    @endcomponent
+    {{-- @component('sections.readerCover')
+    @endcomponent --}}
 
     <div class="journey-map">
         <div id="map" data-gmapkey="{{$gmapkey}}" data-gpx="{{$gpx}}" data-summary-polyline="{{$summary_polyline}}"></div>
@@ -46,9 +45,10 @@
                     <div class="row journey-head">
                         <div class="col-md-12">
                             <h2>{{$journey['name']}}</h2>
-                            <p class="author">{{__('journey.form.author')}} :: {{$journey['author_name']}}<p>
-                            <p class="author">{{__('journey.form.created_at')}} :: {{$journey['created_at']}}</p>
-                            <p class="author">{{__('journey.form.stats.distance')}} :: {{$journey['distance']}}</p>
+                            <p class="author"><i class="fas fa-user-alt"></i> {{$journey['author_name']}}     <i class="fas fa-pen-fancy"></i> {{$journey['created_at']}} </p>
+                            <p class="author">
+                                @isset($journey['distance']) {{\App\Calc::getDistance($journey['distance'])}}@endisset
+                            </p>
                             <hr>
                             <p>{{$journey['description']}}</p>
                         </div>

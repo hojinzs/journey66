@@ -31,7 +31,6 @@ Journey66.setMarker = function(param = {
     //set Marker Offset Event
     let $target = $(param.target);
     google.maps.event.addListener(marker,'click',function(event){
-        console.log("click",event);
         $('html, body').stop().animate({
             scrollTop: $target.position().top 
             }, 500,function(){

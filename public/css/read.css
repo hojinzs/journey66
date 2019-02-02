@@ -39,6 +39,7 @@ html body {
 
 .journey-contents{
     background-color:white;
+    font-size: 18px;
 }
 
 .journey-contents h2{
@@ -46,8 +47,7 @@ html body {
 }
 
 .journey-contents .author{
-    color: #808080;
-    font-weight: bolder;
+    color: #404040;
 }
 
 .journey-contents .waypoint{
@@ -60,7 +60,7 @@ html body {
 }
 
 .journey-contents .waypoint .waypoint_description p{
-    color: #808080;
+    color: #404040;
     font-weight: 200;
 }
 

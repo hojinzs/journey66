@@ -43,11 +43,11 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="journey-meta" class="col-md-2 col-form-label">Stats </label>
-                            <ul id="journey-stat" class="">
+                            <label for="journey-meta" class="col-md-2 col-form-label">{{__('journey.form.stat')}}</label>
+                            <ul id="journey-stat" class="stats">
                                 @foreach ($stats as $stat)
-                                <li><span class="journey-stat-name">{{$stat}} ::</span>
-                                    <span name="{{$stat}}"></span>
+                                <li><span class="stat-name journey-stat-name">{{__('journey.form.stats.'.$stat)}}</span>
+                                    <span class="stat-value" name="{{$stat}}"></span>
                                 </li>
                                 @endforeach
                             </ul>

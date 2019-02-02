@@ -1,5 +1,4 @@
-var gMapKey;
-var form = '#journey';
+
 
 function initMap() {
     let ujid = $('#journey').data('ujid');
@@ -68,8 +67,6 @@ Journey66.Reader = function(data){
     data.waypoints.forEach(function(waypoint, k) {
         //find waypoint section
         let wps = document.getElementById(waypoint.UWID);
-
-        console.log(wps);
 
         //set Static Map
         let encpath = $('#map').data('summary-polyline');
