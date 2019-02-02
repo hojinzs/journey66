@@ -31,6 +31,9 @@
     @component('components.TopMenu')
     @endcomponent
 
+    @component('components.readerCover')
+    @endcomponent
+
     <div class="journey-map">
         <div id="map" data-gmapkey="{{$gmapkey}}" data-gpx="{{$gpx}}" data-summary-polyline="{{$summary_polyline}}"></div>
         <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&callback=initMap"></script>

@@ -23,6 +23,18 @@ class journey extends Model
         return $xml;
     }
 
+    public function setStartingPotint()
+    {
+        $starting = $this->waypoints()->where('type','starting')->first();
+
+        if(!$starting) return;
+
+        $this->started_lat = $starting->latitude;
+        $this->started_lng = $starting->longitude;
+        $this->started_timezone = $starting->timezone;
+        
+        $this->save();
+    }
 
     /**
      * get the sections for the journeys

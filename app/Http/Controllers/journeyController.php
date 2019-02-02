@@ -82,8 +82,8 @@ class journeyController extends Controller
                     $images[] = $new_image['path'];
                 };
             }
-
-
+            //set Starting Point
+            $new_journey->setStartingPotint();
         } catch (\Throwable $th) {
             //throw $th;
             return response($th,400);
@@ -106,7 +106,6 @@ class journeyController extends Controller
                     'value' => $summary_path
                     ],
                 ]);
-                
             };
         } catch (\Throwable $th) {
             $meta = 'fail';
@@ -497,7 +496,11 @@ class journeyController extends Controller
             $waypoint->time = $sequence[$request['sequence']]['time'];
             $waypoint->latitude =  $sequence[$request['sequence']]['latitude'];
             $waypoint->longitude = $sequence[$request['sequence']]['longitude'];
-        }
+            $waypoint->timezone = \App\Calc::getTimezone(
+                $sequence[$request['sequence']]['latitude'],
+                $sequence[$request['sequence']]['longitude']
+            );
+        };
 
         // input
         $waypoint->save();

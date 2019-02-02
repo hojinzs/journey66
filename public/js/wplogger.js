@@ -426,7 +426,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
         $newWaypoint.find('#Lng').val(latlng.lng());
         $newWaypoint.find("#waypoint-stat").find('span[name="distance"]').text(Journey66.calc.Distance(SequencePoint.distance));
         $newWaypoint.find("#waypoint-stat").find('span[name="elevation"]').text(Journey66.calc.Elevation(SequencePoint.elevation));
-        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(moment.tz(SequencePoint.time));
+        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(SequencePoint.time);
         $newWaypoint.show();
 
         $newWaypoint.sequence = SequencePoint.sequence;

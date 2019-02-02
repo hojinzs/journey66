@@ -139,14 +139,20 @@ class GpxController extends Controller
             $file = $gpx->parse($path);
         };
 
+        $startingLat;
+        $startingLng;
         foreach($file->tracks as $track)
         {
             $stats = $track->stats->toArray();
+            $points = $track->getPoints();
+            $startingLat = $points[0]->latitude;
+            $startingLng = $points[0]->longitude;
             break;
         };
 
         $startedAt = \Carbon\Carbon::parse($stats['startedAt'])->toDateTimeString();
         $finishedAt = \Carbon\Carbon::parse($stats['finishedAt'])->toDateTimeString();
+        $timezone = \App\Calc::getTimezone($startingLat,$startingLng);
 
         $array = [
             'distance' => $stats['distance'],
@@ -154,7 +160,7 @@ class GpxController extends Controller
             'elevation' => $stats['cumulativeElevationGain'],
             'startedAt' => $startedAt,
             'finishedAt' => $finishedAt,
-            'timezone' => ''
+            'timezone' => $timezone,
         ];
 
         return $array;
@@ -201,10 +207,6 @@ class GpxController extends Controller
         {
             $track_points = $track->getPoints();
             foreach ($track_points as $sequence => $point) {
-                
-                // $time = \Carbon\Carbon::instance($point->time)->timezone(Config::get('app.timezone'))->toDateTimeString();
-                // $distance = round($point->distance * 0.001,2)."km";
-
                 $time = \Carbon\Carbon::instance($point->time)->toDateTimeString();
 
                 $points[] = [
