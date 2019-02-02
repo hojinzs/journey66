@@ -49,8 +49,8 @@ $(document).ready(function (){
 
     $('.galarry-images').slick({
         dots: true,
+        arrows: false,
         infinite: false,
-        // speed: 300,
         slidesToShow: 1,
         variableWidth: true
     });
@@ -60,12 +60,16 @@ Journey66.Reader = function(data){
     let Reader = new JournalLogger(Journey66.Map,Journey66.Mapkey);
     Reader.setSequence(data.sequence);
     Reader.centerAndZoom();
-    Reader.TrackMarker();
+    Reader.TrackMarker({
+        marker : false
+    });
 
     // Set Waypoints
-    data.waypoints.forEach(function (waypoint, k) {
+    data.waypoints.forEach(function(waypoint, k) {
         //find waypoint section
         let wps = document.getElementById(waypoint.UWID);
+
+        console.log(wps);
 
         //set Static Map
         let encpath = $('#map').data('summary-polyline');
@@ -95,11 +99,12 @@ Journey66.Reader = function(data){
         }
 
         //set Marker
-        var LatLng = new google.maps.LatLng(waypoint.latitude, waypoint.longitude);
-        Journal.setMarker(Journey66.Map, $(wps), k, LatLng, {
-            title: waypoint.name,
-            label: label
+        let LatLng = new google.maps.LatLng(waypoint.latitude, waypoint.longitude);
+        Journey66.setMarker({
+            latlng : LatLng,
+            target : wps,
+            title : waypoint.name,
+            label : label,
         });
-
     });
 };

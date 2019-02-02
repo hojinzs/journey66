@@ -24,8 +24,8 @@ Journey66.Write = function(gpx_data,callbackFn){
     JLogger.$form.attr('data-encoded-polyline',gpx_data.encoded_polyline);
     JLogger.$form.attr('data-summary-polyline',gpx_data.encoded_polyline_summary);
     JLogger.setSequence(gpx_data.sequence);
-    JLogger.centerAndZoom(gpx_data.sequence);
-    JLogger.TrackMarker(JLogger.trackpoint);
+    JLogger.centerAndZoom();
+    JLogger.TrackMarker();
     JLogger.CreateJourney();
     JLogger.setStartEndWaypoint();
     JLogger.GeoPhotoUploader({

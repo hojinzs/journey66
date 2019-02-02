@@ -31,8 +31,8 @@ JournalLogger.prototype.setForm = function(Elements = {
     let finisted_at = moment.tz(this.stats.finishedAt,"UTC").tz(moment.tz.guess());
 
     // set stats
-    $('#journey-stat').find("span[name='distance']").text(Journal.calcDistance(this.stats.distance));
-    $('#journey-stat').find("span[name='elevation']").text(Journal.calcElevation(this.stats.elevation));
+    $('#journey-stat').find("span[name='distance']").text(Journey66.calc.Distance(this.stats.distance));
+    $('#journey-stat').find("span[name='elevation']").text(Journey66.calc.Elevation(this.stats.elevation));
     $('#journey').find("span[name='duration']").text(this.stats.duration);
     // $('#journey-stat').find("span[name='startedAt']").text(this.stats.startedAt);
     $('#journey-stat').find("span[name='startedAt']").text(started_at);
@@ -69,8 +69,6 @@ JournalLogger.prototype.centerAndZoom = function(sequence = null) {
         if(point.latitude < minlat) minlat = point.latitude;
         if(point.latitude > minlat) minlat = point.latitude;
     });
-
-    console.log(minlat,maxlat,minlon,maxlon)
 
     if((minlat == maxlat) && (minlat == 0)) {
         this.map.setCenter(new google.maps.LatLng(49.327667, -122.942333), 14);
@@ -140,35 +138,46 @@ JournalLogger.prototype.DeleteJourney = function($target){
 
 }
 
-JournalLogger.prototype.TrackMarker = function(track = null,prop = {
-    marker : true,
+JournalLogger.prototype.TrackMarker = function(prop = {
+    map : null,
+    track : null,
+    marker : null,
     color : null,
     width : null,
 }){
+
+    console.log("prop",prop);
+
     // set Default Properties
     if(prop.color == null) prop.color = "#ff0000";
     if(prop.width == null) prop.width = 3;
-    if(track == null) track = this.trackpoint;
+    if(prop.track == null) prop.track = this.trackpoint;
+    if(prop.marker == null) prop.marker = true;
+    if(prop.map == null) prop.map = this.map;
+
+    console.log("prop",prop);
 
     let Logger = this;
 
     var baseline = new google.maps.Polyline({
-        path: track,
+        path: prop.track,
         strokeColor: prop.color,
         strokeWeight: prop.width,
-        map: this.map,
+        map: prop.map,
         visible: true,
         zIndex: 1
     });
 
-    if(!prop.marker) return;
+    if(prop.marker == false) return;
+
+    console.log(prop.marker);
 
     var polyline = new google.maps.Polyline({
-        path: track,
+        path: prop.track,
         strokeColor: prop.color,
         strokeOpacity: 0,
         strokeWeight: (prop.width*5),
-        map: this.map,
+        map: prop.map,
         visible: true,
         zIndex: 5
     });
@@ -184,7 +193,7 @@ JournalLogger.prototype.TrackMarker = function(track = null,prop = {
           strokeWeight: 10,
           fillColor: '#0099ff',
           fillOpacity: 0.5,
-          map: this.map,
+          map: prop.map,
           center: event.latLng,
           radius: (prop.width*5),
           zIndex: 2
@@ -389,8 +398,6 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     var plng = SequencePoint.longitude;
     var latlng = new google.maps.LatLng(plat,plng);
 
-    console.log(SequencePoint);
-
     //get last waypoint node
     var Idx = this.waypoints.length - 1
 
@@ -403,11 +410,9 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
         prop.type = $newWaypoint.find('#waypoint-type').val();
         $newWaypoint.sequence = SequencePoint.sequence;
         $newWaypoint.uwid = $(prop.waypoint_form).data('uwid');
-        $newWaypoint.find("#waypoint-stat").find('span[name="distance"]').text(Journal.calcDistance(SequencePoint.distance));
-        $newWaypoint.find("#waypoint-stat").find('span[name="elevation"]').text(Journal.calcElevation(SequencePoint.elevation));
-        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(
-            moment.tz(SequencePoint.time,"UTC").tz(moment.tz.guess())
-        );
+        $newWaypoint.find("#waypoint-stat").find('span[name="distance"]').text(Journey66.calc.Distance(SequencePoint.distance));
+        $newWaypoint.find("#waypoint-stat").find('span[name="elevation"]').text(Journey66.calc.Elevation(SequencePoint.elevation));
+
     } else {
         //set NewWaypointForm
         var $newWaypoint = $dummywp.clone(true);
@@ -419,14 +424,10 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
         $newWaypoint.attr("name",Idx);
         $newWaypoint.find('#Lat').val(latlng.lat());
         $newWaypoint.find('#Lng').val(latlng.lng());
-        $newWaypoint.find("#waypoint-stat").find('span[name="distance"]').text(Journal.calcDistance(SequencePoint.distance));
-        $newWaypoint.find("#waypoint-stat").find('span[name="elevation"]').text(Journal.calcElevation(SequencePoint.elevation));
-        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(
-            moment.tz(SequencePoint.time,"UTC").tz(moment.tz.guess())
-        );
-        console.log(SequencePoint.time);
+        $newWaypoint.find("#waypoint-stat").find('span[name="distance"]').text(Journey66.calc.Distance(SequencePoint.distance));
+        $newWaypoint.find("#waypoint-stat").find('span[name="elevation"]').text(Journey66.calc.Elevation(SequencePoint.elevation));
+        $newWaypoint.find("#waypoint-stat").find('span[name="time"]').text(moment.tz(SequencePoint.time));
         $newWaypoint.show();
-
 
         $newWaypoint.sequence = SequencePoint.sequence;
     }
@@ -1154,14 +1155,3 @@ Journal.setStaticMapURL = function(param={
 
     return staticmap;
 };
-
-
-Journal.calcDistance = function(distance){
-    let km = Number(distance * 0.001).toFixed(2)+"km";
-    return km;
-}
-
-Journal.calcElevation = function(elevation){
-    let m = Number(elevation)+"m";
-    return m;
-}

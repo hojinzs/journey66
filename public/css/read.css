@@ -12,7 +12,6 @@ html body {
     top: 0;
     height: 50vh;
     min-height: 500px;
-    z-index: -3;
 }
 
 .journey-container{
@@ -73,30 +72,9 @@ html body {
     position: relative;
 }
 
-/* .waypoint-galarry {
-    overflow: hidden;
-    overflow-x: scroll;
+.galarry-images .slick-dots {
+    text-align: left;
 }
-
-.waypoint-galarry .galarry-images{
-    width: max-content;
-}
-
-.waypoint-galarry .galarry-images .img-container {
-    display: inline-block;
-    height: 250px;
-}
-
-.waypoint-galarry .galarry-images .img-container img {
-    width: auto;
-    height: 100%;
-}
-
-.waypoint-medias .galarry-control{
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-} */
 
 .galarry-images .img-container {
     display: inline-block;

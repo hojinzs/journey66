@@ -36,8 +36,8 @@ Journey66.Edit = function(data){
     Journey.$form.attr('data-polyline',data.polyline);
     Journey.$form.attr('data-summary-polyline',data.summary_polyline);
     Journey.setSequence(data.sequence);
-    Journey.centerAndZoom(data.sequence);
-    Journey.TrackMarker(Journey.trackpoint);
+    Journey.centerAndZoom();
+    Journey.TrackMarker();
     Journey.UpdateJourney();
     Journey.DeleteJourney($('#delete'));
     Journey.GeoPhotoUploader({
