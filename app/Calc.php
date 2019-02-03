@@ -24,9 +24,9 @@ class Calc
         return $response['timeZoneId'];
     }
 
-    public static function getDistance($int)
+    public static function getDistance($double)
     {
-        $km = round(($int * 0.001),2)+"km";
+        $km = round((double)$double * 0.001,2)."km";
         return $km;
     }
 

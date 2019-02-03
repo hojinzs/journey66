@@ -100,6 +100,7 @@ Journey66.Reader = function(data){
         Journey66.setMarker({
             latlng : LatLng,
             target : wps,
+            Idx : k,
             title : waypoint.name,
             label : label,
         });

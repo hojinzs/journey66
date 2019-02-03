@@ -30,8 +30,8 @@
     @component('components.TopMenu')
     @endcomponent
 
-    {{-- @component('sections.readerCover')
-    @endcomponent --}}
+    @component('sections.readerCover')
+    @endcomponent
 
     <div class="journey-map">
         <div id="map" data-gmapkey="{{$gmapkey}}" data-gpx="{{$gpx}}" data-summary-polyline="{{$summary_polyline}}"></div>
@@ -82,7 +82,7 @@
                             </div>
                             @isset($waypoint['distance'])
                             <div class="col-md-12 waypoint_description">
-                                <p class="author">{{__('journey.form.waypoint.stats.distance')}} :: {{$waypoint['distance']}}</p>
+                                <p class="author">{{__('journey.form.waypoint.stats.distance')}} :: {{\App\Calc::getDistance($waypoint['distance'])}}</p>
                             </div>
                             @endisset
                             @isset($waypoint['description'])

@@ -17,8 +17,8 @@ Journey66.setMarker = function(param = {
     if(!param.latlng instanceof google.maps.LatLng) 
         throw (new Error("Parameter latlng must be instanceof 'google.maps.LatLng' "));
     if(param.map == null) param.map = this.Map;
-    if(param.title == null) param.title = 'Marker #'+Idx;
-    if(param.label == null) param.label = 'W'+ Idx;
+    if(param.title == null) param.title = 'Marker #'+param.Idx;
+    if(param.label == null) param.label = 'W'+ param.Idx;
 
     //get marker node
     let marker = new google.maps.Marker({
@@ -77,4 +77,53 @@ Journey66.calc = {
         }
         xhr.send();
     },
+};
+
+Journey66.Section66 = function(string){
+    this.Element = document.getElementsByTagName(string)[0];
+    this._AJAXcall = function
+        (
+            data = {
+                method : "GET",
+                url : null,
+                data : null,
+            },
+            Callback = {
+                BeforeSendFn : Function, //callback funtion for 
+                CompleteFn : Function,
+                SuccessFn : Function,
+                ErrorFn : Function,
+            },
+        )
+        {
+            let xhr = new XMLHttpRequest();
+            xhr.open(data.method,data.url,true);
+            xhr.onload = function(){
+                if (xhr.status == 200 || xhr.status == 201) {
+                    // AJAX success
+                    let data = JSON.parse(xhr.responseText);
+                    Callback.SuccessFn(data);
+                } else {
+                    // AJAX error
+                    throw new Error("AJAX call failure");
+                    Callback.ErrorFn(data);
+    
+                };
+                // AJAX complete
+                Callback.CompleteFn();
+            };
+            // AJAX beforeSend
+            Callback.BeforeSendFn();
+    
+            // AJAX send
+            xhr.send(data.data);
+        };
+    this._Show = function(val = true)
+        {
+            if(val){
+                this.Element.style.display = "block";
+            } else {
+                this.Element.style.display = "none";
+            }
+        };
 };
