@@ -28,11 +28,11 @@ Journey66.setMarker = function(param = {
         label: param.label
     });
     
-    //set Marker Offset Event
+    //set Marker Scrolling Event //using jQuery. replace later..
     let $target = $(param.target);
     google.maps.event.addListener(marker,'click',function(event){
         $('html, body').stop().animate({
-            scrollTop: $target.position().top 
+            scrollTop: $target.offset().top 
             }, 500,function(){
                 $target.focus();
             });
@@ -101,29 +101,37 @@ Journey66.Section66 = function(string){
             xhr.onload = function(){
                 if (xhr.status == 200 || xhr.status == 201) {
                     // AJAX success
-                    let data = JSON.parse(xhr.responseText);
-                    Callback.SuccessFn(data);
+                    let response = JSON.parse(xhr.responseText);
+                    if(Callback.SuccessFn instanceof Function) Callback.SuccessFn(response);
                 } else {
                     // AJAX error
+                    if(Callback.ErrorFn instanceof Function) Callback.ErrorFn(response);
                     throw new Error("AJAX call failure");
-                    Callback.ErrorFn(data);
     
                 };
                 // AJAX complete
-                Callback.CompleteFn();
+                if(Callback.CompleteFn instanceof Function) Callback.CompleteFn();
             };
             // AJAX beforeSend
-            Callback.BeforeSendFn();
+            if(Callback.BeforeSendFn instanceof Function) Callback.BeforeSendFn();
     
             // AJAX send
-            xhr.send(data.data);
+            if(data.data == null || data.method == "GET"){
+                xhr.send();
+            } else {
+                xhr.send(data.data);
+            };
         };
     this._Show = function(val = true)
         {
             if(val){
-                this.Element.style.display = "block";
+                this.Element.classList.remove("hidden_section");
+                this.Element.disabled = false;
+                // this.Element.style.display = "block";
             } else {
-                this.Element.style.display = "none";
+                this.Element.classList.add("hidden_section");
+                this.Element.disabled = true;
+                // this.Element.style.display = "none";
             }
         };
 };

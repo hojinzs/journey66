@@ -1,31 +1,12 @@
-
-
 function initMap() {
-    let ujid = $('#journey').data('ujid');
-
     Journey66.Mapkey = $('#map').data('gmapkey');
     Journey66.Map = new google.maps.Map(document.getElementById('map'), {
         zoom: 1,
         center: { lat: 1.0, lng: 1.0 }
     });
-
-    $.ajax({
-        type: "GET",
-        url: '/api/journey/' + ujid,
-        dataType: "json",
-        success: function (data) {
-            Journey66.Reader(data);
-        }
-    });
 };
 
 $(document).ready(function (){
-
-    $('.gmap-static-img').click(function (event) {
-        $('html, body').stop().animate({
-            scrollTop: 0
-        }, 500);
-    });
 
     $('.waypoint-img').each(function(i, image){
         let imgWidth = $(image).width();
@@ -52,6 +33,12 @@ $(document).ready(function (){
         infinite: false,
         slidesToShow: 1,
         variableWidth: true
+    });
+
+    $('.gmap-static-img').parent().click(function (event){
+        $('html, body').stop().animate({
+            scrollTop: $('#map').offset().top
+        }, 500);
     });
 });
 
@@ -105,4 +92,5 @@ Journey66.Reader = function(data){
             label : label,
         });
     });
+
 };

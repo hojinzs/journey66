@@ -12,17 +12,16 @@
 ---- => {name}._Show(boolen) // toggle visibility of the Section
 --}}
 @section('scripts')
-    @parent
+@parent
 <script>
-document.addEventListener("DOMContentLoaded", function(){
 
-});
 </script>
 @endsection
 {{-- MODULE SCRIPT END --}}
 
 {{-- MODULE STYLE --}}
 @section('styles')
+@parent
 <style>
     
 </style>

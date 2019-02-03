@@ -52,3 +52,18 @@ li span {
 line-height: 1.8;
 font-size: 1.3em;
 }
+
+
+.level_1{
+    z-index: -3;
+}
+
+
+.level_2{
+    z-index: 0;
+}
+
+
+.level_3{
+    z-index: 1;
+}

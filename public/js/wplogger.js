@@ -1089,7 +1089,7 @@ Journal.setMarker = function(map,target,Idx,latlng,prop = {
     //set Marker Offset Event
     google.maps.event.addListener(marker,'click',function(event){
         $('html, body').stop().animate({
-            scrollTop: $target.position().top 
+            scrollTop: $target.offset().top 
             }, 500,function(){
                 $target.focus();
             });

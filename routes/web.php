@@ -37,3 +37,6 @@ Route::get('/ref/imgeo-js',function(){
 Route::get('/ref/php-gpx',function(){
     return view('ref.php-gpx');
 });
+Route::get('/ref/animate-js',function(){
+    return view('ref.animate_js');
+});

@@ -17,7 +17,6 @@ html body {
 .journey-container{
     background-color:white;
     height: 100%;
-    z-index: 10;
 }
 
 .journey-container row{

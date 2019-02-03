@@ -13,62 +13,62 @@
 @section('scripts')
 @parent
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-    let GPXbtn = document.getElementById("gpx-upload");
-    let GPXuploader = document.getElementById("gpx-upload-file");
-    
-    // attach GPXuploader Event
-    let GPXonProgress = false;
-    GPXbtn.addEventListener("click",function(){
-        if(GPXonProgress) return;
-        GPXuploader.dispatchEvent(new MouseEvent('click'));
-    });
-
-    // upload GPX and get parsing data
-    GPXuploader.addEventListener('change',function(event){
-        let description = GPXbtn.getElementsByTagName('description');
-        let loading = GPXbtn.getElementsByTagName('loading');
-
-        let file = event.target.files[0];
-        let gpx = new FormData();
-        gpx.append('gpx', file);
-
-        getTrack._AJAXcall(
-        {
-            method: 'POST',
-            url : '/api/gpxupload',
-            data : gpx,
-        },
-        {
-            BeforeSendFn: function(){
-                description[0].style.display = "none";
-                loading[0].style.display = "block"
-                GPXonProgress = true;
-            },
-            CompleteFn: function(){
-                event.target.value = "";
-                description[0].style.display = "block";
-                loading[0].style.display = "none"
-                GPXonProgress = false;
-            },
-            SuccessFn: function(data){
-                Journey66.Write(data,function(){
-                    getTrack._Show(false);
-                });
-            },
-            ErrorFn: function(data){
-                let error = GPXbtn.getElementsByClassName('error');
-                error[0].textContent = "error";
-            },
-        });
-    });
-
+$(document).ready(function(){
     // set button slider, use jQuery
     $('#getTrack-features').slick({
         infinite: false,
         slidesToShow: 1,
         variableWidth: true,
         arrows: false
+    });
+});
+
+let GPXbtn = document.getElementById("gpx-upload");
+let GPXuploader = document.getElementById("gpx-upload-file");
+
+// attach GPXuploader Event
+let GPXonProgress = false;
+GPXbtn.addEventListener("click",function(){
+    if(GPXonProgress) return;
+    GPXuploader.dispatchEvent(new MouseEvent('click'));
+});
+
+// upload GPX and get parsing data
+GPXuploader.addEventListener('change',function(event){
+    let description = GPXbtn.getElementsByTagName('description');
+    let loading = GPXbtn.getElementsByTagName('loading');
+
+    let file = event.target.files[0];
+    let gpx = new FormData();
+    gpx.append('gpx', file);
+
+    getTrack._AJAXcall(
+    {
+        method: 'POST',
+        url : '/api/gpxupload',
+        data : gpx,
+    },
+    {
+        BeforeSendFn: function(){
+            description[0].style.display = "none";
+            loading[0].style.display = "block"
+            GPXonProgress = true;
+        },
+        CompleteFn: function(){
+            event.target.value = "";
+            description[0].style.display = "block";
+            loading[0].style.display = "none"
+            GPXonProgress = false;
+        },
+        SuccessFn: function(data){
+            Journey66.Write(data,function(){
+                getTrack._Show(false);
+            });
+        },
+        ErrorFn: function(data){
+            let error = GPXbtn.getElementsByClassName('error');
+            error[0].textContent = "error";
+        },
     });
 });
 </script>
@@ -103,8 +103,6 @@ document.addEventListener("DOMContentLoaded", function(){
 @endsection
 
 @section('html')
-    @parent
-
     <div class="getTrack-header">
         <h3>{{__('journey.form.getPath.title')}}</h3>
     </div>
