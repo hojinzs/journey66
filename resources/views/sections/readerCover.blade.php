@@ -54,7 +54,7 @@
 <style>
     readerCover{
         position: sticky;
-        position: -wedkit-sticky;
+        position: -webkit-sticky;
         top: 0;
         height: 75vh;
         min-height: 500px;

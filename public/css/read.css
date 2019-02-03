@@ -39,6 +39,7 @@ html body {
 .journey-contents{
     background-color:white;
     font-size: 18px;
+    z-index: 10;
 }
 
 .journey-contents h2{
@@ -121,6 +122,7 @@ html body {
         padding-left:1em;
         padding-right: 1em;
         margin-bottom: 5em;
+        z-index: 10;
     }
 
 }
