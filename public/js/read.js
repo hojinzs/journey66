@@ -2,7 +2,12 @@ function initMap() {
     Journey66.Mapkey = $('#map').data('gmapkey');
     Journey66.Map = new google.maps.Map(document.getElementById('map'), {
         zoom: 1,
-        center: { lat: 1.0, lng: 1.0 }
+        center: { lat: 1.0, lng: 1.0 },
+        mapTypeControl: false,
+        zoomControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        rotateControl: false,
     });
 };
 

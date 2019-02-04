@@ -56,8 +56,9 @@
         position: sticky;
         position: -webkit-sticky;
         top: 0;
-        height: 75vh;
+        height: 60vh;
         min-height: 500px;
+        max-height: 700px;
         font: 20px;
     }
 

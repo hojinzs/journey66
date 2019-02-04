@@ -33,20 +33,19 @@
     @component('sections.readerCover',[
         'thumbnail' => '/assets/adult-adventure-asphalt-969679.jpg',
         'name' => $journey->name,
-        'date' => $journey->startedAt,
-        'distance' => \App\Calc::getDistance($journey['distance']),
+        'date' => \Carbon\Carbon::parse($journey->startedAt,"UTC")->setTimezone($journey->started_timezone)->toDateTimeString(),
+        'distance' => \App\Calc::getDistance($journey->distance),
     ])
     @endcomponent
+
 
     <div class="journey-map level_2">
         <div id="map" data-gmapkey="{{$gmapkey}}" data-gpx="{{$gpx}}" data-summary-polyline="{{$summary_polyline}}"></div>
         <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&callback=initMap"></script>
     </div>
-    <article id="journey" data-ujid="{{$journey['UJID']}}">
-    <div class="container journey-container level_3">
-        <div class="row">
-            <div class="journey-contents col-md-12">
-                <section>
+    <div id="journey" data-ujid="{{$journey['UJID']}}">
+        <div class="container journey-contents">
+                <section id="journey-header">
                     <div class="row journey-head">
                         <div class="col-md-12">
                             <h2>{{$journey->name}}</h2>
@@ -108,8 +107,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+
     </div>
-    </article>
 
 @endsection
