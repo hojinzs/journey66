@@ -87,9 +87,10 @@ Journey66.Section66 = function(string){
                 method : "GET",
                 url : null,
                 data : null,
+                header : null,
             },
             Callback = {
-                BeforeSendFn : Function, //callback funtion for 
+                BeforeSendFn : Function,
                 CompleteFn : Function,
                 SuccessFn : Function,
                 ErrorFn : Function,
@@ -98,6 +99,13 @@ Journey66.Section66 = function(string){
         {
             let xhr = new XMLHttpRequest();
             xhr.open(data.method,data.url,true);
+            if(data.header){ //set Header
+                let headers = Object.keys(data.header);
+                for (let i= 0; i < headers.length; i++){
+                    let key = headers[i];
+                    xhr.setRequestHeader(key,data.header[key]);
+                }
+            }
             xhr.onload = function(){
                 if (xhr.status == 200 || xhr.status == 201) {
                     // AJAX success
@@ -105,6 +113,7 @@ Journey66.Section66 = function(string){
                     if(Callback.SuccessFn instanceof Function) Callback.SuccessFn(response);
                 } else {
                     // AJAX error
+                    let response = xhr.responseText;
                     if(Callback.ErrorFn instanceof Function) Callback.ErrorFn(response);
                     throw new Error("AJAX call failure");
     

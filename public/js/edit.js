@@ -22,7 +22,6 @@ function initMap(){
 };
 
 Journey66.Edit = function(data){
-    console.log(Journey66.Mapkey);
     // Set JournalLogger
     let Journey = new JournalLogger(Journey66.Map,Journey66.Mapkey);
     Journey.setForm({
@@ -32,13 +31,12 @@ Journey66.Edit = function(data){
         journey_posted_modal: '#journeyPosted',
         journey_key: Journey66.Key,
         stats: data.stats,
-      });
+    });
     Journey.$form.attr('data-polyline',data.polyline);
     Journey.$form.attr('data-summary-polyline',data.summary_polyline);
     Journey.setSequence(data.sequence);
     Journey.centerAndZoom();
     Journey.TrackMarker();
-    Journey.UpdateJourney();
     Journey.DeleteJourney($('#delete'));
     Journey.GeoPhotoUploader({
         button_id: 'geotag_img_load',
@@ -49,4 +47,42 @@ Journey66.Edit = function(data){
     // set Waypoints
     waypoints = Journey.$waypointlist.find('.waypoint') // jQuery
     Journey.setCurrentWaypoint(waypoints);
+
+    // set submit update Event
+    Journey.$form.on("submit", function(event) {
+        event.preventDefault();
+
+        var loading = $('.img-loading').length;
+        if(loading > 0) {
+            alert(loading+'images upload is unfinished');
+            return;
+        };
+
+        Logger.SubmitUpdate(function(response){
+
+            //remove edit mode
+            Journey.$form.hide();
+            Journey.purgeTrackMarker();
+
+            //make image array
+            let image = [];
+            for(var i = 0,len = response.IMG.length; i < len; i++){
+                img = response.IMG[i];
+                image.push(img);
+            };
+
+            //make data array
+            let cover = {
+                journey: response.UJID,
+                title: response.cover.title,
+                distance: response.cover.distance,
+                thumbnail: response.cover.thumbnail,
+                date: response.cover.date,
+            }
+            let key = response.KEY;
+
+            //cover, go
+            setCover.Start(image,cover,key);
+        });
+    });
 };

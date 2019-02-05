@@ -93,8 +93,6 @@ class journeyController extends Controller
         try{
             if($request->has('staticmap')){
                 $summary_path = journeyController::setSummaryMap($request->input('staticmap'),$new_journey['UJID']);
-                $meta[] = journey_meta::setMetaData('mapimg',$summary_path,$new_journey['id']);
-                $meta[] = journey_meta::setMetaData('thumbnail',$summary_path,$new_journey['id']);
 
                 $new_journey->metas()->createMany([
                     [
@@ -342,13 +340,9 @@ class journeyController extends Controller
             $xml = $saved_journey->getGPXxml();
             $sequence = GpxController::getSequenceArrayFromXml($xml);
 
-            // //get Sequence Array
-            // $disk = Storage::disk('gcs');
-            // $xml = $disk->get($saved_journey['file_path']);
-            // $sequence = GpxController::getSequenceArrayFromXml($xml);
-
             // update Waypoint Data
             $UWID = [];
+            $IMG = [];
             $waypoints_index = 0;
             foreach ($request->input('waypoints') as $key => $waypoint) {
 
@@ -365,7 +359,8 @@ class journeyController extends Controller
                             $UWID[] = $updated_waypoint['UWID'];
         
                             # control images
-                            journeyController::ImgClasification($waypoint['imgs'],$updated_waypoint['id']);                            
+                            $images = journeyController::ImgClasification($waypoint['imgs'],$updated_waypoint['id']);
+                            $IMG = array_merge($IMG,$images);
                             break;
                         default:
                             # code...
@@ -379,11 +374,11 @@ class journeyController extends Controller
                     $UWID[] = $new_waypoint['UWID'];
 
                     # control images
-                    journeyController::ImgClasification($waypoint['imgs'],$new_waypoint['id']);
+                    $images = journeyController::ImgClasification($waypoint['imgs'],$new_waypoint['id']);
+                    $IMG = array_merge($IMG,$images);
+                };
 
-                }
-
-            }
+            };
         } catch (\Throwable $th) {
             //throw $th;
             return $th;
@@ -391,10 +386,12 @@ class journeyController extends Controller
 
         return response()
             ->json([
+            'stauts' => 'success',
             'UJID' => $saved_journey['UJID'],
             'UWID' => $UWID,
-            // 'IMGS' => $images,
-            'stauts' => 'success',
+            'IMG' => $IMG,
+            'KEY' => $saved_journey->key,
+            'cover' => $saved_journey->getCover(),
         ]);
     }
 
@@ -599,12 +596,14 @@ class journeyController extends Controller
 
     private function ImgClasification($images = [],$waypoint_id){
 
+        $waypoint_images = [];
         foreach ($images as $key => $img) {
             # Clasification Images
             switch ($img['type']) {
                 case 'tmp':
                     # temponary saved image file. store it
-                    journeyController::StoreImg($img,$waypoint_id,$key);
+                    $stored = journeyController::StoreImg($img,$waypoint_id,$key);
+                    $waypoint_images[] = $stored;
                     break;
 
                 case 'del':
@@ -614,16 +613,16 @@ class journeyController extends Controller
 
                 case 'cur':
                     # current image file. just update index number
-                    journeyController::UpdateImg($img['id'],$key);
+                    $updated = journeyController::UpdateImg($img['id'],$key);
+                    $waypoint_images[] = $updated;
                     break;
                 
                 default:
                     # code...
                     break;
-            }
-            
+            }   
         }
-        
+        return $waypoint_images;
     }
 
     private function DeleteImg($img_id){

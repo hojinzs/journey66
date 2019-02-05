@@ -13,10 +13,13 @@
     <script type="text/javascript" src="{{url('/')}}/js/loadgpx.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/wplogger.js"></script>
     <script type="text/javascript" src="{{url('/')}}/js/edit.js"></script>
+    <script type="text/javascript" src="{{url('/')}}/slick/slick.min.js"></script>
 @endpush
 
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{url('/')}}/css/style.css">    
+    <link rel="stylesheet" type="text/css" href="/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="/slick/slick-theme.css"/>
 @endpush
 
 @push('meta')
@@ -28,8 +31,14 @@
     @component('components.TopMenu')
     @endcomponent
 
-    <div id="map" data-gmapkey="{{$gmapkey}}"></div>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&callback=initMap"></script>
+    @component('components.section66',[
+        'name' => 'setCover',
+        'section' => 'sections.setCover',
+    ])
+    @endcomponent
+
+    @component('components.GoogleMap')
+    @endcomponent
 
     <div class="container">
 

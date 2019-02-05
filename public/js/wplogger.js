@@ -172,6 +172,8 @@ JournalLogger.prototype.TrackMarker = function(prop = {
         zIndex: 5
     });
 
+    this.Polyline = polyline;
+
     google.maps.event.addListener(polyline,"mouseover",function(event){
 
         polyline.setOptions({strokeOpacity: 0.3});
@@ -214,6 +216,11 @@ JournalLogger.prototype.TrackMarker = function(prop = {
     });
 
 };
+
+JournalLogger.prototype.purgeTrackMarker = function(){
+    google.maps.event.clearListeners(this.Polyline,'mouseover');
+    google.maps.event.clearListeners(this.Polyline,'click');
+}
 
 
 ///////////////////////////
@@ -807,7 +814,7 @@ JournalLogger.prototype.SubmitNew = function(){
         });
 };
 
-JournalLogger.prototype.SubmitUpdate = function(){
+JournalLogger.prototype.SubmitUpdate = function(CallbackFn = null){
     // form data
     var FormArray = {};
     var Logger = this;
@@ -879,6 +886,8 @@ JournalLogger.prototype.SubmitUpdate = function(){
           },
         success: function(data){
             parse = JSON.parse(data);
+            Logger.$postingModal.modal('hide');
+            if(CallbackFn instanceof Function) return CallbackFn(parse);
             Logger.$form.remove();
             Logger.$postingModal.find('author-email').text(parse.mail);
             Logger.$postingModal.find('modal-message-done').show();

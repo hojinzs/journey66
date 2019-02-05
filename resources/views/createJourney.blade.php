@@ -27,11 +27,21 @@
     @component('components.TopMenu')
     @endcomponent
 
-    @component('sections.getTrack')
+    @component('components.section66',[
+        'name' => 'getTrack',
+        'section' => 'sections.getTrack',
+        'thumbnail' => '/assets/adult-backlit-bicycle-1522545.jpg',
+    ])
     @endcomponent
 
-    <div id="map" data-gmapkey="{{$gmapkey}}"></div>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&libraries=geometry&callback=initMap"></script>
+    @component('components.section66',[
+        'name' => 'setCover',
+        'section' => 'sections.setCover',
+    ])
+    @endcomponent
+
+    @component('components.GoogleMap')
+    @endcomponent
     
 
     <div class="container">

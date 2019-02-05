@@ -18,10 +18,7 @@ class journey_meta extends Model
         $journey_meta->value = $value;
         $journey_meta->save();
 
-        return [
-            'meta' => $journey_meta->meta_name,
-            'value' => $journey_meta->value
-        ];
+        return $journey_meta;
 
     }
 

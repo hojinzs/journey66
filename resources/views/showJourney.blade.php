@@ -30,11 +30,11 @@
     @component('components.TopMenu')
     @endcomponent
 
-    @component('sections.readerCover',[
-        'thumbnail' => '/assets/adult-adventure-asphalt-969679.jpg',
-        'name' => $journey->name,
-        'date' => \Carbon\Carbon::parse($journey->startedAt,"UTC")->setTimezone($journey->started_timezone)->toDateTimeString(),
-        'distance' => \App\Calc::getDistance($journey->distance),
+    @component('components.section66',[
+        'name' => 'readerCover',
+        'section' => 'sections.readerCover',
+        'cover' => $journey->getCover(),
+        'thumbnail' => $journey->getCover()['thumbnail'],
     ])
     @endcomponent
 

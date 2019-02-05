@@ -14,7 +14,6 @@ class journey extends Model
 
     public $timestamps = false;
 
-
     public function getGPXxml()
     {
         $disk = Storage::disk('gcs');
@@ -55,5 +54,45 @@ class journey extends Model
     public function waypoints()
     {
         return $this->hasMany('App\waypoint','journey_id');
+    }
+
+
+    public function setMetaData($meta,$value)
+    {
+        $meta = new Meta([
+            'name' => $meta,
+            'value' => $value,
+        ]);
+
+        $this->metas()->save($meta);
+
+        return $meta;
+    }
+
+    public function getMetaData($name)
+    {
+        $metas = $this->metas()->where('name',$name)->get();
+
+        $return = null;
+        foreach ($metas as $meta) {
+            $return[] = $meta->value;
+        }
+        return $return;
+    }
+
+    public function getCover()
+    {
+        $this->getMetaData('thumbnail')[0] ? $thumbnail = $this->getMetaData('thumbnail')[0] : $thumbnail = null;
+        $this->distance ? $distance = \App\Calc::getDistance($this->distance) : $distance = null;
+        $this->startedAt ? $date = \Carbon\Carbon::parse($this->startedAt,"UTC")->setTimezone($this->started_timezone)->toDateTimeString() : $date = null;
+        
+        $cover = [
+            'thumbnail' => $thumbnail,
+            'title' => $this->name,
+            'distance' => $distance,
+            'date' => $date,
+        ];
+
+        return $cover;
     }
 }

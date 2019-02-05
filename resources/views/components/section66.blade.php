@@ -1,11 +1,13 @@
 <{{$name}} class="section66 level-1">
 
-{{--PART STYLE--}}
-@section('styles')
+<script> const <?php echo $name ?> = new Journey66.Section66("<?php echo $name ?>"); </script>
+
 <style>
     {{$name}}{
         display: block;
-        background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url({{$background_url}});
+        @isset($thumbnail) 
+        background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url({{$thumbnail}});
+        @endisset
         background-position: center center;
         background-size: cover;
         background-repeat: no-repeat;    
@@ -22,17 +24,8 @@
         height: 0px;
     }
 </style>
-@show
 
-{{--PART HTML--}}
 <div class="container">
-    @yield('html')
+    @include($section)
 </div>
 </{{$name}} >
-
-{{--PART SCRIPT--}}
-@section('scripts')
-<script>
-    const <?php echo $name ?> = new Journey66.Section66("<?php echo $name ?>");
-</script>
-@show

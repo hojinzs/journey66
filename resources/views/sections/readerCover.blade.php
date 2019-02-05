@@ -1,16 +1,11 @@
 {{-- ReaderCover --}}
 {{-- show journey thumbnail image and hack loading time..
 ---- Variable Given by showJourney.blade.php
----- @thumbnail => $journey->meta->thumbnail
----- @name => $journey->name,
----- @date => $journey->startedAt,
----- @distance' => $journey->distance,
+---- @cover['thumbnail'] => $journey->meta->thumbnail
+---- @cover['title'] => $journey->name,
+---- @cover['date'] => $journey->startedAt,
+---- @cover['distance'] => $journey->distance,
 ==}}
-{{-- MODULE PROPERTIES--}}
-@extends('layout.section66',[
-    'name' => 'readerCover', // Name is using for Tag Name. !!IMPORTANT
-    'background_url' => $thumbnail, //Backgrount URL. required
-])
 
 {{-- MODULE SCRIPT  --}}
 {{-- :::HELPER FUNCTION:::
@@ -19,10 +14,9 @@
 ---- => {name}._AJAXcall ( data{method,url,data}, callback{BeforeSendFn(), CompleteFn(), SuccessFn(response), ErrorFn(response)} )
 ---- => {name}._Show(boolen) // toggle visibility of the Section
 --}}
-@section('scripts')
-@parent
+
 <script>
-// document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function(){
     let URL = '/api/journey/'+window.location.pathname.split("/")[2];
     let msgbox = readerCover.Element.querySelector('span[name=message]');
     msgbox.textContent = "Loading Journey data...";
@@ -42,15 +36,9 @@
             },
         }
     );
-// });
-
+});
 </script>
-@endsection
-{{-- MODULE SCRIPT END --}}
 
-{{-- MODULE STYLE --}}
-@section('styles')
-@parent
 <style>
     readerCover{
         position: sticky;
@@ -84,27 +72,22 @@
         color: red;
     }
 </style>
-@show
-{{-- MODULE STYLE END--}}
-
-{{-- MODULE MARKUP --}}
-@section('html')
 
 <div>
     <span name="title" class="box">
-        <h2>{{$name}}<h2>
+        <h2>{{$cover['title']}}<h2>
     </span>
 </div>
 
 <div>
     <span name="date" class="box">
-        {{$date}}
+        {{$cover['date']}}
     </span>
 </div>
 
 <div>
     <span name="distance" class="box">
-        {{$distance}}
+        {{$cover['distance']}}
     </span>
 </div>
 
@@ -113,6 +96,3 @@
         
     </span>
 </div>
-
-@endsection
-{{-- MODULE MARKUP END--}}
