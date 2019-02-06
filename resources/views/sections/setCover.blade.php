@@ -15,6 +15,7 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
     console.log(imageArray);
     let Cover = this.Element;
     let Button = Cover.querySelector('button[name=set_cover_btn]');
+    let MessageBox = Cover.querySelector('span[name=message]');
 
     //set Slick slider
     console.log("SET SLICK");
@@ -30,12 +31,13 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
     Cover.getElementsByTagName('h2')[0].textContent = CoverData.title;
     Cover.querySelector('span[name=date]').textContent = CoverData.date;
     Cover.querySelector('span[name=distance]').textContent = CoverData.distance;
-    Cover.querySelector('span[name=message]').textContent = "Select image and set cover image";
+    MessageBox.textContent = "Select image and set cover image";
     
     //default data
     let SendForm = new FormData
     SendForm.append('UJID',CoverData.journey);
     SendForm.append('KEY',JourneyKey);
+    console.log(SendForm);
 
     //set current thumbnail
     let currentImg = new Image;
@@ -46,6 +48,7 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
     currentImg.addEventListener('click',PickThumbnail);
     Cover.style.backgroundImage = "linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("+CoverData.thumbnail+")";
     $(image_select_list).slick('slickAdd',$(currentImg));
+    Button.disabled = 'disabled';
 
 
     //set Images
@@ -66,10 +69,11 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
         $(image_select_list).slick('slickAdd',$(newImg));
     });
 
-    Button.addEventListener('click',function(event){
+    Button.addEventListener('click',SetCoverImage = function(event){
+        console.log("FORM::",SendForm);
         setCover._AJAXcall(
         {
-            method: "PUT",
+            method: "POST",
             url: '/api/journey/'+CoverData.journey+'/thumbnail_set',
             data: SendForm,
             header : {
@@ -80,19 +84,25 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
         {
             BeforeSendFn(){
                 // button disactive
+                Button.disabled = 'disabled';
                 // sending message
+                MessageBox.textContent = "setting cover image...";
+
             },
             SuccessFn(response){
-                // success message
-
                 console.log(response);
+                // success message
+                MessageBox.textContent = "cover image has been successfully set";
+                // remove img selector & button
+                image_select_list.style.display = "none";
+                Button.style.display = "none";
+                Button.removeEventListener('click',SetCoverImage);
             },
             ErrorFn(response){
-                // error message
                 console.log(response);
-            },
-            CompleteFn(){
-                // button reactive
+                // error message
+                MessageBox.textContent = "Error! something happend";
+                Button.disabled = false;
             }
         }
         )
@@ -114,8 +124,9 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
             val.classList.remove('img_selected');
         };
         target.classList.add('img_selected');
+        console.log(target.src);
         SendForm.append('url',target.src);
-        if(target.dataset == "current"){
+        if(target.dataset.Index == "current"){
             Button.disabled = 'disabled';
         } else {
             Button.disabled = false;

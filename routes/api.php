@@ -26,7 +26,7 @@ Route::get('/journey/{id}','journeyController@get'); // Get journey data ajax
 Route::post('/journey/{id}/edit','journeyController@update'); // Update journey
 Route::delete('/journey/{id}/delete','journeyController@destroy'); // Delete journey temponary
 
-Route::put('/journey/{id}/thumbnail_set','JourneyResources@setThumbnail'); // Edit thumbnail
+Route::post('/journey/{id}/thumbnail_set','JourneyResources@setThumbnail'); // Edit thumbnail
 
 
 /**
