@@ -765,9 +765,16 @@ JournalLogger.prototype.SubmitNew = function(callbackFn = null){
         })
 
         // set track files
-        // FormArray.polyline = this.$form.data('polyline');
         FormArray.polyline = this.$form.data('encoded-polyline');
         FormArray.gpx = this.$form.data('gpx');
+
+        // set Static img
+        summary_map = $("#journeyPosted .summary-map");
+        FormArray.staticmap = Journal.setStaticMap(summary_map,{
+            width : "500",
+            height : "500",
+            encpath : this.$form.data('summary-polyline')
+        })
     
         // ready to json
         var jsonData = JSON.stringify(FormArray);
