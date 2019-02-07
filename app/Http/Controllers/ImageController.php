@@ -6,11 +6,15 @@ use Validator;
 use App\waypoint;
 use App\Http\Requests\AuthByWaypoint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Support\Facades\Storage;
 
+// use Intervention\Image\ImageManager;
 
 class ImageController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -39,28 +43,32 @@ class ImageController extends Controller
      */
     public function store(Request $request)
     {
+        // check has file
+        if(!$request->hasFile('image')) return response('Can not find image',400);
+        
         // Validation
         $validateData = Validator::make($request->all(),[
             'image' => 'required|image',
             'size' => 'max:15,360'
         ]);
-        if($validateData->fails()){
-            return response("Validation failed",400);
-        }
+        if($validateData->fails()) return response("Validation failed",400);
 
-        //
-        if($request->hasFile('image')){
-            $path = $request->image->store('tmp','gcs');
-            $disk = Storage::disk('gcs');
-            $disk->setVisibility($path,'public');
-            $url = $disk->url($path);
-            return response()->json([
-                'url' => $url,
-                'filename' => $path
-            ]);
-        };
+        // rotate image
+        // Reference :: ( http://image.intervention.io/ )
+        $requestImage = $request->file('image');
+        $converted_img = \Image::make($requestImage)->orientate()->encode('jpg');
+        $now = \Carbon\Carbon::now()->toDateTimeString();
+        $hash = md5($converted_img->__toString().$now);
+        $path = "tmp/".$hash.".jpg";;
 
-        return response('Can not find image',400);
+        //store image
+        Storage::disk('gcs')->put($path,$converted_img->__toString());
+        $disk = Storage::disk('gcs')->setVisibility($path,'public');
+        $url = Storage::disk('gcs')->url($path);
+        return response()->json([
+            'url' => $url,
+            'filename' => $path
+        ]);
     }
 
     /**
