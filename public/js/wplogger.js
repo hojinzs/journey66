@@ -674,7 +674,7 @@ JournalLogger.prototype.setImage = function(prop = {
                 .then(eraseFile(senddata))
                 .then(removeDom(senddata))
                 .catch(function(error){
-                    console.log('something error',error);
+                    throw new Error("Error");
                 });
 
                 function removeData(data){

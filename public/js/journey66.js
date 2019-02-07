@@ -62,14 +62,12 @@ Journey66.calc = {
             +","+lng
             +"&timestamp="+Date.now()/1000
             +"&key="+Journey66.Mapkey;
-            console.log(url);
         
         xhr = new XMLHttpRequest
         xhr.open("GET",url,true);
         xhr.onload = function(){
             if (xhr.status == 200 || xhr.status == 201){
                 let data = JSON.parse(xhr.responseText);
-                console.log(data);
                 return callbackFn(data.timeZoneId);
             } else {
                 return new Error("timezone get Error");

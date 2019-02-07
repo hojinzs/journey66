@@ -50,14 +50,11 @@ Journey66.Write = function(gpx_data,callbackFn){
         };
 
         JLogger.SubmitNew(function(response){
-
-            console.log(response);
-
+            
             //remove edit mode
             JLogger.$form.hide();
             JLogger.purgeTrackMarker();
 
-            // console.log("RESPONSE",response);
 
             //make image array
             let image = [];
