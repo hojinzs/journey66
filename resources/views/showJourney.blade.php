@@ -4,11 +4,21 @@
 
 @extends('layout.app')
 
+
+
 @section('title', $journey['name'])
 
 @push('meta')
-    <meta name="description" content="{{$journey['description']}}">
-    <meta name="googlebot" content="">
+
+    <meta name="title" content="{{$journey->name}}">
+    <meta name="description" content="{{$journey->description}}">
+
+    <meta property="og:site_name" content="Journey 66">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{$journey->name}}" />
+    <meta property="og:description" content="{{$journey->description}}" />
+    <meta property="og:url" content="http://journey66.cc/journey{{$journey->ujid}}" />
+    <meta property="og:image" content="{{$journey->getCover()['thumbnail']}}" />
 @endpush
 
 @push('scripts')

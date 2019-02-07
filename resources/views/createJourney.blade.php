@@ -1,10 +1,18 @@
-@php
-    $gmapkey = env('GOOGLE_MAPS_KEY',null);
-@endphp
-
 @extends('layout.app')
 
 @section('title', 'Write the new Journey')
+
+@push('meta')
+    <meta name="title" content="Journey 66 Write new Journey">
+    <meta name="description" content="write and share your wonderful journey">
+
+    <meta property="og:site_name" content="Journey 66">
+    <meta property="og:title" content="Journey 66 Write new Journey" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="write and share your wonderful journey" />
+    <meta property="og:url" content="http://journey66.cc/write" />
+    <meta property="og:image" content="adult-backlit-bicycle-1522545.jpg" />
+@endpush
 
 @push('scripts')
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
