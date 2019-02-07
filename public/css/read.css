@@ -10,8 +10,10 @@ html body {
     position: sticky;
     position: -webkit-sticky;
     top: 0;
-    height: 50vh;
+    height: 60vh;
     min-height: 500px;
+    max-height: 700px;
+    box-shadow: 0px -5px 60px 8px rgba(0, 0, 0, 0.7);
 }
 #map {
     height: 100%;
@@ -26,6 +28,7 @@ html body {
 .journey-contents{
     background-color:white;
     font-size: 18px;
+    box-shadow: 0px -5px 60px 8px rgba(0, 0, 0, 0.7);
 }
 
 .journey-contents h2{
