@@ -124,10 +124,11 @@ class journeyController extends Controller
             ->json([
             'UJID' => $new_journey->UJID,
             'UWID' => $UWID,
-            'IMGS' => $images,
-            'mail' => $mail_send,
-            'meta' => $meta,
+            'IMG' => $new_journey->getImages(),
+            'cover' => $new_journey->getCover(),
+            'KEY' => $new_journey->key,
             'stauts' => 'success',
+            'mail' => $mail_send,
         ]);
     }
 
@@ -137,41 +138,40 @@ class journeyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         //
-        $journey = journey::where('UJID',$id)->first();
-        if($journey){
-            if($journey['publish_stage']=='Published'){
-                $arr = waypoint::where('journey_id',$journey->id)
-                    ->join('labels', 'waypoints.type', '=', 'labels.name')
-                    ->select('waypoints.*', 'labels.icon')
-                    ->orderBy('sequence','asc')
-                    ->get();
-                $waypoints = array();
-    
-                foreach($arr as $k => $waypoint){
-                    $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
-                    if($images){
-                        $waypoint['images'] = $images;
-                    }
-                    array_push($waypoints,$waypoint);
-                };
+        $journey = journey::where('UJID',$id)->firstOrFail();
 
-                //get Polyline & encode
-                $poly = $journey->polyline_path;
-                $cpoly = GpxController::getCompressedPolyline($poly,2000);
-    
-                return view('showJourney',[
-                    'journey' => $journey,
-                    'waypoints' => $waypoints,
-                    'gpx' => basename($journey->file_path),
-                    'summary_polyline' => $cpoly,
-                    ]);
+        // return  $journey->key."  and  ".$request->query('key');
+
+        if($journey->publish_stage =='Published' || $request->query('key') == $journey->key ){
+            $arr = waypoint::where('journey_id',$journey->id)
+                ->join('labels', 'waypoints.type', '=', 'labels.name')
+                ->select('waypoints.*', 'labels.icon')
+                ->orderBy('sequence','asc')
+                ->get();
+            $waypoints = array();
+
+            foreach($arr as $k => $waypoint){
+                $images = waypoint_image::where('waypoint_id',$waypoint->id)->get();
+                if($images){
+                    $waypoint['images'] = $images;
+                }
+                array_push($waypoints,$waypoint);
             };
-            return redirect('404');
-        };
-        return redirect('404');
+
+            //get Polyline & encode
+            $poly = $journey->polyline_path;
+            $cpoly = GpxController::getCompressedPolyline($poly,2000);
+
+            return view('showJourney',[
+                'journey' => $journey,
+                'waypoints' => $waypoints,
+                'gpx' => basename($journey->file_path),
+                'summary_polyline' => $cpoly,
+                ]);
+        } return abort(401,"unpublished contents");
     }
 
     /**
@@ -389,9 +389,9 @@ class journeyController extends Controller
             'stauts' => 'success',
             'UJID' => $saved_journey['UJID'],
             'UWID' => $UWID,
-            'IMG' => $IMG,
-            'KEY' => $saved_journey->key,
+            'IMG' => $saved_journey->getImages(),
             'cover' => $saved_journey->getCover(),
+            'KEY' => $saved_journey->key,
         ]);
     }
 

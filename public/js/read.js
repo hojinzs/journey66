@@ -5,6 +5,8 @@ function initMap() {
         center: { lat: 1.0, lng: 1.0 },
         mapTypeControl: false,
         zoomControl: false,
+        // gestureHandling: "cooperative",
+        gestureHandling: false,
         streetViewControl: false,
         fullscreenControl: false,
         rotateControl: false,

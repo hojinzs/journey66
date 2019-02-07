@@ -721,7 +721,7 @@ JournalLogger.prototype.setImage = function(prop = {
     };
 };
 
-JournalLogger.prototype.SubmitNew = function(){
+JournalLogger.prototype.SubmitNew = function(callbackFn = null){
         // form data
         var FormArray = {};
         var Logger = this;
@@ -768,49 +768,44 @@ JournalLogger.prototype.SubmitNew = function(){
         // FormArray.polyline = this.$form.data('polyline');
         FormArray.polyline = this.$form.data('encoded-polyline');
         FormArray.gpx = this.$form.data('gpx');
-
-        // set Static img
-        summary_map = $("#journeyPosted .summary-map");
-        FormArray.staticmap = Journal.setStaticMap(summary_map,{
-            width : "500",
-            height : "500",
-            encpath : this.$form.data('summary-polyline')
-        })
     
         // ready to json
         var jsonData = JSON.stringify(FormArray);
     
         //send
         $.ajax({
-          url: "/api/journeynew",
-          type: "POST",
-          contentType: "application/json",
-          data: jsonData,
-          dataType: "text",
-          beforeSend: function(){
-            Logger.$form.find('[type=submit]').prop("disabled",true);
-            Logger.$postingModal.find('modal-message-done').hide();
-            Logger.$postingModal.find('modal-message-error').hide();
-            Logger.$postingModal.modal({
-                backdrop: 'static',
-                keyboard: false,
-            });
-          },
-          success: function(data){
-            // alert(data);
-            parse = JSON.parse(data);
-            Logger.$form.remove();
-            Logger.$postingModal.find('author-email').text(parse.mail);
-            Logger.$postingModal.find('modal-message-done').show();
-          },
-          error: function(xhr,status,error){
-            // alert(error);
-            Logger.$postingModal.find('modal-message-error').show();
-            Logger.$postingModal.find('modal-message-error').text(error);
-          },
-          complete: function(){
-            Logger.$postingModal.find('modal-message-loading').hide();
-          },
+            url: "/api/journeynew",
+            type: "POST",
+            contentType: "application/json",
+            data: jsonData,
+            dataType: "text",
+            beforeSend: function(){
+                Logger.$form.find('[type=submit]').prop("disabled",true);
+                Logger.$postingModal.find('modal-message-done').hide();
+                Logger.$postingModal.find('modal-message-error').hide();
+                Logger.$postingModal.modal({
+                    backdrop: 'static',
+                    keyboard: false,
+                });
+            },
+            success: function(data){
+                // alert(data);
+                parse = JSON.parse(data);
+                Logger.$form.remove();
+                Logger.$postingModal.find('author-email').text(parse.mail);
+                Logger.$postingModal.find('modal-message-done').show();
+                
+                if(callbackFn instanceof Function) return callbackFn(parse);
+            },
+            error: function(xhr,status,error){
+                // alert(error);
+                Logger.$postingModal.find('modal-message-error').show();
+                Logger.$postingModal.find('modal-message-error').text(error);
+            },
+            complete: function(){
+                Logger.$postingModal.find('modal-message-loading').hide();
+                Logger.$postingModal.find('#journeyPosted_close').attr('disabled',false);
+            },
         });
 };
 
@@ -886,11 +881,12 @@ JournalLogger.prototype.SubmitUpdate = function(CallbackFn = null){
           },
         success: function(data){
             parse = JSON.parse(data);
-            Logger.$postingModal.modal('hide');
-            if(CallbackFn instanceof Function) return CallbackFn(parse);
-            Logger.$form.remove();
+            
             Logger.$postingModal.find('author-email').text(parse.mail);
             Logger.$postingModal.find('modal-message-done').show();
+            Logger.$form.remove();
+
+            if(CallbackFn instanceof Function) return CallbackFn(parse);
           },
           error: function(xhr,status,error){
             // alert(error);
@@ -899,6 +895,7 @@ JournalLogger.prototype.SubmitUpdate = function(CallbackFn = null){
           },
           complete: function(){
             Logger.$postingModal.find('modal-message-loading').hide();
+            Logger.$postingModal.find('#journeyPosted_close').attr('disabled',false);
           },
     });
 }

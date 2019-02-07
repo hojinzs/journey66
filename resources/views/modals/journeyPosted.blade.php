@@ -24,16 +24,17 @@
                     @case('edit')
                         <p><i class="far fa-save fa-5x"></i></p>
                         {{__('journey.form.edited.done1')}}<br>
-                        <a href="{{$journeyLink}}">{{__('journey.form.edited.gojourney')}}</a>
                         @break
                     @default
                 @endswitch
-                        <img src="" class="img-fluid summary-map">
                 </modal-message-done>
 
                 <!-- When Posting Error -->
                 <modal-message-error>
                 </modal-message-error>
+            </div>
+            <div class="modal-footer">
+                <button id="journeyPosted_close" type="button" class="btn btn-secondary" data-dismiss="modal" disabled>Close</button>
             </div>
         </div>
     </div>

@@ -16,6 +16,7 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
     let Cover = this.Element;
     let Button = Cover.querySelector('button[name=set_cover_btn]');
     let MessageBox = Cover.querySelector('span[name=message]');
+    let PreviewBtn = Cover.querySelector('button[name=journey_preview]');
 
     //set Slick slider
     console.log("SET SLICK");
@@ -26,6 +27,13 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
         variableWidth: true,
         arrows: false
     });
+
+
+    // set Preview Button
+    PreviewBtn.dataset.href = '/journey/'+CoverData.journey+"?key="+JourneyKey
+    PreviewBtn.addEventListener('click',function(event){
+        location.href = event.target.dataset.href;
+    })
 
     //set Text
     Cover.getElementsByTagName('h2')[0].textContent = CoverData.title;
@@ -59,8 +67,8 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
         let newImg = new Image;
         newImg.classList.add("setcover-images");
         newImg.src = image.path;
-        newImg.dataset.Index = image.id;
-        newImg.dataset.WaypointId = image.waypoint_id;
+        // newImg.dataset.Index = image.id;
+        // newImg.dataset.WaypointId = image.waypoint_id;
 
         //set click event
         newImg.addEventListener('click',PickThumbnail);
@@ -137,7 +145,7 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
 
 <style>
     setCover {
-        height: 60vh;
+        min-height: 60vh;
     }
 
     setCover .setcover-images {
@@ -202,5 +210,6 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
 
     <div>
         <button name="set_cover_btn" type="button" class="btn btn-primary">Cover Set</button>
+        <button name="journey_preview" type="button" class="btn btn-success">Preview ></button>
     </div>
 </div>

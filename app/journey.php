@@ -95,4 +95,18 @@ class journey extends Model
 
         return $cover;
     }
+
+    public function getImages()
+    {
+        $wps = $this->waypoints()->get();
+        $IMG = [];        
+        foreach($wps as $wp){
+            $imgs = [];
+            $imgs = $wp->waypoint_images()->get();
+            foreach($imgs as $img){
+                $IMG[] = $img;
+            }
+        }
+        return $IMG;
+    }
 }

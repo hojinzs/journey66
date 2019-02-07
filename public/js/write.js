@@ -5,7 +5,13 @@ $(document).ready(function(){
 function initMap(){
     Journey66.Map = new google.maps.Map(document.getElementById('map'), {
         zoom: 1,
-        center: {lat: 1.0, lng: 1.0}
+        center: {lat: 1.0, lng: 1.0},
+        mapTypeControl: false,
+        // zoomControl: false,
+        gestureHandling: "cooperative",
+        streetViewControl: false,
+        fullscreenControl: false,
+        rotateControl: false,
     });
     Journey66.Mapkey = $('#map').data('gmapkey');
 };
@@ -26,12 +32,53 @@ Journey66.Write = function(gpx_data,callbackFn){
     JLogger.setSequence(gpx_data.sequence);
     JLogger.centerAndZoom();
     JLogger.TrackMarker();
-    JLogger.CreateJourney();
+    // JLogger.CreateJourney();
     JLogger.setStartEndWaypoint();
     JLogger.GeoPhotoUploader({
         button_id: 'geotag_img_load',
         input_id: 'geotag_img',
         modal_id: 'confrimGeophotoSet',
+    });
+
+    JLogger.$form.on("submit", function(event) {
+        event.preventDefault();
+
+        var loading = $('.img-loading').length;
+        if(loading > 0) {
+            alert(loading+'images upload is unfinished');
+            return;
+        };
+
+        JLogger.SubmitNew(function(response){
+
+            console.log(response);
+
+            //remove edit mode
+            JLogger.$form.hide();
+            JLogger.purgeTrackMarker();
+
+            // console.log("RESPONSE",response);
+
+            //make image array
+            let image = [];
+            for(var i = 0,len = response.IMG.length; i < len; i++){
+                img = response.IMG[i];
+                image.push(img);
+            };
+
+            //make data array
+            let cover = {
+                journey: response.UJID,
+                title: response.cover.title,
+                distance: response.cover.distance,
+                thumbnail: response.cover.thumbnail,
+                date: response.cover.date,
+            }
+            let key = response.KEY;
+
+            //cover, go
+            setCover.Start(image,cover,key);
+        });
     });
 
     return callbackFn()

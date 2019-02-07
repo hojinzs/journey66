@@ -60,8 +60,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 });
             },
             ErrorFn: function(data){
-                let error = GPXbtn.getElementsByClassName('error');
-                error[0].textContent = "error";
+                let error = GPXbtn.getElementsByClassName('error')[0];
+                error.textContent = "error";
             },
         });
     });

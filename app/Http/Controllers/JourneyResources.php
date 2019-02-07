@@ -24,9 +24,6 @@ class JourneyResources extends Controller
             $journey = journey::where('UJID',$id)->first();
             $old_thumbnails = $journey->metas()->where('name','thumbnail')->delete();
 
-            // return $old_thumbnails;
-            // $old_thumbnails[0]->delete();
-
             $url = $request->input('url');
 
             $new_thumbnails = $journey->setMetaData('thumbnail',$url);

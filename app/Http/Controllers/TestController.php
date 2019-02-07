@@ -10,8 +10,9 @@ class TestController extends Controller
 {
     //
 
-    public function api(Request $request){
+    public function api(Request $request,$id){
         //
+        return ;
 
     }
 
