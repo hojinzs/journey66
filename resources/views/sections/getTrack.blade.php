@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function(){
 <div id="getTrack-features">
 
     <!-- GPX UPLOAD -->
-    <div id="gpx-upload" class="getTrack-element">
+    <div id="gpx-upload" class="getTrack-element rounded">
             <h4>{{__('journey.form.getPath.gpx.title')}} <i class="fas fa-file-upload"></i></h4>
         <description>
             <p>{{__('journey.form.getPath.gpx.description')}}</p>
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function(){
     <!-- GPX UPLOAD END -->
 
     <!-- LOAD FROM STRAVA -->
-    <div id="load-strava" class="getTrack-element">
+    <div id="load-strava" class="getTrack-element rounded">
         <h4>{{__('journey.form.getPath.strava.title')}} <i class="fab fa-strava"></i></h4>
         <p>{{__('journey.form.getPath.strava.description')}}</p>
         <p><span class="error"></span></p>

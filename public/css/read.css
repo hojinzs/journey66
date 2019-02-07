@@ -100,7 +100,7 @@ html body {
 @media (max-width: 767px){
 
     #journey{
-        background-color: red;
+        /* background-color: red; */
     }
 
     .journey-map{
