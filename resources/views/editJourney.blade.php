@@ -45,7 +45,13 @@
     ])
     @endcomponent
 
-    @component('components.GoogleMap')
+    @component('components.GoogleMap',[
+        'scriptparam' => [
+            'region' => 'KR',
+            'libraries' => 'geometry',
+            'callback' => 'initMap',
+        ],
+    ])
     @endcomponent
 
     <div class="container">

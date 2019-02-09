@@ -48,10 +48,19 @@
     ])
     @endcomponent
 
-
     <div class="journey-map level_2">
-        <div id="map" data-gmapkey="{{$gmapkey}}" data-gpx="{{$gpx}}" data-summary-polyline="{{$summary_polyline}}"></div>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key={{$gmapkey}}&callback=initMap"></script>
+        @component('components.GoogleMap',[
+            'mapdata' => [
+                'gpx' => $gpx,
+                'summary_polyline' => $summary_polyline,
+            ],
+            'scriptparam' => [
+                'region' => 'KR',
+                'libraries' => 'geometry',
+                'callback' => 'initMap',
+            ],
+        ])
+        @endcomponent
     </div>
     <div id="journey" data-ujid="{{$journey['UJID']}}">
         <div class="container journey-contents">
