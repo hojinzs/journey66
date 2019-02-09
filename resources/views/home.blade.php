@@ -11,7 +11,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="write and share your wonderful journey" />
     <meta property="og:url" content="http://journey66.cc/" />
-    <meta property="og:image" content="adult-backlit-bicycle-1522545.jpg" />
+    <meta property="og:image" content="/assets/adult-backlit-bicycle-1522545.jpg" />
 @endpush
 
 @push('scripts')

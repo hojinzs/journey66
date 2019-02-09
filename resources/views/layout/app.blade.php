@@ -11,14 +11,7 @@
         <title>@yield('title') - Journey66</title>
         @stack('meta')
 
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119350595-2"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'UA-119350595-2');
-        </script>
+        @include('components.GoogleAnalytics')
 
 
         <!-- Load JS Plugin-->
