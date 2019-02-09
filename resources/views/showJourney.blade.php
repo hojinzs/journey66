@@ -1,10 +1,6 @@
-@php
-    $gmapkey = env('GOOGLE_MAPS_HOST_KEY',null)
-@endphp
-
-@extends('layout.app')
-
-
+@extends('layout.app',[
+    'footer' => false,
+])
 
 @section('title', $journey['name'])
 
@@ -64,69 +60,67 @@
     </div>
     <div id="journey" data-ujid="{{$journey['UJID']}}">
         <div class="container journey-contents">
-                <section id="journey-header">
-                    <div class="row journey-head">
-                        <div class="col-md-12">
-                            <h2>{{$journey->name}}</h2>
-                            <p class="author"><i class="fas fa-user-alt"></i> {{$journey->author_name}}     <i class="fas fa-pen-fancy"></i> {{$journey->created_at}} </p>
-                            <p class="author">
-                                @isset($journey['distance']) {{\App\Calc::getDistance($journey['distance'])}}@endisset
-                            </p>
-                            <hr>
-                            <p>{{$journey->description}}</p>
+            <section id="journey-header">
+                <div class="row journey-head">
+                    <div class="col-md-12">
+                        <h2>{{$journey->name}}</h2>
+                        <p class="author"> @isset($journey->distance) {{\App\Calc::getDistance($journey->distance)}}@endisset </p>
+                        <p class="author"> @isset($journey->getCover()['date']) {{$journey->getCover()['date']}}@endisset </p>
+                        <div class="d-flex flex-row-reverse feature-group">
+                            <div class="p-1 feature lilumi-target"><a class="lilumi-target-a"></a><i class="fas fa-ellipsis-h"></i></div>
                         </div>
-                    </div>
-                </section>
-
-                <section id="waypoint-list">
-                    @foreach ($waypoints as $waypoint)
-                    <section id="{{$waypoint['UWID']}}" waypoint-id="{{$waypoint['UWID']}}">
-                        <div class="row waypoint" data-sequence="{{$waypoint['sequence']}}" data-latitude="{{$waypoint['latitude']}}" data-longitude="{{$waypoint['longitude']}}">
-                            <div class="col-md-12 waypoint_type">
-                                <span class="badge badge-secondary"><i class="fas fa-{{__($waypoint['icon'])}}"></i>  {{__('journey.label.waypoint.'.$waypoint['type'])}}</span>
-                            </div>
-                            @isset($waypoint['name'])
-                            <div class="col-md-12 waypoint_name">
-                                <h3>{{$waypoint['name']}}</h3>
-                            </div>
-                            @endisset
-                            <div class="col-md-12 waypoint-medias">
-                                <!-- use Slick jQuery Slider (http://kenwheeler.github.io/slick/) -->
-                                <div class="galarry-images">
-                                    <div class="img-container">
-                                        <img src="" class="gmap-static-img rounded">
-                                    </div>
-                                    @foreach ($waypoint['images'] as $img)
-                                    <div class="img-container">
-                                        <img src="{{$img['path']}}" class="waypoint-img rounded">
-                                    </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            @isset($waypoint['distance'])
-                            <div class="col-md-12 waypoint_description">
-                                <p class="author">{{__('journey.form.waypoint.stats.distance')}} :: {{\App\Calc::getDistance($waypoint['distance'])}}</p>
-                            </div>
-                            @endisset
-                            @isset($waypoint['description'])
-                            <div class="col-md-12 waypoint_description">
-                                <p>{{$waypoint['description']}}</p>
-                            </div>
-                            @endisset
-                        </div>
-                    </section>
-                    @endforeach
-                </section>
-
-                <hr>
-
-                <div class="row journey-metas">
-                    <div class="journey-meta col-md-6">
-                        {{-- <p>{{__('journey.form.created_at')}}:: {{date('d/m/Y',strtotime($waypoint['created_at']))}}</p> --}}
+                        <hr>
+                        <p>{{$journey->description}}</p>
                     </div>
                 </div>
+            </section>
+            <section id="waypoint-list">
+                @foreach ($waypoints as $waypoint)
+                <section id="{{$waypoint['UWID']}}" waypoint-id="{{$waypoint['UWID']}}">
+                    <div class="row waypoint" data-sequence="{{$waypoint['sequence']}}" data-latitude="{{$waypoint['latitude']}}" data-longitude="{{$waypoint['longitude']}}">
+                        <div class="col-md-12 waypoint_type">
+                            <span class="badge badge-secondary"><i class="fas fa-{{__($waypoint['icon'])}}"></i>  {{__('journey.label.waypoint.'.$waypoint['type'])}}</span>
+                        </div>
+                        @isset($waypoint['name'])
+                        <div class="col-md-12 waypoint_name">
+                            <h3>{{$waypoint['name']}}</h3>
+                        </div>
+                        @endisset
+                        <div class="col-md-12 waypoint-medias">
+                            <!-- use Slick jQuery Slider (http://kenwheeler.github.io/slick/) -->
+                            <div class="galarry-images">
+                                <div class="img-container">
+                                    <img src="" class="gmap-static-img rounded">
+                                </div>
+                                @foreach ($waypoint['images'] as $img)
+                                <div class="img-container">
+                                    <img src="{{$img['path']}}" class="waypoint-img rounded">
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @isset($waypoint['distance'])
+                        <div class="col-md-12 waypoint_description">
+                            <p class="author">{{__('journey.form.waypoint.stats.distance')}} :: {{\App\Calc::getDistance($waypoint['distance'])}}</p>
+                        </div>
+                        @endisset
+                        @isset($waypoint['description'])
+                        <div class="col-md-12 waypoint_description">
+                            <p>{{$waypoint['description']}}</p>
+                        </div>
+                        @endisset
+                    </div>
+                </section>
+                @endforeach
+            </section>
+            <hr>
+            <div class="journey-reader-end">
+                <div><i class="fas fa-pen-fancy"></i></div>
+                <div class="author">{{$journey->author_name}}</div>
+                <div>{{$journey->created_at}}</p></div>
             </div>
-
+        </div>
+        @include('footer')
     </div>
 
 @endsection

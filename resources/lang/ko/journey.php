@@ -26,10 +26,10 @@ return [
         ],
         'title' => '제목',
         'style' => '여행 스타일',
-        'description' => '설명',
-        'description_ph' => '여행에 대한 짧은 설명이나 개요 등',
+        'description' => '소개',
+        'description_ph' => '여행에 대한 짧은 소개글',
         'confirm_title' => '여행기 검토 및 발행',
-        'author' => '저자',
+        'author' => '필명',
         'author_ph' => '누가 이 멋진 여행기를 작성했는지 알려주세요',
         'email' => '이메일 주소',
         'email_check' => '작성한 여행기의 수정/삭제를 위한 이메일 수집에 동의합니다. 광고나 메일링에 사용되지 않습니다.',
@@ -85,6 +85,9 @@ return [
             'published_description' => '웹상에 여행기를 공개합니다.',
             'private' => '비공개',
             'private_description' => '비공개로 전환합니다.',
+        ],
+        'coverset' => [
+            'coverset'
         ]
     ],
     'label' => [

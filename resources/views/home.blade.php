@@ -1,4 +1,6 @@
-@extends('layout.app')
+@extends('layout.app',[
+    'footer' => false,
+])
 
 @section('title', 'Home')
 
@@ -47,33 +49,8 @@
             background-size: cover;
             background-repeat: no-repeat;
         }
-        .main-box{
+        .main-header{
             margin-top: 10%;
-        }
-        .a-target{
-            position: relative;
-        }
-        .a-wrapper{
-            display: block;
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            top: 0;
-            left: 0;
-        }
-
-        .opacity-box{
-            background-color: white;
-            opacity: .7;
-            color: black;
-            display: inline-block;
-            margin-bottom: 1em;
-            padding: 0.8em;
-        }
-
-        .opacity-box.link-box{
-            margin-left: 0.5em;
-            box-shadow: 10px 10px 0 0 black;
         }
 
         .link_header{
@@ -81,6 +58,9 @@
             font-weight: 700;
         }
 
+        .main-header .lilumi-box{
+            padding: 1.2em;
+        }
         
     </style>
 @endpush
@@ -91,30 +71,30 @@
         @component('components.TopMenu')
         @endcomponent
         <div class="container">
-                <div class="main-box">
-                    <div class="">
-                        <div class="opacity-box">
-                            <h1>Journey 66</h1>
-                            <p>write and share your wonderful journey</p>
-                        </div>
-                    </div>
-                    <div class="">
-                        <div class="a-target opacity-box link-box">
-                            <a class="a-wrapper" href="/write"></a>
-                            <p><span class="link_header"><i class="fas fa-edit"></i> write journey</span></p>
-                            <p>write new journey  <span class="arrow-right"><i class="fas fa-chevron-circle-right"></i></span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="">
-                        <div class="a-target opacity-box link-box">
-                            <a class="a-wrapper" href="/journey_shuffle"></a>
-                            <p><span class="link_header"><i class="fas fa-random"></i> shuffle</span></p>
-                            <p> read journey randomly   <i id="arrow" class="fas fa-chevron-circle-right"></i></p>
-                            </p>
-                        </div>
+            <div class="main-header">
+                <div class="lilumi-box">
+                    <h1>Journey 66</h1>
+                    <p>write and share your wonderful journey</p>
+                </div>
+            </div>
+            <div class="sub-menus">
+                <div>
+                    <div class="sub-menu lilumi-target lilumi-box lilumi-btn">
+                        <a class="lilumi-target-a" href="/write"></a>
+                        <h4 class="link_header"><i class="fas fa-edit"></i> write journey</h4>
+                        <p>write new journey  <span class="arrow-right"><i class="fas fa-chevron-circle-right"></i></span>
+                        </p>
                     </div>
                 </div>
+                <div>
+                    <div class="sub-menu lilumi-target lilumi-box lilumi-btn">
+                        <a class="lilumi-target-a" href="/journey_shuffle"></a>
+                        <h4 class="link_header"><i class="fas fa-random"></i> shuffle</h4>
+                        <p> read journey randomly   <i id="arrow" class="fas fa-chevron-circle-right"></i></p>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

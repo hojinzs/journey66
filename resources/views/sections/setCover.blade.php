@@ -18,7 +18,7 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
     let PreviewBtn = Cover.querySelector('button[name=journey_preview]');
 
     //set Slick slider
-    let image_select_list = Cover.querySelector('.image-select-list');
+    let image_select_list = Cover.querySelector('.journey-image-list');
     $(image_select_list).slick({
         infinite: false,
         slidesToShow: 1,
@@ -37,7 +37,7 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
     Cover.getElementsByTagName('h2')[0].textContent = CoverData.title;
     Cover.querySelector('span[name=date]').textContent = CoverData.date;
     Cover.querySelector('span[name=distance]').textContent = CoverData.distance;
-    MessageBox.textContent = "Select image and set cover image";
+    MessageBox.textContent = "select and set cover image";
     
     //default data
     let SendForm = new FormData
@@ -46,8 +46,9 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
 
     //set current thumbnail
     let currentImg = new Image;
-    currentImg.classList.add("setcover-images");
+    currentImg.classList.add("journey-image");
     currentImg.classList.add('img_selected');
+    currentImg.classList.add("current_cover");
     currentImg.src = CoverData.thumbnail;
     currentImg.dataset.Index = "current";
     currentImg.addEventListener('click',PickThumbnail);
@@ -61,13 +62,13 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
 
         //set each image
         let newImg = new Image;
-        newImg.classList.add("setcover-images");
+        newImg.classList.add("journey-image");
         newImg.src = image.path;
 
         //set click event
         newImg.addEventListener('click',PickThumbnail);
 
-        //inject images to .image-select-list
+        //inject images to .journey-image-list
         $(image_select_list).slick('slickAdd',$(newImg));
     });
 
@@ -95,9 +96,10 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
             SuccessFn(response){
 
                 // success message
-                MessageBox.textContent = "cover image has been successfully set";
+                MessageBox.textContent = "cover image saved!";
 
                 // remove img selector & button
+                document.getElementById("image-selector").querySelector('h3[class=title]').style.display = "none";
                 image_select_list.style.display = "none";
                 Button.style.display = "none";
                 Button.removeEventListener('click',SetCoverImage);
@@ -118,7 +120,7 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
         let target = event.target;
 
         Cover.style.backgroundImage = "linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("+target.src+")";
-        let imgs = Cover.getElementsByClassName('setcover-images');
+        let imgs = Cover.getElementsByClassName('journey-image');
         for(let i = 0; i < imgs.length; i++){
             let val = imgs[i];
             val.classList.remove('img_selected');
@@ -139,68 +141,56 @@ setCover.Start = function(imageArray,CoverData,JourneyKey){
         min-height: 60vh;
     }
 
-    setCover .setcover-images {
+    #image-selector{
+        margin-top: 1.2em;
+        width: 100%;
+    }
+    #image-selector .journey-image-list{
+        margin: 15px 0px 15px 15px;
+    }
+
+    #image-selector .journey-image {
         height: 100px;
         width: auto;
         margin-right: 20px;
     }
-
-    setCover .setcover-images.img_selected{
+    #image-selector .journey-image.img_selected{
         border-style: solid;
-        border-width: 1px;
+        border-width: 2px;
         border-color: red;
-    }
-
-    setCover .box{
-        background-color: white;
-        height: auto;
-        opacity: .7;
-        color: black;
-        display: inline-block;
-        margin-bottom: 1em;
-        padding: 0.8em;
-        margin-left: 0.5em;
-        box-shadow: 10px 10px 0 0 black;
-    }
-
-    setCover .image-select-list{
-        margin: 15px 0px 15px 15px;
     }
 </style>
 
 <div>
     <div>
-        <span name="title" class="box">
+        <span name="title" class="lilumi-box shadow">
             <h2></h2>
         </span>
     </div>
 
     <div>
-        <span name="date" class="box">
+        <span name="date" class="lilumi-box shadow">
 
         </span>
     </div>
 
     <div>
-        <span name="distance" class="box">
+        <span name="distance" class="lilumi-box shadow">
 
         </span>
     </div>
 
-    <div>
-        <span name="message" class="box">
-            
-        </span>
-    </div>
-
-    <div>
-        <div class="image-select-list">
+    <div id="image-selector" class="lilumi-box shadow">
+        <div>
+            <h3 class="title">Select Cover image</h3>
+            <span name="message"></span>
+        </div>
+        <div class="journey-image-list">
             
         </div>
+        <div class="button-group">
+            <button name="set_cover_btn" type="button" class="btn btn-primary">Cover Set</button>
+        </div>
     </div>
-
-    <div>
-        <button name="set_cover_btn" type="button" class="btn btn-primary">Cover Set</button>
-        <button name="journey_preview" type="button" class="btn btn-success">Preview ></button>
-    </div>
+    <button name="journey_preview" type="button" class="btn btn-success">Preview ></button>
 </div>

@@ -1,5 +1,6 @@
 @php
     $lang = str_replace('_', '-', app()->getLocale());
+    isset($footer)? $footer == $footer : $footer = true;
 @endphp
 
 <!doctype html>
@@ -51,5 +52,6 @@
     </head>
     <body>
         @yield('contents')
+        @includeWhen($footer, 'footer')
     </body>
 </html>

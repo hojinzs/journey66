@@ -67,3 +67,81 @@ font-size: 1.3em;
 .level_3{
     z-index: 1;
 }
+
+
+/* Iiluminate STYLE COMPONENT CSS */
+
+.lilumi-box{
+    background-color: rgba(255, 255, 255, 0.7);
+    color: black;
+    display: inline-block;
+    margin-bottom: 18px;
+    padding: 12px;
+    text-align: left;
+}
+
+.lilumi-box.shadow{
+    box-shadow: 10px 10px 0 0 black;
+}
+
+.lilumi-box.lilumi-btn{
+    border-radius: .25rem!important;
+    box-shadow: 10px 10px 0 0 black;
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.3);
+}
+
+.lilumi-box.lilumi-btn.disactive{
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 10px 10px 0 0 black;
+    cursor: auto;
+    -webkit-tap-highlight-color: none;
+}
+
+.lilumi-target{
+    position: relative;
+}
+
+.lilumi-target-a{
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+#footer{
+    text-align: center;
+    padding-bottom: 1em;
+    color: #4d4d4d;
+    font-size: 13px;
+}
+
+#footer .site-name{
+    font-size: 1.2em;
+}
+
+#footer a:link{
+    color: #4d4d4d;
+}
+
+#footer a:visited{
+    color: #4d4d4d;
+}
+
+#footer a i{
+}
+
+@media only screen
+and (min-width : 1025px){
+    .lilumi-box.lilumi-btn{
+        transition: background-color 1s, box-shadow 0.5s;
+        -webkit-transition: background-color 1s, box-shadow 0.5s;
+    }
+
+    .lilumi-box.lilumi-btn:hover:not(.disactive){
+        background-color: rgba(255, 255, 255, 1);
+        box-shadow: 5px 5px 10px 3px rgba(0, 0, 0, 0.5);
+    }
+}

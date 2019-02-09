@@ -69,38 +69,23 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 
 <style>
-    getTrack .getTrack-element{
-        background-color: white;
-        height: auto;
-        opacity: .7;
-        color: black;
-        display: inline-block;
-        margin-bottom: 1em;
-        padding: 0.8em;
-        margin-left: 0.5em;
-        box-shadow: 10px 10px 0 0 black;
-    }
-    getTrack .getTrack-header{
-        background-color: white;
-        opacity: .7;
-        color: black;
-        display: inline-block;
-        margin-bottom: 1em;
-        padding: 0.8em;
-    }
     getTrack span.error{
         color: red;
     }
+
+    getTrack .options{
+        margin-left: 1em;
+    }
 </style>
 
-<div class="getTrack-header">
+<div class="lilumi-box">
     <h3>{{__('journey.form.getPath.title')}}</h3>
 </div>
 <!-- use Slick jQuery Slider (http://kenwheeler.github.io/slick/) -->
 <div id="getTrack-features">
 
     <!-- GPX UPLOAD -->
-    <div id="gpx-upload" class="getTrack-element rounded">
+    <div id="gpx-upload" class="lilumi-box lilumi-btn options">
             <h4>{{__('journey.form.getPath.gpx.title')}} <i class="fas fa-file-upload"></i></h4>
         <description>
             <p>{{__('journey.form.getPath.gpx.description')}}</p>
@@ -114,9 +99,9 @@ document.addEventListener("DOMContentLoaded", function(){
     <!-- GPX UPLOAD END -->
 
     <!-- LOAD FROM STRAVA -->
-    <div id="load-strava" class="getTrack-element rounded">
+    <div id="load-strava" class="lilumi-box lilumi-btn disactive options">
         <h4>{{__('journey.form.getPath.strava.title')}} <i class="fab fa-strava"></i></h4>
-        <p>{{__('journey.form.getPath.strava.description')}}</p>
+        <p>({{__('journey.form.getPath.strava.description')}})</p>
         <p><span class="error"></span></p>
         {{-- <button id="gpx-upload-button" type="button" class="btn btn-primary" >UPLOAD</button> --}}
         {{-- <input id="gpx-upload-file" name="gpx" type="file" accept=".gpx" hidden> --}}

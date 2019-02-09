@@ -1,6 +1,6 @@
 {{-- ReaderCover --}}
 {{-- show journey thumbnail image and hack loading time..
----- Variable Given by showJourney.blade.php
+---- Variable Given from "showJourney.blade.php"
 ---- @cover['thumbnail'] => $journey->meta->thumbnail
 ---- @cover['title'] => $journey->name,
 ---- @cover['date'] => $journey->startedAt,
@@ -87,49 +87,28 @@ document.addEventListener("DOMContentLoaded", function(){
         font: 20px;
     }
 
-    readerCover .transparent-black{
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.6);
-    }
-
-    readerCover .box{
-        background-color: white;
-        height: auto;
-        opacity: .7;
-        color: black;
-        display: inline-block;
-        margin-bottom: 1em;
-        padding: 0.8em;
-        margin-left: 0.5em;
-        box-shadow: 10px 10px 0 0 black;
-    }
-    readerCover span.error{
-        color: red;
-    }
 </style>
 
 <div>
-    <span name="title" class="box">
+    <span name="title" class="lilumi-box shadow">
         <h2>{{$cover['title']}}<h2>
     </span>
 </div>
 
 <div>
-    <span name="date" class="box">
+    <span name="date" class="lilumi-box shadow">
         {{$cover['date']}}
     </span>
 </div>
 
 <div>
-    <span name="distance" class="box">
+    <span name="distance" class="lilumi-box shadow">
         {{$cover['distance']}}
     </span>
 </div>
 
 <div>
-    <span name="message" class="box">
+    <span name="message" class="lilumi-box shadow">
         
     </span>
 </div>
