@@ -38,42 +38,39 @@ class GpxController extends Controller
     public function store(Request $request)
     {
         //
-        if($request->hasFile('gpx')){
-            try {
+        if(!$request->hasFile('gpx')) return response('cannot find gpx file',400);
 
-                //Polyline Parsing & Encoding
-                $xml = $request->gpx;
-                $points = GpxController::getPointArraytoXml($xml);
-                $sequence = GpxController::getSequenceArrayFromXml($xml);
-                $encoded_polyline = GpxController::getEncodedPolyline($points);
-                $encoded_polyline_summary = GpxController::getCompressedPolyline($encoded_polyline,2000);
-                $stats = GpxController::getSummarizable($xml);
+        try {
+            //Polyline Parsing & Encoding
+            $xml = $request->gpx;
+            $points = GpxController::getPointArraytoXml($xml);
+            $sequence = GpxController::getSequenceArrayFromXml($xml);
+            $encoded_polyline = GpxController::getEncodedPolyline($points);
+            $encoded_polyline_summary = GpxController::getCompressedPolyline($encoded_polyline,2000);
+            $stats = GpxController::getSummarizable($xml);
 
-                //Save polyline data to tmp folder
-                $disk = Storage::disk('gcs');
-                $filename = md5(microtime())."-".$request->gpx->getClientOriginalName();
-                // $disk->put('tmp/'.$filename.'.poly',$encoded_polyline);
-                // $polypath = 'tmp/'.$filename.'.poly';
+            //Save polyline data to tmp folder
+            $disk = Storage::disk('gcs');
+            $filename = md5(microtime())."-".$request->gpx->getClientOriginalName();
+            // $disk->put('tmp/'.$filename.'.poly',$encoded_polyline);
+            // $polypath = 'tmp/'.$filename.'.poly';
 
-                //Keep Gpx file to tmp folder
-                $gpxpath = $request->gpx->storeAs('tmp',$filename,'gcs');
+            //Keep Gpx file to tmp folder
+            $gpxpath = $request->gpx->storeAs('tmp',$filename,'gcs');
 
-                return response()->json([
-                    'stats' => $stats,
-                    'gpx_path' => $gpxpath,
-                    // 'polyline_path' => $polypath,
-                    'points' => $points,
-                    'sequence' => $sequence,
-                    'encoded_polyline' => $encoded_polyline,
-                    'encoded_polyline_summary' => $encoded_polyline_summary,
-                ]);
-            } catch (\Throwable $th) {
-                //throw $th;
-                return $th;
-            }
+            return response()->json([
+                'stats' => $stats,
+                'gpx_path' => $gpxpath,
+                // 'polyline_path' => $polypath,
+                'points' => $points,
+                'sequence' => $sequence,
+                'encoded_polyline' => $encoded_polyline,
+                'encoded_polyline_summary' => $encoded_polyline_summary,
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response('analysis gpx fail',400);
         };
-
-        return response('not gpx file',400);
     }
 
     /**

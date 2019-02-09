@@ -113,7 +113,7 @@ Journey66.Section66 = function(string){
                     // AJAX error
                     let response = xhr.responseText;
                     if(Callback.ErrorFn instanceof Function) Callback.ErrorFn(response);
-                    throw new Error("AJAX call failure");
+                    Journey66.ErrorHandler('AJAX call failure');
     
                 };
                 // AJAX complete
@@ -141,4 +141,8 @@ Journey66.Section66 = function(string){
                 // this.Element.style.display = "none";
             }
         };
+};
+
+Journey66.ErrorHandler = function(message,response = null){
+    throw new Error(message);
 };

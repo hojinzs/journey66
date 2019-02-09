@@ -1,5 +1,5 @@
 @php
-    $gmapkey = env('GOOGLE_MAPS_KEY',null)
+    $gmapkey = env('GOOGLE_MAPS_HOST_KEY',null)
 @endphp
 
 @extends('layout.app')

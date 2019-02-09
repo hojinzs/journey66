@@ -14,7 +14,7 @@ class Calc
             ."location=".$latitude
             .",".$longitude
             ."&timestamp=".$timestamp
-            ."&key=".env('GOOGLE_MAPS_KEY',null);
+            ."&key=".env('GOOGLE_MAPS_SERVER_KEY',null);
 
         // get
         $client = new \GuzzleHttp\Client();

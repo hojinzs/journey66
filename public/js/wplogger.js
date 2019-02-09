@@ -674,7 +674,7 @@ JournalLogger.prototype.setImage = function(prop = {
                 .then(eraseFile(senddata))
                 .then(removeDom(senddata))
                 .catch(function(error){
-                    throw new Error("Error");
+                    Journey66.ErrorHandler('error',error);
                 });
 
                 function removeData(data){
