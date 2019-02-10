@@ -1,14 +1,14 @@
-<h1>Journey66 :: Journey saved</h1>
-<b>notice</b> Please keep this message in cherish.<br>
-You can prove the copyright and manage this wonderful journey you wrote via e-mail.<br>
+<h1>Journey66 :: {{ __('journey.email.saved') }}</h1>
+<b>!! {{ __('journey.email.notice') }} !!</b> {{ __('journey.email.notice_message') }}<br>
+{{ __('journey.email.notice_message2') }}<br>
 <br>
 <h2>{{$journey->name}}</h2>
 {{-- <img src="{{$journey->thumbnail}}"> --}}
-- author: {{$journey->author_name}} <br>
-- Saved at {{$currnetTime}} <br>
+- {{ __('journey.form.author') }}: {{$journey->author_name}} <br>
+- {{ __('journey.form.savedAt') }} {{$currnetTime}} <br>
 <br>
-your Journey has been saved. but it is not published on public.<br>
-please review the Journey you wrote and let people to see.<br>
+{{ __('journey.email.status_message1') }}<br>
+{{ __('journey.email.status_message2') }}<br>
 <br>
-<a href="{{$link}}">Edit & Change Publish Status ></a><br>
+<a href="{{$link}}">{{ __('journey.email.link') }} ></a><br>
 {{-- - PIN : {{$journey->pin}} --}}

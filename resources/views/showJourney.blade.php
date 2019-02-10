@@ -48,7 +48,7 @@
         @component('components.GoogleMap',[
             'mapdata' => [
                 'gpx' => $gpx,
-                'summary_polyline' => $summary_polyline,
+                'summary-polyline' => $summary_polyline,
             ],
             'scriptparam' => [
                 'region' => 'KR',

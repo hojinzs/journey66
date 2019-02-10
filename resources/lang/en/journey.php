@@ -10,6 +10,11 @@ return [
     |
     */
 
+    'home' => [
+        'slogan' => 'write and share your wonderful journey',
+        'write_desc' => 'write new journey',
+        'shuffle_desc' => 'read journey randomly',
+    ],
     'form' => [
         'getPath' => [
             'title' => 'get path',
@@ -31,6 +36,7 @@ return [
         'confirm_title' => 'Confirm & Publish your Journey',
         'author' => 'author',
         'author_ph' => 'let us to know who writen this wonderful journey',
+        'savedAt' => 'Saved at',
         'email' => 'email',
         'email_check' => 'accept subscriptions email information for edit or delete the journey, not use for advertising or mailing',
         'delete' => 'delete journey',
@@ -76,6 +82,7 @@ return [
             'done1' => 'Your edits were successfully saved!',
             'gojourney' => 'read your journey',
         ],
+        'publish' => 'publish',
         'published_stages' => [
             'pending' => 'pending',
             'pending_description' => 'waiting for public on web',
@@ -83,7 +90,11 @@ return [
             'published_description' => 'public on web',
             'private' => 'private',
             'private_description' => 'turn private',
-        ]
+        ],
+        'coverset' => [
+            'coverset' => 'coverset',
+        ],
+        'submit' => 'submit',
     ],
     'label' => [
         'journey' => [
@@ -105,6 +116,15 @@ return [
             'destination' => 'finish',
             'milestone' => 'milestone',
         ],
+    ],
+    'email' => [
+        'saved' => 'Journey saved',
+        'notice' => 'notice',
+        'notice_message' => 'Please keep this message in cherish.',
+        'notice_message2' => 'You can prove the copyright and manage this wonderful journey you wrote via e-mail.',
+        'status_message1' => 'your Journey has been saved. but it is not published on public.',
+        'status_message2' => 'please review the Journey you wrote and let people to see.',
+        'link' => 'Edit & Change Publish Status',
     ]
 
 ];

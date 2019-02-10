@@ -10,6 +10,11 @@ return [
     |
     */
 
+    'home' => [
+        'slogan' => '멋진 여행기를 작성하고 공유하세요.',
+        'write_desc' => '새 여행기 작성',
+        'shuffle_desc' => '아무 여행기나 읽기',
+    ],
     'form' => [
         'getPath' => [
             'title' => '경로 가져오기',
@@ -31,6 +36,7 @@ return [
         'confirm_title' => '여행기 검토 및 발행',
         'author' => '필명',
         'author_ph' => '누가 이 멋진 여행기를 작성했는지 알려주세요',
+        'savedAt' => '작성일시',
         'email' => '이메일 주소',
         'email_check' => '작성한 여행기의 수정/삭제를 위한 이메일 수집에 동의합니다. 광고나 메일링에 사용되지 않습니다.',
         'delete' => '여행기 삭제',
@@ -53,7 +59,7 @@ return [
             'type' => '타입',
             'photo' => '사진',
             'name' => '주제',
-            'description' => '설명',
+            'description' => '내용',
             'btn_up' => '위로',
             'btn_down' => '아래로',
             'btn_delete' => '삭제',
@@ -78,6 +84,7 @@ return [
             'done1' => 'Your edits were successfully saved!',
             'gojourney' => 'read your journey',
         ],
+        'publish' => '공개설정',
         'published_stages' => [
             'pending' => '대기',
             'pending_description' => '공개 되기 전 검토중입니다.',
@@ -87,8 +94,9 @@ return [
             'private_description' => '비공개로 전환합니다.',
         ],
         'coverset' => [
-            'coverset'
-        ]
+            'coverset' => '커버저장',
+        ],
+        'submit' => '저장하기',
     ],
     'label' => [
         'journey' => [
@@ -110,6 +118,15 @@ return [
             'destination' => '종료',
             'milestone' => '이정표',
         ],
+    ],
+    'email' => [
+        'saved' => '여행기가 저장되었습니다.',
+        'notice' => '안내',
+        'notice_message' => '본 이메일을 소중하게 간직해주세요.',
+        'notice_message2' => '이 이메일을 툥해 여행기를 수정하거나 저작권을 주장할 수 있습니다.',
+        'status_message1' => '여행기가 성공적으로 저장되었으나, 아직 공개된 상태가 아닙니다.',
+        'status_message2' => '여행기를 검토한 후 많은 사람들이 볼 수 있게 해주세요.',
+        'link' => '수정 및 공개상태 변경하기',
     ]
 
 ];

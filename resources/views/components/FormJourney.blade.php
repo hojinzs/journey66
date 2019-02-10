@@ -111,7 +111,7 @@
                         @isset($journey)
                         <div class="form-group">
                             <div class="row">
-                                <label for="publish_stage" class="col-md-2 col-form-label">Publish</label>
+                                <label for="publish_stage" class="col-md-2 col-form-label">{{ __('journey.form.publish') }}</label>
                                 <div class="col-md-10">
                                     @if ($journey['publish_stage'] == 'Pending')
                                         <div class="form-check">
@@ -143,7 +143,7 @@
                         @endisset
                         <div class="form-group row">
                             <div class="col-md-12">
-                                <input type="submit" value="Submit" type="button" class="btn btn-primary btn-lg btn-block">
+                                <input type="submit" value="{{ __('journey.form.submit') }}" type="button" class="btn btn-primary btn-lg btn-block">
                             </div>
                         </div>
                         @isset($journey)

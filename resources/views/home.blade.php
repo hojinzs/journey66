@@ -74,7 +74,7 @@
             <div class="main-header">
                 <div class="lilumi-box">
                     <h1>Journey 66</h1>
-                    <p>write and share your wonderful journey</p>
+                    <p>{{ __('journey.home.slogan') }}</p>
                 </div>
             </div>
             <div class="sub-menus">
@@ -82,7 +82,7 @@
                     <div class="sub-menu lilumi-target lilumi-box lilumi-btn">
                         <a class="lilumi-target-a" href="/write"></a>
                         <h4 class="link_header"><i class="fas fa-edit"></i> write journey</h4>
-                        <p>write new journey  <span class="arrow-right"><i class="fas fa-chevron-circle-right"></i></span>
+                        <p>{{ __('journey.home.write_desc') }}   <span class="arrow-right"><i class="fas fa-chevron-circle-right"></i></span>
                         </p>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
                     <div class="sub-menu lilumi-target lilumi-box lilumi-btn">
                         <a class="lilumi-target-a" href="/journey_shuffle"></a>
                         <h4 class="link_header"><i class="fas fa-random"></i> shuffle</h4>
-                        <p> read journey randomly   <i id="arrow" class="fas fa-chevron-circle-right"></i></p>
+                        <p>{{ __('journey.home.shuffle_desc') }}   <i id="arrow" class="fas fa-chevron-circle-right"></i></p>
                         </p>
                     </div>
                 </div>
