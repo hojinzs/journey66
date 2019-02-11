@@ -14,6 +14,7 @@ return [
         'slogan' => 'write and share your wonderful journey',
         'write_desc' => 'write new journey',
         'shuffle_desc' => 'read journey randomly',
+        'shuffle_cointer' => 'remain :count journeys for activation',
     ],
     'form' => [
         'getPath' => [
@@ -85,6 +86,7 @@ return [
         ],
         'publish' => 'publish',
         'published_stages' => [
+            'new_description' => 'Please check your email and turn it public.',
             'pending' => 'pending',
             'pending_description' => 'waiting for public on web',
             'published' => 'published',

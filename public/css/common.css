@@ -92,7 +92,9 @@ font-size: 1.3em;
 }
 
 .lilumi-box.lilumi-btn.disactive{
-    background-color: rgba(255, 255, 255, 0.3);
+    /* background-color: rgba(255, 255, 255, 0.3); */
+    background-color: white;
+    opacity: 0.3;
     box-shadow: 10px 10px 0 0 black;
     cursor: auto;
     -webkit-tap-highlight-color: none;

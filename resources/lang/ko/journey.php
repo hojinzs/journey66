@@ -14,6 +14,7 @@ return [
         'slogan' => '멋진 여행기를 작성하고 공유하세요.',
         'write_desc' => '새 여행기 작성',
         'shuffle_desc' => '아무 여행기나 읽기',
+        'shuffle_cointer' => '활성화까지 여행기 :count 개 남음',
     ],
     'form' => [
         'getPath' => [
@@ -87,6 +88,7 @@ return [
         ],
         'publish' => '공개설정',
         'published_stages' => [
+            'new_description' => '발송된 이메일을 확인한 후 공개상태로 전환해주세요.',
             'pending' => '대기',
             'pending_description' => '공개 되기 전 검토중입니다.',
             'published' => '공개',

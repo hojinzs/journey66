@@ -86,14 +86,26 @@
                         </p>
                     </div>
                 </div>
+                @if($shuffle['activate']) {{-- shuffle Active --}}
                 <div>
-                    <div class="sub-menu lilumi-target lilumi-box lilumi-btn disactive">
-                        {{-- <a class="lilumi-target-a" href="/journey_shuffle"></a> --}}
+                    <div class="sub-menu lilumi-target lilumi-box lilumi-btn">
+                        <a class="lilumi-target-a" href="/journey_shuffle"></a>
                         <h4 class="link_header"><i class="fas fa-random"></i> shuffle</h4>
                         <p>{{ __('journey.home.shuffle_desc') }}   <i id="arrow" class="fas fa-chevron-circle-right"></i></p>
                         </p>
                     </div>
                 </div>
+                @else  {{-- shuffle disactive --}}
+                <div>
+                    <div class="sub-menu lilumi-target lilumi-box lilumi-btn disactive">
+                        {{-- <a class="lilumi-target-a" href="/journey_shuffle"></a> --}}
+                        <h4 class="link_header"><i class="fas fa-random"></i> shuffle</h4>
+                        <p>{{ __('journey.home.shuffle_desc') }}   <i id="arrow" class="fas fa-chevron-circle-right"></i></p>
+                        <p>{{ __('journey.home.shuffle_cointer',['count' => $shuffle['remain']]) }}</i></p>
+                        </p>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
     </div>

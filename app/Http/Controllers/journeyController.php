@@ -226,6 +226,10 @@ class journeyController extends Controller
     public function showRandom()
     {
 
+        $shuffle = $this->ShufflingActivate();
+
+        if($shuffle['activate'] == false) return abort(403,'unactivate -'.__('journey.home.shuffle_cointer',['count' => $shuffle['remain']]));
+
         $journey = journey::select('UJID')
             ->where('publish_stage','=','Published')
             ->inRandomOrder()
@@ -650,5 +654,27 @@ class journeyController extends Controller
 
         return $url;
     }
+
+    //temponary feature. delete it when Shuffling is Activation
+    public static function ShufflingActivate()
+    {
+        $published = \App\journey::where('publish_stage','=','Published')->get();
+        $count = count($published);
+
+        if($count >= 30){
+            $shuffle = [
+                'activate' => true,
+                'remain' => 0,
+            ];
+        } else {
+            $remain = (30 - $count);
+            $shuffle = [
+                'activate' => false,
+                'remain' => $remain,
+            ];
+        };
+
+        return $shuffle;
+     }
 
 }

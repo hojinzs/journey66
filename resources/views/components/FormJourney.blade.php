@@ -111,11 +111,18 @@
                             </div>
                         </div>
                         @endif
-                        @isset($journey)
                         <div class="form-group">
                             <div class="row">
                                 <label for="publish_stage" class="col-md-2 col-form-label">{{ __('journey.form.publish') }}</label>
                                 <div class="col-md-10">
+                                    @empty($journey)
+                                        <input class="form-check-input" type="radio" name="publish_stage" id="Radio1" value="Pending" checked disabled>
+                                        <label class="form-check-label" for="Radio1">
+                                            <b>{{__('journey.form.published_stages.pending')}}</b> -{{__('journey.form.published_stages.pending_description')}}
+                                        </label>
+                                        <p>{{__('journey.form.published_stages.new_description')}}</p>
+                                    @endempty                                    
+                                    @isset($journey)
                                     @if ($journey['publish_stage'] == 'Pending')
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="publish_stage" id="Radio1" value="Pending" checked>
@@ -140,10 +147,10 @@
                                             </label>
                                         </div>
                                     @endif
+                                    @endisset
                                 </div>
                             </div>
                         </div>
-                        @endisset
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <input type="submit" value="{{ __('journey.form.submit') }}" type="button" class="btn btn-primary btn-lg btn-block">

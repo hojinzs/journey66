@@ -12,12 +12,18 @@
 */
 
 Route::get('/', function () {
-    return view('home');
+
+    // temponaly feature
+    $shuffle = \App\Http\Controllers\journeyController::ShufflingActivate();
+
+    return view('home',[
+        'shuffle' => $shuffle,
+    ]);
 });
 
 Route::get('/write','journeyController@create');
 
-// Route::get('/journey_shuffle','journeyController@showRandom');
+Route::get('/journey_shuffle','journeyController@showRandom');
 
 Route::get('/journey/{id}','journeyController@show');
 
