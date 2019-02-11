@@ -28,6 +28,7 @@ class JourneyPosted extends Mailable
 
         $this->journey = $journey;
         $this->link = url("/journey/{$journey->UJID}/edit?key={$journey->key}");
+        $this->share_link = url("/journey/{$journey->UJID}");
         $this->currnetTime = date('Y-m-d H:i:s', time());
 
     }
@@ -43,7 +44,8 @@ class JourneyPosted extends Mailable
                     ->with([
                         'journey' => $this->journey,
                         'link' => $this->link,
-                        'currnetTime' => $this->currnetTime
+                        'share_link' => $this->share_link,
+                        'currnetTime' => $this->currnetTime,
                     ]);
 
     }

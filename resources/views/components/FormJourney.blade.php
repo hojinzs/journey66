@@ -62,7 +62,8 @@
         <i class="fas fa-map-marked-alt"></i> {{__('journey.form.inform.setmarker')}}<br>
         <i class="fas fa-image"></i> {{__('journey.form.inform.geotag_photo')}} 
             <button type="button" class="btn btn-secondary btn-sm" id="geotag_img_load">Upload Photo</button>
-            <input class="btn btn-secondary btn-sm" type="file" value="Upload Photo" id="geotag_img" hidden>
+            <input class="btn btn-secondary btn-sm" type="file" value="Upload Photo" id="geotag_img" accept="image/*" hidden>
+            <p>{{__('journey.form.inform.sort')}}</p>
     </div>
 
     <fieldset name="waypoint-list" id="waypoint-list">
@@ -97,10 +98,11 @@
                             <label for="email" class="col-md-2 col-form-label">{{__('journey.form.email')}}</label>
                             <div class="col-md-10">
                                 <input id="email" name="email" class="form-control" type="email" 
-                                @isset($journey['author_email'])value="{{$journey['author_email']}}"@endisset
+                                @isset($journey['author_email'])value="{{$journey['author_email']}}" readonly @endisset
                                 required>
                             </div>
                         </div>
+                        @empty($journey)
                         <div class="form-group row">
                             <label for="check_email" class="col-md-2 col-form-label"></label>
                             <div class="col-md-10">
@@ -108,6 +110,7 @@
                                 <label>{{__('journey.form.email_check')}}</label>
                             </div>
                         </div>
+                        @endif
                         @isset($journey)
                         <div class="form-group">
                             <div class="row">

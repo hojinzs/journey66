@@ -44,6 +44,7 @@ return [
         'inform' => [
             'setmarker' => 'Click on the memorable point',
             'geotag_photo' => 'or.. use GeoTagged Photo',
+            'sort' => 'Waypoints are sorted by track timeline.',
         ],
         'stats' => [
             'distance' => 'distance',
@@ -125,6 +126,7 @@ return [
         'status_message1' => 'your Journey has been saved. but it is not published on public.',
         'status_message2' => 'please review the Journey you wrote and let people to see.',
         'link' => 'Edit & Change Publish Status',
+        'share_link_message' => 'use this link! to share journey',
     ]
 
 ];

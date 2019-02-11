@@ -57,7 +57,8 @@ id="{{$id}}" data-UWID="{{$waypoint['UWID']}}" data-seq="{{$waypoint['sequence']
                                     @endforeach
                                 @endisset
                             </div>
-                            <input type="file" id="input_img" />
+                            <input type="file" id="input_img" accept="image/*" />
+                            <p>(image file Only(jpg,png,gif..), filesize 3Mb max)</p>
                         </div>
                     </div>
                     <div class="form-group row">
