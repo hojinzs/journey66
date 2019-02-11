@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Route::get('/write','journeyController@create');
 
-Route::get('/journey_shuffle','journeyController@showRandom');
+// Route::get('/journey_shuffle','journeyController@showRandom');
 
 Route::get('/journey/{id}','journeyController@show');
 
