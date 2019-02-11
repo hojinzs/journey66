@@ -105,6 +105,9 @@ Journey66.Section66 = function(string){
                 }
             }
             xhr.onload = function(){
+                // AJAX complete
+                if(Callback.CompleteFn instanceof Function) Callback.CompleteFn();
+                
                 if (xhr.status == 200 || xhr.status == 201) {
                     // AJAX success
                     let response = JSON.parse(xhr.responseText);
@@ -116,8 +119,6 @@ Journey66.Section66 = function(string){
                     Journey66.ErrorHandler('AJAX call failure');
     
                 };
-                // AJAX complete
-                if(Callback.CompleteFn instanceof Function) Callback.CompleteFn();
             };
             // AJAX beforeSend
             if(Callback.BeforeSendFn instanceof Function) Callback.BeforeSendFn();

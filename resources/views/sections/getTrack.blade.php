@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function(){
             },
             ErrorFn: function(data){
                 let error = GPXbtn.getElementsByClassName('error')[0];
-                error.textContent = "error";
+                error.textContent = "gpx file error!";
             },
         });
     });
@@ -75,6 +75,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
     getTrack .options{
         margin-left: 1em;
+    }
+
+    getTrack .error{
+        margin: 
     }
 </style>
 
@@ -102,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function(){
     <div id="load-strava" class="lilumi-box lilumi-btn disactive options">
         <h4>{{__('journey.form.getPath.strava.title')}} <i class="fab fa-strava"></i></h4>
         <p>({{__('journey.form.getPath.strava.description')}})</p>
-        <p><span class="error"></span></p>
+        <p ><span class="error"></span></p>
         {{-- <button id="gpx-upload-button" type="button" class="btn btn-primary" >UPLOAD</button> --}}
         {{-- <input id="gpx-upload-file" name="gpx" type="file" accept=".gpx" hidden> --}}
     </div>
