@@ -50,11 +50,11 @@ class JourneyWaypointChange extends Migration
 
         DB::statement('ALTER TABLE journeys CHANGE COLUMN publish_stage publish_stage ENUM("Pending","Published","Private") NOT NULL DEFAULT "Pending";');
 
-        //undo waypoint table
-        Schema::table('waypoints',function(Blueprint $table){
-            $table->string('name')
-            ->nullable($value = false)
-            ->change();
-        });
+        // //undo waypoint table
+        // Schema::table('waypoints',function(Blueprint $table){
+        //     $table->string('name')
+        //     ->nullable($value = false)
+        //     ->change();
+        // });
     }
 }
