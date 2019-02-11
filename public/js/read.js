@@ -42,7 +42,7 @@ $(document).ready(function (){
         variableWidth: true
     });
 
-    $('.gmap-static-img').parent().click(function (event){
+    $('.gmap-static-img').click(function (event){
         $('html, body').stop().animate({
             scrollTop: $('#map').offset().top
         }, 500);

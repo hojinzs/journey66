@@ -91,9 +91,9 @@ html body {
     margin: 0em 0.5em 0.5em 0em;
 }
 
-.galarry-images .img-container img.waypoint-img{
+/* .galarry-images .img-container img.waypoint-img{
     display: none;
-}
+} */
 
 .galarry-images .img-container canvas {
     width: auto;

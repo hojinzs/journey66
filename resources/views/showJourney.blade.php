@@ -94,7 +94,7 @@
                                 </div>
                                 @foreach ($waypoint['images'] as $img)
                                 <div class="img-container">
-                                    <img src="{{ $img['path'] }}" class="waypoint-img rounded">
+                                    <img src="{{ $img->path }}" class="waypoint-img rounded">
                                 </div>
                                 @endforeach
                             </div>
