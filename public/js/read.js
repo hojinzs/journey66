@@ -15,24 +15,24 @@ function initMap() {
 
 $(document).ready(function (){
 
-    $('.waypoint-img').each(function(i, image){
-        let imgWidth = $(image).width();
-        let URL = image.src;
+    // $('.waypoint-img').each(function(i, image){
+    //     let imgWidth = $(image).width();
+    //     let URL = image.src;
         
-        loadImage(
-        URL,
-        function(loadedImage){
-            let $canvas = $(loadedImage);
-            $canvas.addClass('waypoint-img rounded');
-            $(image).replaceWith($canvas);
-        },
-        {
-            maxWidth: imgWidth,
-            orientation: true,
-            canvas: false,
-        }
-        );
-    })
+    //     loadImage(
+    //     URL,
+    //     function(loadedImage){
+    //         let $canvas = $(loadedImage);
+    //         $canvas.addClass('waypoint-img rounded');
+    //         $(image).replaceWith($canvas);
+    //     },
+    //     {
+    //         maxWidth: imgWidth,
+    //         orientation: true,
+    //         canvas: false,
+    //     }
+    //     );
+    // })
 
     $('.galarry-images').slick({
         dots: true,
