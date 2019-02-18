@@ -64,7 +64,7 @@ JournalLogger.prototype.centerAndZoom = function(sequence = null) {
         if(point.longitude < minlon) minlon = point.longitude;
         if(point.longitude > maxlon) maxlon = point.longitude;
         if(point.latitude < minlat) minlat = point.latitude;
-        if(point.latitude > minlat) minlat = point.latitude;
+        if(point.latitude > maxlat) maxlat = point.latitude;
     });
 
     if((minlat == maxlat) && (minlat == 0)) {
@@ -80,7 +80,7 @@ JournalLogger.prototype.centerAndZoom = function(sequence = null) {
             new google.maps.LatLng(minlat, minlon),
             new google.maps.LatLng(maxlat, maxlon));
     this.map.setCenter(new google.maps.LatLng(centerlat, centerlon));
-    this.map.fitBounds(bounds);
+    this.map.fitBounds(bounds,15);
     this.zoom = this.map.getZoom();
 }
 
