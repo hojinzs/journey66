@@ -41,6 +41,7 @@
         @switch($lang)
             @case('ko')
                 <link href="https://fonts.googleapis.com/css?family=Noto+Serif+KR" rel="stylesheet">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"></script>
                 <style>body{font-family: 'Daehan', serif; !important} </style>
                 @break
             @case('en')

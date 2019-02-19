@@ -47,6 +47,7 @@ return [
             'geotag_photo' => 'or.. use GeoTagged Photo',
             'sort' => 'Waypoints are sorted by track timeline.',
         ],
+        'stat' => 'stat',
         'stats' => [
             'distance' => 'distance',
             'elevation' => 'elevation',
@@ -65,6 +66,7 @@ return [
             'btn_down' => 'down',
             'btn_delete' => 'delete',
             'btn_undelete' => 'cancel delete',
+            'stat' => 'stat',
             'stats' => [
                 'distance' => 'distance',
                 'elevation' => 'elevation',

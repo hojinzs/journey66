@@ -24,8 +24,8 @@ JournalLogger.prototype.setForm = function(Elements = {
     this.journey_key = Elements.journey_key;
     this.stats = Elements.stats;
 
-    let started_at = moment.tz(this.stats.startedAt,"UTC").tz(this.stats.timezone);
-    let finisted_at = moment.tz(this.stats.finishedAt,"UTC").tz(this.stats.timezone);
+    let started_at = moment.tz(this.stats.startedAt,"UTC").tz(this.stats.timezone).format('lll');
+    let finisted_at = moment.tz(this.stats.finishedAt,"UTC").tz(this.stats.timezone).format('lll');
 
     // set stats
     $('#journey-stat').find("span[name='distance']").text(Journey66.calc.Distance(this.stats.distance));
@@ -391,7 +391,7 @@ JournalLogger.prototype.NewWaypoint = function(SequencePoint = {},prop = {
     let $dummywp = this.$dummywp;
     let timezone = this.stats.timezone;
 
-    let time = moment.tz(SequencePoint.time,"UTC").tz(timezone).format();
+    let time = moment.tz(SequencePoint.time,"UTC").tz(timezone).format('lll');
 
     var plat = SequencePoint.latitude;
     var plng = SequencePoint.longitude;
